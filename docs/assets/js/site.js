@@ -135,6 +135,10 @@
         const R1=a*c1[0]+(1-a)*c2[0],R2=a*c1[1]+(1-a)*c2[1];
         return "α="+a.toFixed(2)+"：R₁="+fmt(R1)+"，R₂="+fmt(R2)+"，和="+fmt(R1+R2);
       }
+      case "crb-gaussian": {
+        const n=Math.round(v),crb=4/n;
+        return "n="+n+"，σ²=4：CRB=1/I(μ)="+crb.toFixed(5)+"（无偏估计方差下界）";
+      }
       default: return null;
     }
   }

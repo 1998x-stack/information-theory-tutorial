@@ -25,7 +25,10 @@
     "Shannon1959RD": "https://doi.org/10.1002/j.1538-7305.1959.tb01533.x",
     "Cover1972BC": "T. Cover (1972), Broadcast Channels, IEEE Trans. Inf. Theory 18(1)",
     "Ahlswede2000": "R. Ahlswede et al. (2000), Network Information Flow, IEEE Trans. Inf. Theory 46(4)",
-    "HanKobayashi1981": "T. Han & K. Kobayashi (1981), A New Achievable Rate Region for the Interference Channel, IEEE Trans. Inf. Theory 27(1)"
+    "HanKobayashi1981": "T. Han & K. Kobayashi (1981), A New Achievable Rate Region for the Interference Channel, IEEE Trans. Inf. Theory 27(1)",
+    "Akaike1973": "H. Akaike (1973), Information Theory and an Extension of the Maximum Likelihood Principle",
+    "Schwarz1978": "G. Schwarz (1978), Estimating the Dimension of a Model, Annals of Statistics 6(2)",
+    "Rissanen1978": "J. Rissanen (1978), Modeling by Shortest Data Description"
   },  "claims": [
     {
       "chapter": 1,
@@ -225,6 +228,17 @@
         "CoverThomas"
       ],
       "toy": "P1=2, P2=1.5, sigma2=1: R1max=0.7925, R2max=0.6610, Rsum=1.0850"
+    },
+    {
+      "chapter": 22,
+      "statement": "Fisher information I(theta)=E[(d log f/d theta)^2] equals local KL curvature; Cramer-Rao gives Var>=1/I for unbiased estimators under regularity. MDL minimizes L(model)+L(data|model) and is asymptotically BIC. Jaynes maximum entropy picks the least-committed distribution under constraints; AIC/BIC trade fit vs complexity.",
+      "evidence": [
+        "Akaike1973",
+        "Schwarz1978",
+        "Rissanen1978",
+        "CoverThomas"
+      ],
+      "toy": "Gaussian location: I=n/sigma^2; n=100, sigma^2=4 -> CRB=0.04; aic(-10,3)=26; bic(-10,3,100)=33.8155"
     }
   ]
 }

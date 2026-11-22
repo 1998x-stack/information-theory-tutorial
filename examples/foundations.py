@@ -100,6 +100,29 @@ def mac_capacity_corners(P1, P2, sigma2=1.0):
             awgn_capacity((P1 + P2) / sigma2))
 
 
+def fisher_info_gaussian(n, sigma):
+    """Fisher information n/sigma^2 for the mean of n i.i.d. N(mu, sigma^2)."""
+    if n <= 0 or sigma <= 0:
+        raise ValueError("n and sigma must be positive")
+    return n / sigma**2
+
+
+def cramer_rao_bound(n, sigma):
+    """Variance lower bound sigma^2/n for the Gaussian location parameter."""
+    return 1.0 / fisher_info_gaussian(n, sigma)
+
+
+def aic(log_likelihood, k):
+    """Akaike information criterion -2 logL + 2k (nats log-likelihood)."""
+    return -2 * log_likelihood + 2 * k
+
+
+def bic(log_likelihood, k, n):
+    """Bayesian information criterion -2 logL + k ln n."""
+    from math import log
+    return -2 * log_likelihood + k * log(n)
+
+
 if __name__ == "__main__":
     p, q = (.75,.25), (.5,.5)
     print("H(p)",entropy(p),"H(p,q)",cross_entropy(p,q),"KL",kl(p,q))
