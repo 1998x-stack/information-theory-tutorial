@@ -127,7 +127,7 @@ def label_smoothing(target_index: int, num_classes: int,
 def brier_score(probabilities: Sequence[float], target: Sequence[float]) -> float:
     if len(probabilities) != len(target) or not probabilities:
         raise ValueError("probability and target vectors must have equal nonzero length")
-    if any(p < 0 or not isfinite(p) for p in probabilities + tuple(target)):
+    if any(p < 0 or not isfinite(p) for p in tuple(probabilities) + tuple(target)):
         raise ValueError("probabilities and targets must be finite and nonnegative")
     if abs(sum(probabilities) - 1.0) > 1e-9 or abs(sum(target) - 1.0) > 1e-9:
         raise ValueError("both vectors must be normalized")
