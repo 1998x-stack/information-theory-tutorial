@@ -2,7 +2,7 @@
 
 [课程首页（GitHub Pages）](https://1998x-stack.github.io/information-theory-tutorial/) · [源码仓库](https://github.com/1998x-stack/information-theory-tutorial)
 
-28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。****全 28 章已完成六批深度精修（88 张独立 SVG、30 个交互实验）；第 28 章有真正可运行的端到端 Huffman–Hamming–BSC 项目**。**
+28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**全 28 章已完成六批深度精修（88 张独立 SVG、30 个交互实验）；第 28 章有真正可运行的端到端 Huffman–Hamming–BSC 项目。**
 
 ## 本地阅读与构建
 
