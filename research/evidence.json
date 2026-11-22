@@ -62,7 +62,8 @@
     "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
     "BerutLandauer2012": "https://doi.org/10.1038/nature10872",
     "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860",
-    "PetersonBrown1961DOI": "https://ieeexplore.ieee.org/abstract/document/4066263/"
+    "PetersonBrown1961DOI": "https://ieeexplore.ieee.org/abstract/document/4066263/",
+    "MITPerfectSecrecyLecture2026": "https://mit6875.github.io/Lecnotes-v2/lecture-01.html"
   },
   "claims": [
     {
@@ -230,7 +231,8 @@
       "evidence": [
         "ShannonSecrecy1949",
         "Wyner1975",
-        "HoMasseyPerfectSecrecy2012"
+        "HoMasseyPerfectSecrecy2012",
+        "MITPerfectSecrecyLecture2026"
       ],
       "toy": "uniform M and Bernoulli(q) XOR key: I(M;C)=1-h2(q), zero only at q=.5"
     },
@@ -544,6 +546,13 @@
         "previous": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf",
         "finding": "The URL now redirects to the University of Manchester Advanced Processor Technologies group page rather than the paper PDF.",
         "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
+      },
+      {
+        "chapter": 18,
+        "reference": "Perfect-secrecy university lecture notes",
+        "previous": "https://www.ccs.neu.edu/home/wichs/class/crypto-fall17/lecture1.pdf",
+        "finding": "The legacy university PDF is blocked to automated retrieval; replace it with a current, accessible MIT lecture note that explicitly covers Shannon security and the one-time pad.",
+        "replacement": "https://mit6875.github.io/Lecnotes-v2/lecture-01.html"
       }
     ],
     "mathml_audit": {
