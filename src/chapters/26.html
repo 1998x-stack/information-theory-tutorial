@@ -1,276 +1,45 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>第26章 语义信息论</title>
-    <link rel="stylesheet" href="theme.css">
-</head>
-<body>
-<div class="double-border">
-<div class="container">
-    <div class="sidebar">
-        <h3>📡 课程目录</h3>
-        <ul class="chapter-list">
-            <li><a href="01.html">第1章 什么是信息</a></li>
-            <li><a href="02.html">第2章 概率论回顾</a></li>
-            <li><a href="03.html">第3章 自信息与熵</a></li>
-            <li><a href="04.html">第4章 互信息</a></li>
-            <li><a href="05.html">第5章 KL散度与交叉熵</a></li>
-            <li><a href="06.html">第6章 熵的性质深入</a></li>
-            <li><a href="07.html">第7章 渐进均分性AEP</a></li>
-            <li><a href="08.html">第8章 信源编码定理</a></li>
-            <li><a href="09.html">第9章 Huffman编码</a></li>
-            <li><a href="10.html">第10章 算术编码</a></li>
-            <li><a href="11.html">第11章 字典编码</a></li>
-            <li><a href="12.html">第12章 离散信道</a></li>
-            <li><a href="13.html">第13章 信道容量</a></li>
-            <li><a href="14.html">第14章 信道编码定理</a></li>
-            <li><a href="15.html">第15章 线性分组码</a></li>
-            <li><a href="16.html">第16章 循环码与CRC</a></li>
-            <li><a href="17.html">第17章 卷积码与Viterbi译码</a></li>
-            <li><a href="18.html">第18章 信息论与安全</a></li>
-            <li><a href="19.html">第19章 率失真理论</a></li>
-            <li><a href="20.html">第20章 连续信源与微分熵</a></li>
-            <li><a href="21.html">第21章 网络信息论</a></li>
-            <li><a href="22.html">第22章 信息论与统计推断</a></li>
-            <li><a href="23.html">第23章 交叉熵与深度学习</a></li>
-            <li><a href="24.html">第24章 信息瓶颈理论</a></li>
-            <li><a href="25.html">第25章 信息论工具实战</a></li>
-            <li><a href="26.html" class="active">第26章 语义信息论</a></li>
-            <li><a href="27.html">第27章 信息论前沿</a></li>
-            <li><a href="28.html">第28章 综合项目</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-
-        <p>Shannon在他的1948年论文中明确写道："信息的语义方面与工程问题无关。"这句话划定了经典信息论的边界——我们只关心符号的传输，不关心符号的"含义"。但到了2025年，6G通信、大语言模型和生成式AI正在迫使信息论跨越这个边界——语义信息论应运而生。</p>
-
-        <p>回顾我们学过的所有章节，从熵到信道容量，从Huffman编码到LDPC码，我们始终遵循着Shannon的教诲：通信的任务是在接收端精确复现发送端的符号序列。至于接收端是否"理解"了这些符号——那不是信息论该管的事。</p>
-
-        <p>这个假设在20世纪是完全合理的。电报系统不需要理解电报内容，电话网络不需要理解对话。但在AI时代，情况变了。如果接收端是一个大语言模型，如果通信的两端都是智能体——它们之间传递的不再是"符号"，而是"意图"和"意义"。传输pixel值已经过时了，传输"一张微笑女性的照片"才是更高效的通信方式。而这，需要一套全新的理论。</p>
-
-        <h2>从语法到语义的范式转变</h2>
-
-        <p>经典信息论是<strong>语法级（syntax-level）</strong>的通信：发送端发出一串符号，接收端收到一串可能被噪声污染的符号，译码器尽可能恢复原始符号序列。至于这些符号代表了什么含义，理论完全不做假设。这就是为什么Shannon可以在完全不涉及语义的情况下建立通信的数学极限——因为传输和意义是正交的。</p>
-
-        <p>语义通信则完全不同。语义通信的目标是<strong>传递含义（meaning）</strong>，而不是传递符号。发送端和接收端各自有一个"知识库"（可以是共享的先验知识、预训练模型、或语言理解能力），通信的任务是利用这些共享知识，用尽可能少的符号让接收端理解发送端想要表达的含义。</p>
-
-        <p>举个例子：假设你要发送一张人脸图片。</p>
-
-        <ul>
-            <li><strong>经典方法</strong>：传输每个像素的RGB值。一张512×512的彩色图片，如果每个通道8bit，需要传输512×512×3×8 = 6,291,456 bits。这是语法级的通信。</li>
-            <li><strong>语义方法</strong>：用一个预训练好的生成模型，发送端只需传输"smiling woman with glasses"这样的语义描述（不到100个字符），接收端的生成模型就能根据这个描述和共享的知识库重建出高度相似的人脸图片。这是语义级的通信。</li>
-        </ul>
-
-        <p>当然，语义通信不是没有代价的。发送端需要"理解"图片的内容（这需要视觉模型），接收端需要"生成"图片（这需要生成模型）。但如果这些模型已经在两端部署好了——比如基站和手机都配备了AI芯片——那么传输代价就从几百万bits降到了几百bits。</p>
-
-        <div class="highlight">
-            <strong>语义信息论的核心洞见：</strong>如果接收方只需要"理解"而不需要"完美重建"，那么我们可以用远比Shannon极限更少的比特来完成通信——这是6G时代的关键突破。
-        </div>
-
-        <p>这个转变带来的理论问题是深刻的：我们如何定义"含义"的熵？如何定义语义意义上的信道容量？如何设计最优的语义编码方案？经典信息论的工具箱——熵、互信息、信道容量——在语义级都需要重新审视。</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>维度</th>
-                    <th>经典信息论</th>
-                    <th>语义信息论</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>传输什么</td>
-                    <td>符号序列（bits）</td>
-                    <td>含义/语义描述</td>
-                </tr>
-                <tr>
-                    <td>度量指标</td>
-                    <td>比特率、误码率</td>
-                    <td>语义保真度、意图还原度</td>
-                </tr>
-                <tr>
-                    <td>信源模型</td>
-                    <td>符号的概率分布</td>
-                    <td>含义空间 + 知识库</td>
-                </tr>
-                <tr>
-                    <td>信道模型</td>
-                    <td>条件概率转移矩阵</td>
-                    <td>语义噪声 + 理解偏差</td>
-                </tr>
-                <tr>
-                    <td>接收端目标</td>
-                    <td>符号级精确恢复</td>
-                    <td>含义级正确理解</td>
-                </tr>
-                <tr>
-                    <td>核心极限</td>
-                    <td>熵 → 信道容量</td>
-                    <td>语义熵 → 语义信道容量</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p>本质区别可以用一句话总结：经典信息论关心"信号是否被正确接收"，语义信息论关心"含义是否被正确理解"。</p>
-
-        <h2>语义熵与语义信道容量</h2>
-
-        <p>2025年，Lu等人在经典信息论框架的基础上提出了G理论（G-Theory），试图统一语法级和语义级的信息度量。这个工作的核心思路是引入<strong>真值函数（truth function）</strong>和<strong>语义约束（semantic constraints）</strong>来扩展Shannon熵的定义。</p>
-
-        <p>在经典信息论中，概率分布p(x)完全决定了熵H(X) = -Σ p(x) log p(x)。这里，x可以是一个符号、一个字母、或者一个像素值——我们只关心它的概率，不关心它"意味着什么"。</p>
-
-        <p>在语义信息论中，我们需要额外的结构。考虑一个信源产生的语义消息m，它的"含义"可以用一个语义向量s(m)来表示（比如一个NLP模型的embedding）。发送端和接收端共享一个知识库K。语义熵的定义不仅取决于消息的概率分布，还取决于知识库的完善程度：</p>
-
-        <ul>
-            <li><strong>语义熵 H_s(M | K)</strong>：给定接收端的知识库K，信源消息M的剩余不确定性。如果K非常完善（比如接收端已经知道所有背景知识），H_s就会很低——短消息就能传达丰富含义。如果K很贫乏，H_s就很高——需要用更多符号才能表达清楚。</li>
-            <li><strong>语义互信息 I_s(M; R | K)</strong>：给定知识库K，发送端的消息M和接收端对消息的理解R之间的共享含义。它衡量的是"含义被正确传达了多少"，而不是"符号被正确接收了多少"。</li>
-        </ul>
-
-        <p>语义信道容量的定义则更加微妙。在经典信息论中，信道容量是输入分布上互信息的最大值。在语义信息论中，<strong>语义信道容量 C_s</strong>是在"含义空间"上定义的：给定发送端的知识库和接收端的生成能力，每传输一个符号平均能传达的最大含义量。</p>
-
-        <pre><code># 语义熵的简化计算示例
-
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
-def semantic_entropy(messages, knowledge_base, epsilon=1e-10):
-    """
-    简化的语义熵计算：消息在知识库条件下的不确定性
-    越新颖的消息 -> 语义熵越高
-    越能被知识库预测的消息 -> 语义熵越低
-    """
-    # 将知识库作为参考语料
-    all_texts = knowledge_base + messages
-    vectorizer = TfidfVectorizer(max_features=100)
-    tfidf_matrix = vectorizer.fit_transform(all_texts)
-
-    kb_vectors = tfidf_matrix[:len(knowledge_base)]
-    msg_vectors = tfidf_matrix[len(knowledge_base):]
-
-    semantic_entropies = []
-    for i, msg_vec in enumerate(msg_vectors):
-        # 计算消息与知识库的最大相似度
-        similarities = cosine_similarity(msg_vec, kb_vectors).flatten()
-        max_sim = np.max(similarities)
-        # 语义熵：在知识库已知条件下的"新奇度"
-        # 完全已知 -> 熵接近0；完全未知 -> 熵较高
-        se = -np.log2(max_sim + epsilon)
-        semantic_entropies.append(se)
-
-    return np.mean(semantic_entropies)
-
-# 示例：一封越洋家书
-knowledge = [
-    "小明正在美国读博士",
-    "他学的是计算机科学",
-    "他的研究方向是机器学习",
-]
-message = ["我最近在做一个关于语义通信的项目"]
-
-se = semantic_entropy(message, knowledge)
-print(f"语义熵: {se:.2f} bits")
-# 假设输出: 语义熵: 1.23 bits
-# （如果知识库已包含背景信息，语义熵就会较低）</code></pre>
-
-        <p>这个例子虽然简化了，但抓住了语义熵的核心直觉：<strong>你已有的知识越多，新消息对你来说就越"确定"</strong>。这解释了为什么老友之间聊天只需要只言片语就能传达大量信息，而向科普读者解释同一个概念却需要大段篇幅。</p>
-
-        <h2>语义通信框架与6G</h2>
-
-        <p>语义信息论不是纯学术游戏——它有着非常实际的工程目标。6G通信标准（预计2030年左右商用）已经将语义通信列为关键技术方向之一。2025-2026年，北京邮电大学等机构发表了一系列工作，试图重新定义熵、互信息和信道容量在"含义导向传输"中的形式。</p>
-
-        <p>一个典型的语义通信系统架构如下：</p>
-
-        <pre><code>信源 → [语义编码器] → [信道编码器] → 信道 → [信道译码器] → [语义译码器] → 信宿
-                ↑                                          ↑
-           知识库共享                                   知识库共享</code></pre>
-
-        <p>关键区别在于：语义编码器不再输出原始符号的压缩表示，而是输出"语义表示"——通常是一个低维的embedding向量。这个向量蕴含了信源消息的核心含义，同时对信道噪声有很强的鲁棒性（因为embedding空间的拓扑结构可以容忍小的扰动而不改变语义）。</p>
-
-        <p>语义译码器则是生成式的——它根据接收到的语义表示和共享知识库，<strong>生成</strong>信源消息的一个近似。这个过程天然是有损的，但有损失去的是"不重要的细节"（比如背景纹理的精确颜色），保留的是"核心含义"（比如人脸身份、表情和姿态）。</p>
-
-        <p>2025年的一个实际案例是图像语义压缩：发送端用视觉Transformer提取图片的语义token（平均每张图片约200个token，每个token约16bits，总共3200 bits），接收端用扩散模型重建图片。相比之下，JPEG压缩同等质量的图片约需要50000 bits。语义压缩在比特率上实现了超过一个数量级的降低，而主观视觉质量（用户打分）甚至更好。</p>
-
-        <div class="tip">
-            <strong>深度思考：</strong>语义通信框架其实暗合了信息瓶颈原理（第24章）——发送端丢弃与任务无关的信息，保留与语义最相关的信息。两者的区别在于：IB理论中的"任务"通常是给定的标签，而语义通信中的"任务"是"让接收端理解含义"。当接收端是通用AI模型时，这个"任务空间"本身就是一个开放问题。
-        </div>
-
-        <h2>大模型与语义信息</h2>
-
-        <p>大语言模型（LLMs）与语义信息论之间有着深刻的联系——这种联系比很多人意识到的要紧密得多。</p>
-
-        <p>首先，LLM本质上可以看作一个<strong>语义压缩器</strong>。一个训练良好的语言模型，能够将海量文本中的信息压缩为模型参数。当你给它一个prompt时，它不是在逐字查询，而是在条件概率空间中导航——这正是语义编码的过程。从信息论角度看，LLM的生成过程就是"在共享知识库（预训练参数）的基础上，用最少的额外token表达含义"。</p>
-
-        <p><strong>Prompt工程</strong>从语义信息论的角度看，其实就是<strong>语义编码器的设计</strong>。一个好的prompt能够在少量token内精确传达意图（低语义熵），而一个模糊的prompt需要多次交互才能澄清（高语义熵）。这就像通信系统中的信源编码——只是编码的空间从"二进制符号"变成了"自然语言token"。</p>
-
-        <p><strong>Chain-of-Thought（思维链）</strong>则可以理解为<strong>语义译码器中的渐进推理过程</strong>。经典译码器中，我们一次性从接收信号恢复发送符号；而CoT将这个过程分解为多个推理步骤，每一步都建立在之前步骤建立的"局部语义"之上。这与Turbo译码中的迭代思想有着惊人的相似性——只是迭代的对象从"校验信息"变成了"推理线索"。</p>
-
-        <p><strong>In-context learning（上下文学习）</strong>的信息论解释更加迷人。为什么LLM只需要几个示例就能学会一个新任务？从语义信息论的角度看，示例的作用是调整接收端的"语义先验"——通过在上下文中提供少量标注样本，等效于临时扩展了接收端的共享知识库K，使得后续的语义解码更加精确。</p>
-
-        <div class="highlight">
-            <strong>关键联系：</strong>NLP中衡量模型质量的perplexity（困惑度）本质上就是交叉熵的指数形式。perplexity越低，说明模型对下一个token的预测越确定——这既是语法级的性能指标，也是语义级的压缩效率指标。困惑度2.0意味着模型平均只需要2 bits来编码下一个token——接近真实信息的压缩极限。
-        </div>
-
-        <pre><code>import torch
-import torch.nn.functional as F
-
-def compute_perplexity(logits, targets):
-    """
-    困惑度与平均交叉熵的关系：
-    perplexity = exp(L)  (自然对数) 或 2^L  (以2为底)
-    其中 L 是平均交叉熵损失
-    """
-    ce_loss = F.cross_entropy(logits, targets, reduction='mean')
-    perplexity = torch.exp(ce_loss)
-    # 等价于：每token所需bits = log2(perplexity) = ce_loss / ln(2)
-    bits_per_token = ce_loss / torch.log(torch.tensor(2.0))
-    return perplexity.item(), bits_per_token.item()
-
-# 假设有3个模型的logits和targets
-# 模型A：困惑度 2.0 → 每token 1.0 bit
-# 模型B：困惑度 10.0 → 每token 3.32 bits
-# 模型C：困惑度 100.0 → 每token 6.64 bits
-
-dummy_logits_a = torch.randn(1, 1000)  # 1000个词表
-dummy_logits_b = torch.randn(1, 1000)  # 更差的预测
-dummy_targets = torch.randint(0, 1000, (1,))
-
-# 模拟模型A的完美预测
-dummy_logits_a[0, dummy_targets[0]] = 20.0
-# 模型B的差预测
-dummy_logits_b[0, dummy_targets[0]] = 5.0
-
-ppl_a, bpt_a = compute_perplexity(dummy_logits_a, dummy_targets)
-ppl_b, bpt_b = compute_perplexity(dummy_logits_b, dummy_targets)
-
-print(f"模型A: perplexity={ppl_a:.2f}, bits/token={bpt_a:.2f}")
-print(f"模型B: perplexity={ppl_b:.2f}, bits/token={bpt_b:.2f}")
-# 假设输出体现：更好的语言模型 = 更低的perplexity = 更高效的语义编码</code></pre>
-
-        <p>这里有一个值得玩味的事实：Shannon本人预测的英语字母熵大约是1.3 bits/letter（从语法级统计得出）。而GPT-4在英语文本上的perplexity约为5-10，对应约2.3-3.3 bits/letter。GPT-4的"压缩率"反而比Shannon的统计模型差？不是的——Shannon的统计模型针对的是字符级的语法概率，而LLM的perplexity是在token级（每个token平均约4个字符）衡量的，并且token分布包含了更多的语义信息。换算到同等语义粒度，LLM的实际压缩效率远超Shannon模型——这正是因为LLM"理解了语义"，而不仅仅是"记住了统计规律"。</p>
-
-        <hr>
-
-        <p>本章回顾了语义信息论的动机、核心概念和最新进展。关键takeaways：</p>
-
-        <ul>
-            <li>经典信息论处理<strong>语法级</strong>通信（符号传输），语义信息论处理<strong>语义级</strong>通信（含义传输）</li>
-            <li>语义熵和语义信道容量通过引入<strong>知识库</strong>来扩展Shannon熵和互信息的定义</li>
-            <li>6G通信将语义压缩视为关键使能技术，可实现一个数量级以上的比特率降低</li>
-            <li>大语言模型可以视为<strong>语义编码器/译码器</strong>，prompt engineering和CoT均可用语义信息论的视角解释</li>
-        </ul>
-
-        <p>语义信息论只是信息论众多前沿方向之一。量子信息、信息分解、复杂系统——Shannon的理论正在被扩展到前所未有的领域。</p>
-
-        <div class="footer-nav">
-            <a href="25.html">← 上一章</a>
-            <a href="index.html">📖 返回目录</a>
-            <a href="27.html">下一章 →</a>
-        </div>
-    </div>
-</div>
-</div>
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="将“含义”定义为可检验的语义变量或任务损失，推导语义等价类与率失真界，并审视共享知识、生成式重建、LLM 和 6G 场景的真实适用条件。"><title>第 26 章 · 语义信息论：传输含义还是完成任务？ | 信息论</title><link rel="stylesheet" href="../assets/css/site.css"><script defer src="../assets/js/site.js"></script></head><body><a class="skip-link" href="#content">跳转至正文</a><header class="top"><a class="brand" href="../index.html">信息论 / INFORMATION THEORY</a><nav aria-label="课程导航"><a href="../index.html">课程首页</a><a href="../index.html#chapters">全部章节</a></nav></header><div class="layout"><nav class="toc" aria-label="本章目录"><strong>第 26 章 · 语义信息论：传输含义还是完成任务？</strong><a href="#problem">同一句意思，为什么不必传同样的字节？</a><a href="#model">从符号 X 到语义 S：必须明确映射</a><a href="#entropy">语义熵不是一个统一的现成公式</a><a href="#distortion">把“理解正确”写成任务失真函数</a><a href="#knowledge">共享知识是压缩的条件，也是风险</a><a href="#system">语义通信系统怎样进行端到端优化？</a><a href="#llm">大模型能帮忙，但困惑度不是语义理解</a><a href="#takeaways">研究结论的适用边界</a><a href="#sources">来源与延伸阅读</a></nav><main id="content"><article><header class="article-header"><p class="chapter-label">SEMANTIC & TASK-ORIENTED COMMUNICATION / CHAPTER 26</p><h1>语义信息论：传输含义还是完成任务？</h1><p class="dek">将“含义”定义为可检验的语义变量或任务损失，推导语义等价类与率失真界，并审视共享知识、生成式重建、LLM 和 6G 场景的真实适用条件。</p></header><div class="article-body">
+<section id="problem" aria-labelledby="s26-problem"><h2 id="s26-problem">同一句意思，为什么不必传同样的字节？</h2>
+<p>把“前方禁止通行”和“道路已封闭，请绕行”视作两条消息时，它们在字节、文字长度与语法上不同；但如果接收端只需决定“继续前进还是绕行”，两条消息可能触发同一个动作。信息论最值得追问的不是“少发多少字符”，而是：<strong>我们究竟要求接收端重现什么？</strong></p>
+<p>Shannon 的 1948 年通信模型刻意将语义从当时的工程问题中抽离，却并未主张消息永远不能按语义处理。只要任务、损失函数和数据分布可精确定义，经典的熵、互信息与率失真工具本身仍然适用；较新的语义通信研究还会引入知识库、生成式接收机与任务相关度量。不同论文对“语义熵”“语义容量”有不同定义，不能把其中一种当作普适定理。</p>
+<figure><img loading="lazy" src="../assets/figures/26-symbols-and-intents.svg" alt="八种符号消息归并为正常和告警两个任务类别"><figcaption>八条等概率符号消息携带 3 bit 符号熵；若接收端只需要区分两类意图，任务变量 S 的熵是 1 bit，前提是两端共享同一分类规则。</figcaption></figure>
+</section>
+<section id="model" aria-labelledby="s26-model"><h2 id="s26-model">从符号 X 到语义 S：必须明确映射</h2>
+<p>先定义离散消息 X、共享或接收端已知的上下文 K，以及随任务给定的语义映射 <code>S=g(X,K)</code>。这里的 S 不必是一段“神奇的向量”；它可以是告警类别、意图编号、控制决策、要检索的事实集合，甚至是具体业务任务的正确答案。若 S 完全由 X 和 K 决定，则：</p>
+<div class="math-equation" role="group" aria-label="已知上下文时语义变量的条件熵不超过源消息的条件熵"><div class="math-scroll" tabindex="0" role="region" aria-label="已知上下文时语义变量的条件熵不超过源消息的条件熵，可横向滚动"><math display="block" aria-label="已知上下文时语义变量的条件熵不超过源消息的条件熵"><mrow><mi>H</mi><mo>(</mo><mi>S</mi><mo>|</mo><mi>K</mi><mo>)</mo><mo>≤</mo><mi>H</mi><mo>(</mo><mi>X</mi><mo>|</mo><mi>K</mi><mo>)</mo></mrow></math></div><div class="eq-label">(26.1)</div></div>
+<p>证明仅需链式法则：<code>H(X,S|K)=H(X|K)+H(S|X,K)=H(S|K)+H(X|S,K)</code>，而确定性语义映射给出 <code>H(S|X,K)=0</code>。因此差值为 <code>H(X|S,K)≥0</code>。被“压掉”的信息是任务映射丢弃的细节，并不是物理信道凭空获得了额外容量。</p>
+<p>以八条等概率消息为例，符号熵为 <code>log₂8=3</code> bit/消息。如果四条指向 NORMAL、四条指向 ALERT，那么任务变量的熵恰好为 <code>1</code> bit/消息。这个差距不包含模型权重、同步、传输协议、端侧算力和错误保护等开销，不能直接宣传成某个真实通信系统“节约 67% 带宽”。</p></section>
+<section id="entropy" aria-labelledby="s26-entropy"><h2 id="s26-entropy">语义熵不是一个统一的现成公式</h2>
+<p>对于已经定义好的离散语义变量 S，<code>H(S|K)</code> 是严格的 Shannon 条件熵，具有明确的操作意义。另一类论文会用同义词等价类、逻辑命题真值、语义嵌入分布或基于任务的损失，分别建立自己的“语义熵”或“语义率”定义。这些量需要逐一检查空间、基准测度、编码模型及是否有编码定理，不能直接相互比较。</p>
+<div class="note warning">将文本嵌入与知识库向量做余弦相似度，然后取 <code>−log₂(similarity)</code>，不自动构成熵：相似度不是归一化事件概率，结果可能因嵌入模型、文本长度甚至负相似度而失去信息论含义。</div>
+<p>语义变量还可能依赖上下文。发送端认为“OK”代表任务完成，但接收端的知识 K 不同，可能理解成“收到但未完成”；这不是简单的物理信道比特错误，而是语义协议不一致。可验证的模型应明确：谁持有 K、如何版本化、何时更新、如何处理分布外输入。</p></section>
+<section id="distortion" aria-labelledby="s26-distortion"><h2 id="s26-distortion">把“理解正确”写成任务失真函数</h2>
+<p>如果 S 是二分类任务的真实类别，接收端输出 <code>Ŝ</code>，最朴素的语义失真是零一损失 <code>d(S,Ŝ)=𝟙[S≠Ŝ]</code>。给定真实类别分布，任务率失真函数就是满足允许平均决策错误率 D 时，所需最少互信息：</p>
+<div class="math-equation" role="group" aria-label="任务率失真函数是在预期任务失真不超过 D 时最小化互信息"><div class="math-scroll" tabindex="0" role="region" aria-label="任务率失真函数是在预期任务失真不超过 D 时最小化互信息，可横向滚动"><math display="block" aria-label="任务率失真函数是在预期任务失真不超过 D 时最小化互信息"><mrow><msub><mi>R</mi><mtext>task</mtext></msub><mo>(</mo><mi>D</mi><mo>)</mo><mo>=</mo><munder><mo>min</mo><mrow><mi>p</mi><mo>(</mo><mover><mi>s</mi><mo>^</mo></mover><mo>|</mo><mi>s</mi><mo>)</mo><mo>:</mo><mi>𝔼</mi><mo>[</mo><mi>d</mi><mo>]</mo><mo>≤</mo><mi>D</mi></mrow></munder><mi>I</mi><mo>(</mo><mi>S</mi><mo>;</mo><mover><mi>S</mi><mo>^</mo></mover><mo>)</mo></mrow></math></div><div class="eq-label">(26.2)</div></div>
+<p>在 S 为等概独立 Bernoulli(1/2)、失真是 Hamming 距离的特例中，经典闭式结果为：</p>
+<div class="math-equation" role="group" aria-label="均匀二元任务的 Hamming 率失真函数"><div class="math-scroll" tabindex="0" role="region" aria-label="均匀二元任务的 Hamming 率失真函数，可横向滚动"><math display="block" aria-label="均匀二元任务的 Hamming 率失真函数"><mrow><mi>R</mi><mo>(</mo><mi>D</mi><mo>)</mo><mo>=</mo><mn>1</mn><mo>−</mo><msub><mi>h</mi><mn>2</mn></msub><mo>(</mo><mi>D</mi><mo>)</mo><mo>,</mo><mspace width="0.7em"/><mn>0</mn><mo>≤</mo><mi>D</mi><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math></div><div class="eq-label">(26.3)</div></div>
+<figure><img loading="lazy" src="../assets/figures/26-task-rate-distortion.svg" alt="均匀二元任务下率失真从 D 等于零的 1 bit 单调下降到 D 等于二分之一的零 bit"><figcaption>这条曲线是理想 i.i.d. 二元任务的渐近率失真函数；它不是某种 LLM 语义信道的实测吞吐量。</figcaption></figure>
+<div class="lab" data-lab="semantic-rd"><label for="lab26">调整允许的平均任务错误率 D</label><input id="lab26" type="range" min="0" max="0.5" step="0.01" value="0.1"><output for="lab26" aria-live="polite">D=0.10；R(D)=0.5310 bit/任务符号</output><p class="micro">二元均匀 i.i.d. 任务、Hamming 失真与渐近块长；实际无线传输仍需另行考虑信道编码、时延、元数据和有限块长。</p></div>
+<p>对于医疗报警，漏报和误报代价通常不相等，可以定义代价矩阵 <code>d(s,ŝ)</code> 而不是简单 0–1 损失；对于图像描述可使用检索成功率、目标检测、事实一致性或结构化任务效用。若指标改变，最优语义表示也会改变，未必存在一个“通用的最好语义压缩器”。</p></section>
+<section id="knowledge" aria-labelledby="s26-knowledge"><h2 id="s26-knowledge">共享知识是压缩的条件，也是风险</h2>
+<p>接收端的推断依赖共享背景信息 K。如果两端知道道路状态分类、地图版本与指令集合，那么一句简短代码就可以触发复杂行为。但模型更新、符号表不一致或领域迁移会造成语义偏差；通信成功不能仅以物理比特错误率评判，也应检查<strong>任务损失、分布漂移、置信度与错误恢复策略</strong>。</p>
+<figure><img loading="lazy" src="../assets/figures/26-knowledge-mismatch.svg" alt="发送端和接收端共享同一映射时意图可恢复，知识版本不一致时同一 token 会被误译"><figcaption>同一语义标签只有在发端和收端的上下文约定一致时才是可靠协议；失配可在比特完全正确的情况下造成任务错误。</figcaption></figure>
+<p>有的系统把 K 编进固定基础模型权重，并把模型部署当作离线成本；有的系统则动态同步知识库。比较两种系统时，应对同步成本、算力/能耗、更新频率、知识泄漏风险与所需任务精度作同一口径的统计。</p></section>
+<section id="system" aria-labelledby="s26-system"><h2 id="s26-system">语义通信系统怎样进行端到端优化？</h2>
+<p>一种可操作的架构是：输入 X 经语义编码器提取任务相关的 T；物理信道编码器将 T 映射为满足功率约束的信号；接收机通过信道观测恢复 <code>Ť</code>，再解码得到动作 <code>Ŝ</code>。这与经典联合信源—信道编码并不矛盾，而是把优化目标从逐比特还原扩展为任务损失。</p>
+<figure><img loading="lazy" src="../assets/figures/26-semantic-system.svg" alt="任务语义编码、物理信道传输、接收端任务解码，以及两端共享知识 K 的结构图"><figcaption>物理信道负责将编码后的表示传至接收端；语义失真由目标任务计算，两端需就知识版本及指标达成一致。</figcaption></figure>
+<p>可把问题写成在信道与计算预算约束下最小化 <code>E[d_task(S,Ŝ)]</code>，并同时报告每任务样本所需信道使用次数、总发送比特、时延、端侧能耗以及错误发生时的后果。实际系统还要分别报告 bit-level 和 task-level 评价，不能只展示重建图像是否“看起来类似”。</p>
+<p>ITU-R M.2160 确认 IMT-2030 六类使用场景，其中包含 AI and Communication；这不等于某一语义熵公式或生成式通信架构已被确定为统一 6G 协议。标准化场景与探索性研究应分别陈述。</p></section>
+<section id="llm" aria-labelledby="s26-llm"><h2 id="s26-llm">大模型能帮忙，但困惑度不是语义理解</h2>
+<p>语言模型给出 token 的条件概率，可作为预测式信源编码器或接收端共享先验的一部分。在固定 tokenizer、相同测试语料及自然对数交叉熵条件下，perplexity 与平均负对数似然满足 <code>PPL=exp(NLL_nats)</code>；换算到 bit/token 则 <code>bits/token = NLL_nats / ln 2</code>。这是真实的概率编码联系，但<strong>低 PPL 不自动表示正确理解意图</strong>。</p>
+<div class="math-equation" role="group" aria-label="语言模型自然对数 NLL 与困惑度及比特每词元的换算"><div class="math-scroll" tabindex="0" role="region" aria-label="语言模型自然对数 NLL 与困惑度及比特每词元的换算，可横向滚动"><math display="block" aria-label="语言模型自然对数 NLL 与困惑度及比特每词元的换算"><mtable><mtr><mtd><mi>PPL</mi><mo>=</mo><mi>exp</mi><mo>(</mo><msub><mi>NLL</mi><mi>nats</mi></msub><mo>)</mo></mtd></mtr><mtr><mtd><mtext>bits/token</mtext><mo>=</mo><mfrac><msub><mi>NLL</mi><mi>nats</mi></msub><mrow><mi>ln</mi><mn>2</mn></mrow></mfrac></mtd></mtr></mtable></math></div><div class="eq-label">(26.4)</div></div>
+<p>生成式语义接收机可能输出与原句不同但任务等价的结果，也可能“幻觉”出没有发送过的事实。若任务要求精确法律文本、密码学证据或医疗剂量，细节本身就是任务的重要部分；绝不能因为生成式结果流畅，就声称信息无损恢复。tokenizer 不同的 PPL 也不能直接当成同一 bit/字符指标。</p></section>
+<section id="takeaways" aria-labelledby="s26-takeaways"><h2 id="s26-takeaways">研究结论的适用边界</h2>
+<ul><li>必须先定义消息变量 X、上下文 K、语义/任务变量 S 与任务失真 d，否则“语义容量”缺乏可比较的操作定义。</li><li>语义等价类降低所需信息量，是因为任务允许丢弃细节；不能无条件替代原始文件的无损通信。</li><li>分享预训练模型可以降低在线消息率，但模型部署、同步和推理并非零成本。</li><li>把任务准确率、速率、时延、能耗、漂移鲁棒性与安全性放在同一张实验表中，而不是只报告主观语义相似度。</li></ul></section>
+<section id="sources" aria-labelledby="s26-sources"><h2 id="s26-sources">来源与延伸阅读</h2><ol class="references">
+<li><a href="https://www.cs.yale.edu/homes/yry/readings/general/shannon1948.pdf">C. E. Shannon (1948), A Mathematical Theory of Communication</a>：经典通信问题的建模范围。</li>
+<li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10888479/">Xin, Fan &amp; Letaief (2024), Semantic Communication: A Survey of Its Theoretical Development</a>：多种语义熵和语义率失真框架的分歧。</li>
+<li><a href="https://ieeexplore.ieee.org/abstract/document/10946974">Meaningful Goals: Toward a Semantic-Functional Rate Distortion Theory (2025)</a>：以任务失真定义可达目标的研究。</li>
+<li><a href="https://doi.org/10.1109/TMC.2024.3406375">A Theory of Semantic Communication (2024)</a>：语言设计与任务导向联合编码。</li>
+<li><a href="https://www.itu.int/rec/R-REC-M.2160-0-202311-I/en">ITU-R M.2160-0 (2023), IMT-2030 Framework</a>：AIAC 是未来移动网络场景之一。</li>
+<li><a href="https://doi.org/10.1109/TIT.1959.1056961">C. E. Shannon (1959), Coding Theorems for a Discrete Source With a Fidelity Criterion</a>：率失真定理的操作基础。</li></ol></section></div><nav class="chapter-nav" aria-label="相邻章节"><a href="25.html">← 第 25 章</a><a href="../index.html">返回课程首页</a><a href="27.html">第 27 章 →</a></nav></article></main></div></body></html>
