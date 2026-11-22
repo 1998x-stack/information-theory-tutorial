@@ -15,11 +15,11 @@
 1. 先审旧正文和章节图谱，给读者一个真实问题，再写从直觉到可检验结论的因果学习路线。
 2. 核查教材/原论文、公开大学课程两类依据；关键结论按章节写入 `research/evidence.json`。
 3. 写符号表与前提：离散/连续、概率支持集、自然对数还是 log₂、条件独立等。缺失时不得声称定理普遍成立。
-4. 公式优先原生 MathML（`mfrac`/ `munderover`/ `msub`），每条关键式要有 aria-label，长式放在可聚焦、可横向滚动的容器。SVG 内不得嵌套 MathML。
+4. 公式优先 MathML Core（`mfrac`/ `munderover`/ `msub`），每条关键式要有 aria-label，长式放在可聚焦、可横向滚动的容器。不要使用已从 MathML Core 移除的 `mfenced`；矩阵括号用 `mrow` + `mo` 明确构造。SVG 内不得嵌套 MathML。
 5. 使用独立原创 SVG：`xmlns/viewBox/title/desc`，明确箭头方向、变量含义、分布归一化、单位与适用条件，图注不能仅复述标题。
 6. 提供具有固定种子的、可以断言的最小计算例；交互为渐进增强，默认结果不依赖 JavaScript，原生 range/button 可键盘操作并更新 output。
 7. 运行 `python3 scripts/build.py && python3 scripts/build.py --check && python3 scripts/validate.py && python3 -m unittest discover -s tests`。
-8. 运行 `python3 scripts/browser_smoke.py` 完成浏览器验收 1440、390、360 像素、键盘聚焦、SVG、数学式布局、无页面横溢、打印、控制器输出和全部本地链接。若未执行应写明“未验证”，不能伪称通过。
+8. 运行 `python3 scripts/browser_smoke.py` 完成 Chromium 验收 1440、768、390、360 像素、键盘聚焦、MathML namespace/几何、SVG 实际加载、无外部运行时依赖、无页面横溢、打印和所有交互输出。`scripts/validate.py` 还必须验证 MathML XML 结构、公式限位节点、重复 ID、全部本地文件与片段链接、导航和实验脚本映射。若未执行应写明“未验证”，不能伪称通过。
 
 ## 容易出错的技术约束
 

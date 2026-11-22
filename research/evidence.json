@@ -61,8 +61,9 @@
     "SchreiberTE2000": "https://doi.org/10.1103/PhysRevLett.85.461",
     "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
     "BerutLandauer2012": "https://doi.org/10.1038/nature10872",
-    "CRCTheoryNotes": "https://perswww.kuleuven.be/~u0068190/Onderwijs/Extra_info/crc.pdf",
-    "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860"
+    "CRCTheoryNotes": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf",
+    "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860",
+    "PetersonBrown1961DOI": "https://doi.org/10.1109/JRPROC.1961.287814"
   },
   "claims": [
     {
@@ -417,6 +418,54 @@
         "section": "cross-entropy",
         "issue": "The logarithm base underlying NLL and the q−y gradient was implicit.",
         "resolution": "State natural-log loss units as nats/sample and the conversion to bits."
+      },
+      {
+        "chapter": 12,
+        "section": "output-marginal-and-MathML-Core",
+        "issue": "The output-marginal probability sum still had an empty upper-limit mrow, and the BSC matrix used legacy mfenced.",
+        "resolution": "Use munder for the unbounded sum and explicit mrow/mo square brackets for the transition matrix."
+      },
+      {
+        "chapter": 16,
+        "section": "source-integrity",
+        "issue": "The Peterson–Brown title linked to Peterson's unrelated 1960 BCH paper DOI; the added KU Leuven personal-site PDF was retired in February 2026.",
+        "resolution": "Correct the DOI to 10.1109/JRPROC.1961.287814 and replace the retired URL with the original paper's accessible PDF mirror."
+      },
+      {
+        "chapter": 17,
+        "section": "notation",
+        "issue": "The encoder paragraph rendered XOR as the literal string oplus.",
+        "resolution": "Rewrite the prose equations with explicit code spans and the ⊕ operator, aligned with the MathML definition."
+      },
+      {
+        "chapter": 18,
+        "section": "notation",
+        "issue": "The reused one-time-pad example rendered XOR as the literal string oplus.",
+        "resolution": "Rewrite both ciphertext equations using explicit ⊕ notation."
+      },
+      {
+        "chapter": 24,
+        "section": "source-integrity",
+        "issue": "The Deep Variational Information Bottleneck citation pointed to arXiv:1801.04062 rather than the cited Alemi et al. work.",
+        "resolution": "Point to the verified original arXiv record 1612.00410."
+      },
+      {
+        "chapter": 25,
+        "section": "KSG-MathML",
+        "issue": "The KSG-1 formula contained an extra closing mrow and was not well-formed XML.",
+        "resolution": "Wrap the summand bracket in an explicit mrow and retain the standard KSG-1 digamma expression."
+      },
+      {
+        "chapter": 1,
+        "section": "quality-gates",
+        "issue": "Static validation did not parse MathML structure, resolve local fragment IDs, verify interactive handler mappings or detect duplicate IDs.",
+        "resolution": "Replace the shallow checker with XML-based MathML validation, fragment-aware local-link validation, unique-ID checks, lab-to-handler mapping and evidence metadata validation."
+      },
+      {
+        "chapter": 1,
+        "section": "browser-gates",
+        "issue": "Chromium coverage omitted the 768px tablet viewport and did not assert absence of external runtime requests or check print rendering across representative math-heavy chapters.",
+        "resolution": "Expand Chromium coverage to 1440/768/390/360, record console/runtime/network errors, verify MathML limits and accessible controls, and check print output on seven representative chapters."
       }
     ],
     "numerical_rechecks": [
@@ -455,6 +504,43 @@
         "example": "AAAABBCD source/channel coding",
         "result": "Huffman payload 14 bits; 2 padding bits; four Hamming(7,4) codewords; 28 transmitted bits excluding shared codebook, framing and length metadata."
       }
-    ]
+    ],
+    "external_reference_checks": [
+      {
+        "chapter": 16,
+        "reference": "Peterson & Brown, Cyclic Codes for Error Detection",
+        "previous": "https://doi.org/10.1109/TIT.1960.1057586",
+        "finding": "The DOI resolves to W. W. Peterson's different 1960 BCH paper; Peterson & Brown's 1961 Proceedings of the IRE paper is DOI 10.1109/JRPROC.1961.287814.",
+        "replacement": "https://doi.org/10.1109/JRPROC.1961.287814"
+      },
+      {
+        "chapter": 16,
+        "reference": "CRC burst-error proof",
+        "previous": "https://perswww.kuleuven.be/~u0068190/Onderwijs/Extra_info/crc.pdf",
+        "finding": "The personal-web-hosting service was discontinued in February 2026; the URL redirects to the university shutdown notice.",
+        "replacement": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf"
+      },
+      {
+        "chapter": 24,
+        "reference": "Alemi et al., Deep Variational Information Bottleneck",
+        "previous": "https://arxiv.org/abs/1801.04062",
+        "finding": "The cited paper is arXiv:1612.00410, ICLR 2017; 1801.04062 is not the cited original.",
+        "replacement": "https://arxiv.org/abs/1612.00410"
+      }
+    ],
+    "mathml_audit": {
+      "chapter_pages": 28,
+      "math_elements": 110,
+      "known_structural_defects_fixed": [
+        "chapter 12: empty mrow in output marginal",
+        "chapter 25: extra closing mrow in KSG-1"
+      ],
+      "policy": "Every MathML fragment must parse as XML; mfrac/msub/msup/munder/mover/munderover arities are checked; empty structural rows and legacy mfenced are rejected."
+    },
+    "automated_verification": {
+      "status": "pending-github-actions",
+      "static": "expanded XML, anchors, duplicate IDs, SVG accessibility, labs and evidence checks",
+      "browser": "Chromium 1440/768/390/360 plus keyboard, offline asset, MathML geometry and representative print checks"
+    }
   }
 }

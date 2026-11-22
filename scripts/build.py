@@ -51,7 +51,7 @@ def main():
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(content, encoding="utf-8")
     if args.check and stale:
-        print("Stale or missing generated paths:\\n" + "\\n".join(stale))
+        print("Stale or missing generated paths:\n" + "\n".join(stale))
         raise SystemExit(1)
     print(f"Checked {total} generated files: " + ("clean" if not stale else f"updated {len(stale)}"))
 
