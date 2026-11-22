@@ -41,7 +41,7 @@ def validate():
             local = (page.parent / parsed.path).resolve() if parsed.path else page
             if not local.is_file():
                 errors.append(f"Broken {page.relative_to(ROOT)} -> {url}")
-        if page.name in {f"{i:02d}.html" for i in range(1,16)}:
+        if page.name in {f"{i:02d}.html" for i in range(1,21)}:
             minimum_figures = 3 if int(page.stem) >= 6 else 2
             if scan.tags.get("h1",0) != 1 or scan.tags.get("math",0) < 1 or scan.tags.get("figure",0) < minimum_figures:
                 errors.append(f"New chapter semantic tags: {page}")
@@ -56,7 +56,7 @@ def validate():
                 errors.append(f"SVG a11y: {figure}")
         except ET.ParseError as e:
             errors.append(f"SVG parse: {figure}: {e}")
-    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 41:
+    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 56:
         errors.append("Expected at least forty-one original SVG diagrams")
     data = json.loads((DOCS / "data/courses.json").read_text(encoding="utf-8"))
     if data.get("chapterCount") != 28 or len(data.get("chapters", [])) != 28:
@@ -64,6 +64,6 @@ def validate():
     if errors:
         print("\\n".join(errors))
         raise SystemExit(1)
-    print(f"Static validation passed: {len(names)} HTML, 41+ SVG, local links and semantic checks")
+    print(f"Static validation passed: {len(names)} HTML, 56+ SVG, local links and semantic checks")
 if __name__ == "__main__":
     validate()

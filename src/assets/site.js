@@ -3,6 +3,11 @@
   const h2 = p => (p <= 0 || p >= 1) ? 0 :
     -p * Math.log2(p) - (1-p) * Math.log2(1-p);
   const fmt = n => n.toFixed(4);
+
+  function crcRemainder(bits,generator){const w=bits.split("").map(Number),g=generator.split("").map(Number);for(let i=0;i<=w.length-g.length;i++)if(w[i])for(let j=0;j<g.length;j++)w[i+j]^=g[j];return w.slice(-(g.length-1)).join("").padStart(g.length-1,"0");}
+  function convEncode(bits){let state=0,out="";for(const ch of bits+"00"){const b=Number(ch),p=(state>>1)&1,o=state&1;out+=(b^p^o).toString()+(b^o).toString();state=(b<<1)|p;}return out;}
+  function viterbiDecode(received){const pairs=received.match(/../g)||[];let m=[0,Infinity,Infinity,Infinity],backs=[];for(const pair of pairs){const next=[Infinity,Infinity,Infinity,Infinity],pred=[null,null,null,null];for(let s=0;s<4;s++){if(!Number.isFinite(m[s]))continue;const p=(s>>1)&1,o=s&1;for(let b=0;b<=1;b++){const out=[b^p^o,b^o],ns=(b<<1)|p,cost=(Number(pair[0])!==out[0])+(Number(pair[1])!==out[1]),v=m[s]+cost;if(v<next[ns]){next[ns]=v;pred[ns]={state:s,bit:b};}}}m=next;backs.push(pred);}let state=0,bits="";for(let t=backs.length-1;t>=0;t--){const p=backs[t][state];if(!p)return {bits:"?",metric:Infinity};bits=p.bit+bits;state=p.state;}return {bits:bits.slice(0,-2),metric:m[0]};}
+  function waterFill(noise,power){let lo=Math.min(...noise),hi=Math.max(...noise)+power;for(let k=0;k<80;k++){const mid=(lo+hi)/2,total=noise.reduce((s,n)=>s+Math.max(mid-n,0),0);if(total>power)hi=mid;else lo=mid;}const level=(lo+hi)/2,powers=noise.map(n=>Math.max(level-n,0)),capacity=powers.reduce((s,p,i)=>s+.5*Math.log2(1+p/noise[i]),0);return {level,powers,capacity};}
   function typicalMass(n, p=.25, eps=.15) {
     const H = h2(p);
     let binomial = Math.pow(1-p, n), mass = 0;
@@ -77,6 +82,12 @@
         bits[position-1]=bits[position-1]==="0"?"1":"0";
         return "翻转位置"+position+"：收到"+bits.join("")+"；syndrome="+position.toString(2).padStart(3,"0")+"₂ → 纠正第"+position+"位";
       }
+
+      case "crc-syndrome": {const pos=Math.round(v),bits="1101001".split("");if(pos>0)bits[pos-1]=bits[pos-1]==="0"?"1":"0";const received=bits.join(""),syn=crcRemainder(received,"1011");return pos===0?"收到 1101001；综合征 000，码字通过校验":("翻转位置 "+pos+"：收到 "+received+"；综合征 "+syn+"，"+(syn==="000"?"未检出":"检测到错误"));}
+      case "viterbi-noise": {const pos=Math.round(v),bits=convEncode("1011").split("");if(pos>0)bits[pos-1]=bits[pos-1]==="0"?"1":"0";const received=bits.join(""),decoded=viterbiDecode(received);return "接收 "+received+"；硬判决 Viterbi 解码为 "+decoded.bits+"；路径度量 "+decoded.metric;}
+      case "otp-leakage": return "q="+v.toFixed(2)+"；均匀明文下泄漏 I(M;C)="+fmt(1-h2(v))+" bit";
+      case "binary-rd": return "D="+v.toFixed(3)+"；R(D)="+fmt(v>=.2?0:h2(.2)-h2(v))+" bit/符号";
+      case "water-filling": {const z=waterFill([1,2,4],v);return "P="+v.toFixed(1)+"；μ="+fmt(z.level)+"；分配("+z.powers.map(x=>x.toFixed(3)).join(", ")+")；容量="+fmt(z.capacity)+" bit/组三次使用";}
       default: return null;
     }
   }
