@@ -13,7 +13,7 @@
 <g fill="none" stroke="#147f80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
 <path d="M620 178H606m-32 0H570"/><path d="M410 178H360"/>
 <path d="M200 178H115V285H590V198M590 285H805V198"/>
-<path d="M890 178H822"/>
+<path d="M890 178H822"/><path d="M789 178H770"/><path d="M778 172L770 178L778 184"/>
 </g>
 <g fill="#fff0e8" stroke="#d06d4d" stroke-width="2"><circle cx="590" cy="178" r="16"/><circle cx="805" cy="178" r="16"/></g>
 <g fill="#d06d4d" font-family="system-ui,sans-serif" font-weight="750" text-anchor="middle" font-size="21"><text x="590" y="185">⊕</text><text x="805" y="185">⊕</text></g>
