@@ -57,7 +57,7 @@ def validate():
         except ET.ParseError as e:
             errors.append(f"SVG parse: {figure}: {e}")
     if len(list((DOCS / "assets/figures").glob("*.svg"))) < 56:
-        errors.append("Expected at least forty-one original SVG diagrams")
+        errors.append("Expected at least fifty-six original SVG diagrams")
     data = json.loads((DOCS / "data/courses.json").read_text(encoding="utf-8"))
     if data.get("chapterCount") != 28 or len(data.get("chapters", [])) != 28:
         errors.append("Course metadata inconsistent with 28 chapters")
