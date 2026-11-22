@@ -60,7 +60,10 @@
     "PreskillHolevo2025": "https://www.preskill.caltech.edu/ph219/chap10_6A_2025.pdf",
     "SchreiberTE2000": "https://doi.org/10.1103/PhysRevLett.85.461",
     "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
-    "BerutLandauer2012": "https://doi.org/10.1038/nature10872"
+    "BerutLandauer2012": "https://doi.org/10.1038/nature10872",
+    "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860",
+    "PetersonBrown1961DOI": "https://ieeexplore.ieee.org/abstract/document/4066263/",
+    "MITPerfectSecrecyLecture2026": "https://mit6875.github.io/Lecnotes-v2/lecture-01.html"
   },
   "claims": [
     {
@@ -207,7 +210,8 @@
       "evidence": [
         "CRCRevEng",
         "CRCRevEngReadme",
-        "RFC1662"
+        "RFC1662",
+        "PetersonBrown1961DOI"
       ],
       "toy": "G=1011, message 1101 -> codeword 1101001, remainder 000; CRC32 check vector 123456789 -> CBF43926"
     },
@@ -226,7 +230,9 @@
       "statement": "Perfect secrecy is I(M;C)=0 or posterior invariance. H(K)>=H(M) is necessary, not sufficient. OTP needs a uniform independent equal-length key used once. The degraded wiretap formula requires the stated DMC assumptions.",
       "evidence": [
         "ShannonSecrecy1949",
-        "Wyner1975"
+        "Wyner1975",
+        "HoMasseyPerfectSecrecy2012",
+        "MITPerfectSecrecyLecture2026"
       ],
       "toy": "uniform M and Bernoulli(q) XOR key: I(M;C)=1-h2(q), zero only at q=.5"
     },
@@ -348,5 +354,250 @@
       ],
       "toy": "AAAABBCD -> Huffman 14 bits, pad 2, four Hamming blocks = 28 physical bits; Hamming(7,4) 1011 -> 0110011; source/channel bitstream roundtrips under p=0, single-bit errors per block corrected."
     }
-  ]
+  ],
+  "second_pass": {
+    "date": "2026-11-23",
+    "scope": "All 28 standalone chapter pages, their mathematical markup, examples, diagrams/captions, source references, cross-chapter navigation, metadata and browser quality gates.",
+    "method": "Re-derive numerical examples; compare theorem assumptions and units to primary sources or university notes; distinguish exact derivations from finite-sample demonstrations; validate MathML structure and HTML references; run full Python and Chromium CI before release.",
+    "corrections": [
+      {
+        "chapter": 12,
+        "section": "channel-kernel",
+        "issue": "An unbounded summation was represented with munderover and an empty upper-limit node.",
+        "resolution": "Use munder for the y∈Y lower limit; retain row-stochastic normalization."
+      },
+      {
+        "chapter": 13,
+        "section": "capacity",
+        "issue": "The conditional-entropy sum had an empty upper-limit node.",
+        "resolution": "Use munder for the x∈X lower limit; BA objective and units remain bits."
+      },
+      {
+        "chapter": 14,
+        "section": "theorem",
+        "issue": "The condition R<C was double-escaped in navigation and theorem copy.",
+        "resolution": "Render a single HTML less-than entity."
+      },
+      {
+        "chapter": 16,
+        "section": "references-and-navigation",
+        "issue": "Next-chapter label was 161 rather than 17; CRC burst-error theorem needed a direct explanatory source.",
+        "resolution": "Correct navigation and add CRC polynomial error-detection notes."
+      },
+      {
+        "chapter": 17,
+        "section": "navigation",
+        "issue": "Next-chapter label was 171 rather than 18.",
+        "resolution": "Correct the label and include the next chapter topic."
+      },
+      {
+        "chapter": 18,
+        "section": "perfect-secrecy-bound",
+        "issue": "The independence assumptions behind H(K)≥H(M) were underspecified; next-chapter label was 181.",
+        "resolution": "State zero-error unique decryption and perfect secrecy explicitly; distinguish the general entropy lower bound from the independent uniform OTP construction; correct navigation."
+      },
+      {
+        "chapter": 19,
+        "section": "reverse-water-filling",
+        "issue": "The vector Gaussian rate expression had malformed TeX-like prose and an empty upper summation node; next-chapter label was 191.",
+        "resolution": "Add a numbered MathML rate formula, specify the active set σᵢ²>θ, and recompute (1,4,9), D=4, θ=1.5, R=2 bits/vector."
+      },
+      {
+        "chapter": 20,
+        "section": "high-resolution-quantization",
+        "issue": "A closing parenthesis was unmatched and the quantization entropy approximation was too broadly qualified.",
+        "resolution": "State the Δ→0 high-resolution condition and compute finite-step entropy from the quantized distribution."
+      },
+      {
+        "chapter": 22,
+        "section": "fisher-information",
+        "issue": "The score logarithm and local KL unit were implicit.",
+        "resolution": "Use ln in the Fisher score and state the local KL expansion is in nats; bit-valued KL scales the quadratic term by 1/ln 2."
+      },
+      {
+        "chapter": 23,
+        "section": "cross-entropy",
+        "issue": "The logarithm base underlying NLL and the q−y gradient was implicit.",
+        "resolution": "State natural-log loss units as nats/sample and the conversion to bits."
+      },
+      {
+        "chapter": 12,
+        "section": "output-marginal-and-MathML-Core",
+        "issue": "The output-marginal probability sum still had an empty upper-limit mrow, and the BSC matrix used legacy mfenced.",
+        "resolution": "Use munder for the unbounded sum and explicit mrow/mo square brackets for the transition matrix."
+      },
+      {
+        "chapter": 16,
+        "section": "source-integrity",
+        "issue": "The Peterson–Brown title linked to Peterson's unrelated 1960 BCH paper DOI; the added KU Leuven personal-site PDF was retired in February 2026.",
+        "resolution": "Correct the DOI and link directly to the verified IEEE Xplore record; remove the purported full-text mirror because the old KU Leuven URL is retired and the Manchester URL now redirects to a generic group page."
+      },
+      {
+        "chapter": 17,
+        "section": "notation",
+        "issue": "The encoder paragraph rendered XOR as the literal string oplus.",
+        "resolution": "Rewrite the prose equations with explicit code spans and the ⊕ operator, aligned with the MathML definition."
+      },
+      {
+        "chapter": 18,
+        "section": "notation",
+        "issue": "The reused one-time-pad example rendered XOR as the literal string oplus.",
+        "resolution": "Rewrite both ciphertext equations using explicit ⊕ notation."
+      },
+      {
+        "chapter": 24,
+        "section": "source-integrity",
+        "issue": "The Deep Variational Information Bottleneck citation pointed to arXiv:1801.04062 rather than the cited Alemi et al. work.",
+        "resolution": "Point to the verified original arXiv record 1612.00410."
+      },
+      {
+        "chapter": 25,
+        "section": "KSG-MathML",
+        "issue": "The KSG-1 formula contained an extra closing mrow and was not well-formed XML.",
+        "resolution": "Wrap the summand bracket in an explicit mrow and retain the standard KSG-1 digamma expression."
+      },
+      {
+        "chapter": 1,
+        "section": "quality-gates",
+        "issue": "Static validation did not parse MathML structure, resolve local fragment IDs, verify interactive handler mappings or detect duplicate IDs.",
+        "resolution": "Replace the shallow checker with XML-based MathML validation, fragment-aware local-link validation, unique-ID checks, lab-to-handler mapping and evidence metadata validation."
+      },
+      {
+        "chapter": 1,
+        "section": "browser-gates",
+        "issue": "Chromium coverage omitted the 768px tablet viewport and did not assert absence of external runtime requests or check print rendering across representative math-heavy chapters.",
+        "resolution": "Expand Chromium coverage to 1440/768/390/360, record console/runtime/network errors, verify MathML limits and accessible controls, and check print output on seven representative chapters."
+      },
+      {
+        "chapter": 15,
+        "section": "MathML-spacing",
+        "issue": "The GF(2) notation used a whitespace-only mo element as spacing.",
+        "resolution": "Replace the empty presentation operator with an explicit mspace node."
+      },
+      {
+        "chapter": 18,
+        "section": "one-time-pad-notation",
+        "issue": "A second prose occurrence of XOR remained as the literal string oplus in the OTP construction.",
+        "resolution": "Use the explicit code expression C=M⊕K, consistent with the equation and key-reuse discussion."
+      }
+    ],
+    "numerical_rechecks": [
+      {
+        "chapter": 13,
+        "example": "Binary Z-channel W=[[1,0],[0.2,0.8]]",
+        "result": "Capacity 0.618231365928 bits/use at q≈0.435661978 (dense-grid independent recheck q=0.43566)."
+      },
+      {
+        "chapter": 19,
+        "example": "Independent Gaussian component variances (1,4,9), total distortion 4",
+        "result": "Water level 1.5; distortions (1,1.5,1.5); rate 0.5[log2(4/1.5)+log2(9/1.5)]=2 bits/vector."
+      },
+      {
+        "chapter": 20,
+        "example": "Real scalar AWGN with P/N0=2",
+        "result": "Real scalar AWGN: 0.5 log2(3)=0.792481250361 bits/real-use."
+      },
+      {
+        "chapter": 21,
+        "example": "Two-user real Gaussian MAC P1=2, P2=1.5, N=1",
+        "result": "C1=0.792481250361, C2=0.660964047444, sum bound=1.084962500721 bits/real-use."
+      },
+      {
+        "chapter": 23,
+        "example": "Softmax logits (2,0,-1), target class index 1",
+        "result": "Target probability 0.114195199385; cross-entropy 2.169846019556 nats; target-logit gradient −0.885804800615."
+      },
+      {
+        "chapter": 25,
+        "example": "Bivariate Gaussian correlation ρ=0.7",
+        "result": "Analytic MI −0.5 log2(1−0.7²)=0.485715423902 bits."
+      },
+      {
+        "chapter": 28,
+        "example": "AAAABBCD source/channel coding",
+        "result": "Huffman payload 14 bits; 2 padding bits; four Hamming(7,4) codewords; 28 transmitted bits excluding shared codebook, framing and length metadata."
+      }
+    ],
+    "external_reference_checks": [
+      {
+        "chapter": 16,
+        "reference": "Peterson & Brown, Cyclic Codes for Error Detection",
+        "previous": "https://doi.org/10.1109/TIT.1960.1057586",
+        "finding": "The DOI resolves to W. W. Peterson's different 1960 BCH paper; Peterson & Brown's 1961 Proceedings of the IRE paper is DOI 10.1109/JRPROC.1961.287814.",
+        "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
+      },
+      {
+        "chapter": 16,
+        "reference": "CRC burst-error proof",
+        "previous": "https://perswww.kuleuven.be/~u0068190/Onderwijs/Extra_info/crc.pdf",
+        "finding": "The KU Leuven personal-web-hosting service was retired; a second purported full-text mirror at Manchester now redirects to a generic research-group page. Remove the PDF claim and consolidate on the IEEE Xplore record.",
+        "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
+      },
+      {
+        "chapter": 24,
+        "reference": "Alemi et al., Deep Variational Information Bottleneck",
+        "previous": "https://arxiv.org/abs/1801.04062",
+        "finding": "The cited paper is arXiv:1612.00410, ICLR 2017; 1801.04062 is not the cited original.",
+        "replacement": "https://arxiv.org/abs/1612.00410"
+      },
+      {
+        "chapter": 16,
+        "reference": "Peterson & Brown full-text mirror",
+        "previous": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf",
+        "finding": "The URL now redirects to the University of Manchester Advanced Processor Technologies group page rather than the paper PDF.",
+        "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
+      },
+      {
+        "chapter": 18,
+        "reference": "Perfect-secrecy university lecture notes",
+        "previous": "https://www.ccs.neu.edu/home/wichs/class/crypto-fall17/lecture1.pdf",
+        "finding": "The legacy university PDF is blocked to automated retrieval; replace it with a current, accessible MIT lecture note that explicitly covers Shannon security and the one-time pad.",
+        "replacement": "https://mit6875.github.io/Lecnotes-v2/lecture-01.html"
+      }
+    ],
+    "mathml_audit": {
+      "chapter_pages": 28,
+      "math_elements": 110,
+      "known_structural_defects_fixed": [
+        "chapter 12: empty mrow in output marginal",
+        "chapter 25: extra closing mrow in KSG-1"
+      ],
+      "policy": "Every MathML fragment must parse as XML; mfrac/msub/msup/munder/mover/munderover arities are checked; empty structural rows and legacy mfenced are rejected."
+    },
+    "automated_verification": {
+      "status": "passed",
+      "workflow": "Validate tutorial",
+      "workflow_run_id": 45046745689,
+      "tested_head": "145d216bdbbd354a5db19f4a905ca2d7faba51fb",
+      "static": {
+        "generated_pages": "passed",
+        "html_pages": 29,
+        "chapters": 28,
+        "mathml_formulas": 110,
+        "svg_assets": 88,
+        "local_file_and_fragment_links": "passed",
+        "navigation": "passed",
+        "lab_handler_mapping": "passed",
+        "evidence_sources": "passed",
+        "python_unit_tests": "passed"
+      },
+      "browser": {
+        "engine": "Chromium",
+        "page_viewport_checks": 116,
+        "viewports": [
+          1440,
+          768,
+          390,
+          360
+        ],
+        "print_checks": 7,
+        "image_loading": "passed",
+        "mathml_namespace_and_geometry": "passed",
+        "keyboard_range_controls": "passed",
+        "no_horizontal_page_overflow": "passed",
+        "no_external_runtime_requests": "passed",
+        "no_console_or_page_errors": "passed"
+      }
+    }
+  }
 }
