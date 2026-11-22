@@ -7,6 +7,7 @@ from examples.channel_coding import (
     binary_entropy,blahut_arimoto,repetition_error_probability,
     exact_bsc_block_error,hamming74_encode,hamming74_correct,
     hamming74_syndrome,hamming74_extract,
+    crc32_reflected,crc32_msb,
 )
 
 class ChannelCodingTests(unittest.TestCase):
@@ -75,6 +76,14 @@ class ChannelCodingTests(unittest.TestCase):
         self.assertEqual(hamming74_syndrome("0110111"),5)
         self.assertEqual(hamming74_correct("0110111"),"0110011")
         self.assertEqual(hamming74_extract("0110011"),"1011")
+    def test_crc32_check_values(self):
+        self.assertEqual(crc32_reflected(b"123456789"),0xCBF43926)
+        self.assertEqual(crc32_reflected(b""),0x00000000)
+        self.assertEqual(crc32_msb(b"123456789"),0xFC891918)
+        # CRC is linear: a single-bit flip changes the remainder
+        self.assertNotEqual(crc32_reflected(b"payload"),crc32_reflected(b"payloae"))
+        with self.assertRaises(ValueError):
+            crc32_reflected("not bytes")
 
 if __name__=="__main__":
     unittest.main()

@@ -77,6 +77,14 @@
         bits[position-1]=bits[position-1]==="0"?"1":"0";
         return "翻转位置"+position+"：收到"+bits.join("")+"；syndrome="+position.toString(2).padStart(3,"0")+"₂ → 纠正第"+position+"位";
       }
+      case "crc-remainder": {
+        const p=Math.round(v),bits="1101001".split("");
+        if(p>0) bits[p-1]=bits[p-1]==="0"?"1":"0";
+        const recv=bits.join(""),m=recv.split("").map(Number),g=[1,0,1,1];
+        for(let i=0;i<m.length-3;i++) if(m[i]) for(let j=0;j<4;j++) m[i+j]^=g[j];
+        const s=m.slice(-3).join("");
+        return (p===0?"未翻转":"翻转第"+p+"位")+"：接收 "+recv+"；余数 s(x)="+s+(s==="000"?" → 接受":" → 检出错误");
+      }
       default: return null;
     }
   }

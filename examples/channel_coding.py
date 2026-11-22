@@ -217,6 +217,30 @@ def hamming74_extract(codeword:str):
     return "".join(codeword[i-1] for i in (3,5,6,7))
 
 
+def crc32_reflected(data: bytes) -> int:
+    """CRC-32/ISO-HDLC (zlib, PNG, Ethernet): reflected polynomial 0xEDB88320."""
+    if not isinstance(data, (bytes, bytearray)):
+        raise ValueError("CRC input must be bytes")
+    poly, crc = 0xEDB88320, 0xFFFFFFFF
+    for byte in data:
+        crc ^= byte
+        for _ in range(8):
+            crc = (crc >> 1) ^ poly if crc & 1 else crc >> 1
+    return crc ^ 0xFFFFFFFF
+
+
+def crc32_msb(data: bytes) -> int:
+    """Non-reflected CRC-32/BZIP2 variant: polynomial 0x04C11DB7."""
+    if not isinstance(data, (bytes, bytearray)):
+        raise ValueError("CRC input must be bytes")
+    poly, crc = 0x04C11DB7, 0xFFFFFFFF
+    for byte in data:
+        crc ^= byte << 24
+        for _ in range(8):
+            crc = ((crc << 1) ^ poly) & 0xFFFFFFFF if crc & 0x80000000 else (crc << 1) & 0xFFFFFFFF
+    return crc ^ 0xFFFFFFFF
+
+
 if __name__ == "__main__":
     text="ABCABCABC"
     print("LZ77",lz77_tokens(text))
