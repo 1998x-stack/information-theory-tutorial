@@ -41,10 +41,11 @@ def validate():
             local = (page.parent / parsed.path).resolve() if parsed.path else page
             if not local.is_file():
                 errors.append(f"Broken {page.relative_to(ROOT)} -> {url}")
-        if page.name in {f"{i:02d}.html" for i in range(1,6)}:
-            if scan.tags.get("h1",0) != 1 or scan.tags.get("math",0) < 1 or scan.tags.get("figure",0) < 2:
+        if page.name in {f"{i:02d}.html" for i in range(1,11)}:
+            minimum_figures = 3 if int(page.stem) >= 6 else 2
+            if scan.tags.get("h1",0) != 1 or scan.tags.get("math",0) < 1 or scan.tags.get("figure",0) < minimum_figures:
                 errors.append(f"New chapter semantic tags: {page}")
-            if not all(token in content for token in ('class="math-scroll"', 'aria-label=', 'id="sources"')):
+            if not all(token in content for token in ('class="math-scroll"', 'aria-label=', 'id="sources"', 'data-lab=', 'aria-live="polite"')):
                 errors.append(f"New chapter math/reference a11y: {page}")
     for figure in sorted((DOCS / "assets/figures").glob("*.svg")):
         try:
@@ -55,14 +56,14 @@ def validate():
                 errors.append(f"SVG a11y: {figure}")
         except ET.ParseError as e:
             errors.append(f"SVG parse: {figure}: {e}")
-    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 10:
-        errors.append("Expected at least ten original SVG diagrams")
+    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 25:
+        errors.append("Expected at least twenty-five original SVG diagrams")
     data = json.loads((DOCS / "data/courses.json").read_text(encoding="utf-8"))
     if data.get("chapterCount") != 28 or len(data.get("chapters", [])) != 28:
         errors.append("Course metadata inconsistent with 28 chapters")
     if errors:
         print("\\n".join(errors))
         raise SystemExit(1)
-    print(f"Static validation passed: {len(names)} HTML, 10+ SVG, local links and semantic checks")
+    print(f"Static validation passed: {len(names)} HTML, 25+ SVG, local links and semantic checks")
 if __name__ == "__main__":
     validate()

@@ -8,7 +8,7 @@
 
 - 维护源：`src/home/index.html`、`src/chapters/{NN}.html`、`src/assets/`、`src/figures/`、`src/data/courses.json`。
 - 构建产物：`docs/` 由 `scripts/build.py` 复制生成，不能只修改 `docs/`；根目录 `index.html` 与 28 个兼容重定向同为产物。
-- 06–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
+- 11–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
 
 ## 逐章工作流
 
@@ -19,7 +19,7 @@
 5. 使用独立原创 SVG：`xmlns/viewBox/title/desc`，明确箭头方向、变量含义、分布归一化、单位与适用条件，图注不能仅复述标题。
 6. 提供具有固定种子的、可以断言的最小计算例；交互为渐进增强，默认结果不依赖 JavaScript，原生 range/button 可键盘操作并更新 output。
 7. 运行 `python3 scripts/build.py && python3 scripts/build.py --check && python3 scripts/validate.py && python3 -m unittest discover -s tests`。
-8. 额外浏览器验收 1440、390、360 像素、键盘聚焦、SVG、数学式布局、无页面横溢、打印、控制器输出和全部本地链接。若未执行应写明“未验证”，不能伪称通过。
+8. 运行 `python3 scripts/browser_smoke.py` 完成浏览器验收 1440、390、360 像素、键盘聚焦、SVG、数学式布局、无页面横溢、打印、控制器输出和全部本地链接。若未执行应写明“未验证”，不能伪称通过。
 
 ## 容易出错的技术约束
 
@@ -27,6 +27,9 @@
 - (D(P\|\|Q)) 不对称、不是距离；当 p(x)>0 且 q(x)=0 时为无穷大。
 - 数据处理不等式需要马尔可夫链 X→Y→Z 条件独立假设。
 - 离散熵中 0 log 0 按极限约定为 0；概率总和应为 1。
+- AEP 的 i.i.d. 版本须注明独立同分布；有限 n 的典型集概率未必接近 1，不能混淆近乎无损与完全无损编码。
+- Huffman 的最优性仅指给定符号分布下最短平均前缀码；编码树的父子关系必须与实际码字相符。
+- 算术编码须用旧边界同时更新新上下界；教学版有理数区间并不等于可交付的有限精度位流协议。
 - 不可把单次 toy 计算说成一般性数学证明。
 
 ## 外部规范与来源
