@@ -168,6 +168,60 @@ def typical_mass(n,p=0.25,epsilon=0.15):
         if abs(-(k*log2(p)+(n-k)*log2(1-p))/n-H)<=epsilon+1e-12)
 
 
+
+def adaptive_interval(message, symbols=("A","B"), initial_count=1):
+    """Exact adaptive arithmetic intervals using synchronized pseudocounts."""
+    if not isinstance(initial_count,int) or initial_count<1 or len(set(symbols))!=len(symbols) or not symbols:
+        raise ValueError("invalid initial adaptive counts")
+    counts={symbol:initial_count for symbol in symbols}
+    lo,hi=Fraction(0),Fraction(1)
+    for symbol in message:
+        if symbol not in counts:
+            raise ValueError("unknown adaptive symbol")
+        total=sum(counts.values())
+        cumulative=0
+        for current in counts:
+            if current==symbol:
+                old_lo,old_hi=lo,hi
+                width=old_hi-old_lo
+                lo=old_lo+width*Fraction(cumulative,total)
+                hi=old_lo+width*Fraction(cumulative+counts[current],total)
+                break
+            cumulative+=counts[current]
+        counts[symbol]+=1
+    return lo,hi
+
+
+def adaptive_decode(value, length, symbols=("A","B"), initial_count=1):
+    """Reverse adaptive_interval with the same symbol order and update rule."""
+    if not isinstance(initial_count,int) or initial_count<1 or not isinstance(length,int) or length<0 or len(set(symbols))!=len(symbols) or not symbols:
+        raise ValueError("invalid adaptive decoding parameters")
+    value=Fraction(value)
+    if not 0<=value<1:
+        raise ValueError("invalid dyadic code value")
+    counts={symbol:initial_count for symbol in symbols}
+    lo,hi=Fraction(0),Fraction(1)
+    decoded=[]
+    for _ in range(length):
+        total=sum(counts.values())
+        cumulative=0
+        scaled=(value-lo)/(hi-lo)
+        for symbol in counts:
+            p_lower=Fraction(cumulative,total)
+            p_upper=Fraction(cumulative+counts[symbol],total)
+            if p_lower<=scaled<p_upper:
+                old_lo,old_hi=lo,hi
+                width=old_hi-old_lo
+                lo=old_lo+width*p_lower
+                hi=old_lo+width*p_upper
+                decoded.append(symbol)
+                counts[symbol]+=1
+                break
+            cumulative+=counts[symbol]
+        else:
+            raise ValueError("value outside adaptive interval")
+    return "".join(decoded)
+
 if __name__=="__main__":
     weights={"A":.4,"B":.3,"C":.2,"D":.1}
     codebook=huffman_codebook(weights)

@@ -62,7 +62,15 @@ def verify(output):
                               right:Math.round(el.getBoundingClientRect().right),
                               left:Math.round(el.getBoundingClientRect().left)
                             }))""")
-                        faults.append(f"horizontal overflow {state['overflow']}px, elements={offenders}")
+                        geometry=page.evaluate("""() => ['html','body','.layout','main','article','.article-body','.article-body pre','.article-body pre code','.math-equation','.math-scroll','math','.top'].map(selector=>{
+                            const el=document.querySelector(selector);
+                            if(!el)return null;
+                            const r=el.getBoundingClientRect(),c=getComputedStyle(el);
+                            return {selector,left:Math.round(r.left),right:Math.round(r.right),
+                              width:Math.round(r.width),scroll:el.scrollWidth,client:el.clientWidth,
+                              overflowX:c.overflowX}
+                        })""")
+                        faults.append(f"horizontal overflow {state['overflow']}px, elements={offenders}, layout={geometry}")
                     if state["brokenImages"]:
                         faults.append("unloaded figures: "+str(state["brokenImages"]))
                     if name!="index.html":

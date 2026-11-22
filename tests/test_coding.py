@@ -5,7 +5,7 @@ import unittest
 
 from examples.coding import (
     entropy, kraft_sum, shannon_lengths, huffman_codebook, decode_prefix,
-    arithmetic_interval, arithmetic_decode, dyadic_prefix, typical_mass
+    arithmetic_interval, arithmetic_decode, dyadic_prefix, typical_mass, adaptive_interval, adaptive_decode
 )
 
 class CodingTests(unittest.TestCase):
@@ -48,6 +48,19 @@ class CodingTests(unittest.TestCase):
                 self.assertGreaterEqual(val,lo)
                 self.assertLessEqual(val+F(1,1<<len(prefix)),hi)
                 self.assertEqual(arithmetic_decode(val,n,p),msg)
+    def test_adaptive_roundtrip(self):
+        self.assertEqual(adaptive_interval("ABA"),(F(1,3),F(5,12)))
+        self.assertEqual(adaptive_decode(F(3,8),3),"ABA")
+        for n in range(1,6):
+            for seq in product("AB",repeat=n):
+                message="".join(seq)
+                lo,hi=adaptive_interval(message)
+                bits=dyadic_prefix(lo,hi)
+                v=F(int(bits,2),1<<len(bits))
+                self.assertEqual(adaptive_decode(v,n),message)
+        with self.assertRaises(ValueError):
+            adaptive_interval("AX")
+
     def test_reject_invalid_model(self):
         with self.assertRaises(ValueError):
             arithmetic_interval("A",{"A":F(1,2)})
