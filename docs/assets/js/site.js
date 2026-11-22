@@ -139,6 +139,10 @@
         const n=Math.round(v),crb=4/n;
         return "n="+n+"，σ²=4：CRB=1/I(μ)="+crb.toFixed(5)+"（无偏估计方差下界）";
       }
+      case "ce-gradient": {
+        const z=Math.round(v)/10,p=1/(1+Math.exp(-z)),nll=-Math.log(p);
+        return "z="+z.toFixed(1)+"，p="+p.toFixed(3)+"，NLL="+nll.toFixed(3)+"，∂L/∂z_correct=p−y="+(p-1).toFixed(3);
+      }
       default: return null;
     }
   }

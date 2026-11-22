@@ -3,7 +3,7 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "examples"))
-from foundations import entropy, surprisal, kl, cross_entropy, bayes_positive, bsc_information, otp_encrypt, otp_decrypt, otp_reuse_xor, min_entropy, awgn_capacity, water_filling, mac_capacity_corners, fisher_info_gaussian, cramer_rao_bound, aic, bic
+from foundations import entropy, surprisal, kl, cross_entropy, bayes_positive, bsc_information, otp_encrypt, otp_decrypt, otp_reuse_xor, min_entropy, awgn_capacity, water_filling, mac_capacity_corners, fisher_info_gaussian, cramer_rao_bound, aic, bic, softmax, cross_entropy as ce, cross_entropy_grad
 
 class FoundationTests(unittest.TestCase):
     def test_otp_and_min_entropy(self):
@@ -36,6 +36,16 @@ class FoundationTests(unittest.TestCase):
         self.assertEqual(cramer_rao_bound(100, 2.0), 0.04)
         self.assertEqual(aic(-10.0, 3), 26.0)
         self.assertAlmostEqual(bic(-10.0, 3, 100), 33.81551, places=4)
+    def test_softmax_cross_entropy(self):
+        z, y = [2.0, 1.0, 0.0], [1.0, 0.0, 0.0]
+        p = softmax(z)
+        self.assertAlmostEqual(p[0], 0.6652409, places=6)
+        self.assertAlmostEqual(ce(y, p), 0.5880511, places=6)
+        g = cross_entropy_grad(z, y)
+        self.assertAlmostEqual(g[0], p[0]-1)
+        self.assertAlmostEqual(g[1], p[1])
+        with self.assertRaises(ValueError):
+            ce([0.5, 0.5], [1.0])
     def test_entropy(self):
         self.assertAlmostEqual(entropy([.5,.25,.125,.125]), 1.75)
         self.assertAlmostEqual(entropy([.5,.5]), 1.0)

@@ -123,6 +123,26 @@ def bic(log_likelihood, k, n):
     return -2 * log_likelihood + k * log(n)
 
 
+def softmax(logits):
+    """Numerically stable softmax over a list of real logits."""
+    from math import exp
+    vals = list(logits)
+    if not vals:
+        raise ValueError("softmax needs at least one logit")
+    m = max(vals)
+    exps = [exp(v - m) for v in vals]
+    total = sum(exps)
+    return [e / total for e in exps]
+
+
+def cross_entropy_grad(logits, true_probs):
+    """Gradient of cross entropy w.r.t. logits: p - y (softmax parameterization)."""
+    p = softmax(logits)
+    if len(p) != len(true_probs):
+        raise ValueError("logits and labels must have equal length")
+    return [pi - yi for pi, yi in zip(p, true_probs)]
+
+
 if __name__ == "__main__":
     p, q = (.75,.25), (.5,.5)
     print("H(p)",entropy(p),"H(p,q)",cross_entropy(p,q),"KL",kl(p,q))

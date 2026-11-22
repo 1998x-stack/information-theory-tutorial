@@ -28,7 +28,10 @@
     "HanKobayashi1981": "T. Han & K. Kobayashi (1981), A New Achievable Rate Region for the Interference Channel, IEEE Trans. Inf. Theory 27(1)",
     "Akaike1973": "H. Akaike (1973), Information Theory and an Extension of the Maximum Likelihood Principle",
     "Schwarz1978": "G. Schwarz (1978), Estimating the Dimension of a Model, Annals of Statistics 6(2)",
-    "Rissanen1978": "J. Rissanen (1978), Modeling by Shortest Data Description"
+    "Rissanen1978": "J. Rissanen (1978), Modeling by Shortest Data Description",
+    "Szegedy2016": "C. Szegedy et al. (2016), Rethinking the Inception Architecture for Computer Vision, CVPR",
+    "Kingma2014": "D. P. Kingma & M. Welling (2014), Auto-Encoding Variational Bayes, ICLR",
+    "Higgins2017": "I. Higgins et al. (2017), beta-VAE, ICLR"
   },  "claims": [
     {
       "chapter": 1,
@@ -239,6 +242,17 @@
         "CoverThomas"
       ],
       "toy": "Gaussian location: I=n/sigma^2; n=100, sigma^2=4 -> CRB=0.04; aic(-10,3)=26; bic(-10,3,100)=33.8155"
+    },
+    {
+      "chapter": 23,
+      "statement": "For one-hot labels cross-entropy equals negative log-likelihood, so minimizing it is maximum likelihood. With softmax the gradient of cross-entropy w.r.t. logits is p-y and does not saturate, unlike MSE+sigmoid. Label smoothing mixes the one-hot target with the uniform (max-entropy) distribution; the VAE objective's KL term is a rate-distortion tradeoff.",
+      "evidence": [
+        "Szegedy2016",
+        "Kingma2014",
+        "Higgins2017",
+        "CoverThomas"
+      ],
+      "toy": "softmax([2,1,0]) = [0.665241,0.244729,0.090031]; CE([1,0,0],p)=0.5880511 bit; grad = p-y"
     }
   ]
 }

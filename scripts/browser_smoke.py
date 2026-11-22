@@ -17,7 +17,7 @@ DOCS = ROOT / "docs"
 def verify(output):
     output.mkdir(parents=True,exist_ok=True)
     failures,records=[],[]
-    filenames=["index.html"]+[f"chapters/{n:02d}.html" for n in range(1,23)]
+    filenames=["index.html"]+[f"chapters/{n:02d}.html" for n in range(1,24)]
     with sync_playwright() as pw:
         browser=pw.chromium.launch(headless=True)
         for width in (1440,390,360):
@@ -100,7 +100,8 @@ def verify(output):
                         "chapters/11.html","chapters/12.html","chapters/13.html",
                         "chapters/14.html","chapters/15.html","chapters/16.html",
                         "chapters/17.html","chapters/18.html","chapters/19.html",
-                        "chapters/20.html","chapters/21.html","chapters/22.html"
+                        "chapters/20.html","chapters/21.html","chapters/22.html",
+                        "chapters/23.html"
                     ):
                         page.screenshot(
                             path=str(output/f"{Path(name).stem}-{width}.png"),
