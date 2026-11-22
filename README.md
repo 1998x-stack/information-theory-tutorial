@@ -2,7 +2,7 @@
 
 [课程首页（GitHub Pages）](https://1998x-stack.github.io/information-theory-tutorial/) · [源码仓库](https://github.com/1998x-stack/information-theory-tutorial)
 
-28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–20 章已完成四批深度精修（57 张独立 SVG、20 个交互小实验）；21–28 保留原版，等待逐章审查。**
+28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–25 章已完成五批深度精修（73 张独立 SVG、25 个交互小实验）；26–28 保留原版，等待逐章审查。**
 
 ## 本地阅读与构建
 
@@ -38,7 +38,8 @@ examples/foundations.py   # 离散信息量计算样例
 examples/coding.py        # Huffman、Kraft、精确算术编码及译码
 examples/channel_coding.py # LZ77/LZ78、容量、块错误、Hamming(7,4)
 examples/advanced_information.py # CRC、Viterbi、OTP、率失真、微分熵与高斯信道
-tests/                    # 数值、编码往返、纠错与高级信息论断言
+examples/information_learning.py # 多用户容量、统计推断、CE/IB 与互信息估计
+tests/                    # 数值、编码往返、纠错、统计学习与估计器断言
 research/evidence.json    # 关键论断的来源
 scripts/browser_smoke.py  # Playwright 浏览器视觉与交互烟测
 AGENTS.md                 # 章节维护规范
