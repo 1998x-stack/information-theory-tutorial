@@ -8,7 +8,7 @@
 
 - 维护源：`src/home/index.html`、`src/chapters/{NN}.html`、`src/assets/`、`src/figures/`、`src/data/courses.json`。
 - 构建产物：`docs/` 由 `scripts/build.py` 复制生成，不能只修改 `docs/`；根目录 `index.html` 与 28 个兼容重定向同为产物。
-- 16–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
+- 21–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
 
 ## 逐章工作流
 
@@ -42,3 +42,9 @@
 - https://doi.org/10.1002/j.1538-7305.1948.tb01338.x
 - https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2
 - https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/pages/lecture-notes/
+
+- CRC 的漏检条件是 G(x) 整除错误多项式 E(x)；次数 r、常数项为 1 的生成多项式可检出所有长度不超过 r 的突发错误。随机漏检概率近似必须注明错误模型。标准 CRC 还要记录 init/refin/refout/xorout；CRC 不是 MAC。
+- 卷积码必须明确寄存器状态位序、生成多项式、输入/输出顺序、初态和终态。Viterbi 的分支度量由信道模型决定；硬判决汉明距离与软判决似然不能混称。
+- 完善保密要求 I(M;C)=0。H(K)≥H(M) 是正确解密系统的必要条件，不是充分条件；OTP 要求密钥均匀、独立、等长、保密且只使用一次。
+- 率失真函数依赖源分布与失真函数，约束是期望块平均失真；高斯平方误差公式不能推广到任意源/感知度量。向量高斯源的反向注水应区分单标量公式。
+- 微分熵会随坐标尺度变化；h(aX+b)=h(X)+log₂|a|。高斯最大熵需注明协方差约束。实值 AWGN 每次使用容量含 1/2；带宽容量需单独说明自由度归一化。并联高斯信道注水与源编码反向注水方向相反。

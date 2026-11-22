@@ -1,5 +1,5 @@
 {
-  "scope": "01–15: finite discrete information theory, data compression, DMC capacity, coding theorem, linear codes; base-2 logs unless stated",
+  "scope": "01–20: discrete and continuous information theory, source/channel coding, CRC, secrecy, rate-distortion and Gaussian channels; logarithms base 2 unless stated",
   "sources": {
     "Shannon1948": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x",
     "CoverThomas": "https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2",
@@ -14,7 +14,20 @@
     "RFC1951": "https://www.rfc-editor.org/rfc/rfc1951.html",
     "Blahut1972": "https://doi.org/10.1109/TIT.1972.1054855",
     "MITChannel": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/pages/lecture-notes/",
-    "Hamming1950": "https://doi.org/10.1002/j.1538-7305.1950.tb00463.x"
+    "Hamming1950": "https://doi.org/10.1002/j.1538-7305.1950.tb00463.x",
+    "CRCRevEng": "https://reveng.sourceforge.io/crc-catalogue/all.htm",
+    "CRCRevEngReadme": "https://reveng.sourceforge.io/readme.htm",
+    "RFC1662": "https://www.rfc-editor.org/rfc/rfc1662.html",
+    "Forney1973": "https://doi.org/10.1109/PROC.1973.9030",
+    "NASAViterbi1971": "https://ntrs.nasa.gov/api/citations/19710023029/downloads/19710023029.pdf",
+    "NASAViterbi1972": "https://ntrs.nasa.gov/api/citations/19720017581/downloads/19720017581.pdf",
+    "ShannonSecrecy1949": "https://doi.org/10.1002/j.1538-7305.1949.tb00928.x",
+    "Wyner1975": "https://doi.org/10.1002/j.1538-7305.1975.tb02040.x",
+    "ShannonRateDistortion1959": "https://doi.org/10.1109/TIT.1959.1056961",
+    "CoverThomasRD": "https://static.ias.edu/pitp/archive/2012files/Cover_and_Thomas_Chptr13.pdf",
+    "ITUT81": "https://www.itu.int/rec/T-REC-T.81",
+    "StanfordEE376ALec8": "https://web.stanford.edu/class/ee376a/files/lecture_8.pdf",
+    "WiegandSchwarz": "https://web.stanford.edu/class/ee398a/BookWiegandSchwarz.pdf"
   },
   "claims": [
     {
@@ -154,6 +167,57 @@
         "MITChannel"
       ],
       "toy": "message 1011 -> codeword 0110011, flip fifth -> 0110111, syndrome=5"
+    },
+    {
+      "chapter": 16,
+      "statement": "Cyclic codes are ideals in GF(2)[x]/(x^n−1). CRC systematic encoding appends the remainder of x^r M modulo G. An error is undetected iff G divides E; degree-r G with nonzero constant term detects every burst of length at most r. CRC-32/ISO-HDLC requires its full parameter tuple.",
+      "evidence": [
+        "CRCRevEng",
+        "CRCRevEngReadme",
+        "RFC1662"
+      ],
+      "toy": "G=1011, message 1101 -> codeword 1101001, remainder 000; CRC32 check vector 123456789 -> CBF43926"
+    },
+    {
+      "chapter": 17,
+      "statement": "A rate-1/2 K=3 (7,5)_8 convolutional encoder with state=(previous,older) has four states. Hard-decision Viterbi retains the minimum accumulated Hamming-metric path per state, with initial/final states and tail bits explicit.",
+      "evidence": [
+        "Forney1973",
+        "NASAViterbi1971",
+        "NASAViterbi1972"
+      ],
+      "toy": "message 1011 plus tail 00 -> 111000010111; one encoded bit flip is recovered"
+    },
+    {
+      "chapter": 18,
+      "statement": "Perfect secrecy is I(M;C)=0 or posterior invariance. H(K)>=H(M) is necessary, not sufficient. OTP needs a uniform independent equal-length key used once. The degraded wiretap formula requires the stated DMC assumptions.",
+      "evidence": [
+        "ShannonSecrecy1949",
+        "Wyner1975"
+      ],
+      "toy": "uniform M and Bernoulli(q) XOR key: I(M;C)=1-h2(q), zero only at q=.5"
+    },
+    {
+      "chapter": 19,
+      "statement": "R(D) minimizes mutual information subject to expected distortion. Bernoulli Hamming and Gaussian squared-error sources have distinct closed forms; independent Gaussian vectors use reverse water-filling. JPEG quantization, not DCT alone, introduces primary irreversible loss.",
+      "evidence": [
+        "ShannonRateDistortion1959",
+        "CoverThomasRD",
+        "WiegandSchwarz",
+        "ITUT81"
+      ],
+      "toy": "Bernoulli(.2), D=.1 => .2529325 bit/symbol; Gaussian variance1,D=.25 => 1 bit/symbol; vector variances(1,4,9), D=4 => theta=1.5, R=2"
+    },
+    {
+      "chapter": 20,
+      "statement": "Differential entropy transforms as h(aX+b)=h(X)+log2|a| for a!=0; Gaussian maximizes entropy at fixed covariance. Real scalar AWGN capacity is .5 log2(1+P/N0) bits/real use; independent parallel real subchannels use water-filling.",
+      "evidence": [
+        "MIT",
+        "StanfordEE376ALec8",
+        "Shannon1948",
+        "WiegandSchwarz"
+      ],
+      "toy": "U(0,.25) h=-2; N(0,1) h≈2.0471; AWGN SNR2 C≈.79248; noise(1,2,4), power6 -> (3.333,2.333,.333), C≈1.67322"
     }
   ]
 }
