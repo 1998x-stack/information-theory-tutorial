@@ -23,3 +23,18 @@
   min-inline-size:100%;
   vertical-align:top;
 }
+
+/* At very narrow widths, preserve copyable source while visually wrapping long
+   lines. This is a responsive text layout, not an overflow clipping workaround. */
+@media (max-width:580px) {
+  .article-body pre { white-space:pre-wrap; overflow-wrap:anywhere; }
+  .article-body pre code {
+    display:block;
+    inline-size:100%;
+    min-inline-size:0;
+    max-inline-size:100%;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+  }
+}
