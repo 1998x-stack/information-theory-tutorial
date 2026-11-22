@@ -222,6 +222,20 @@ def adaptive_decode(value, length, symbols=("A","B"), initial_count=1):
             raise ValueError("value outside adaptive interval")
     return "".join(decoded)
 
+def gaussian_rate_distortion(D, sigma2=1.0):
+    """R(D)=0.5*log2(sigma2/D) for 0<D<=sigma2, else 0. Squared-error distortion."""
+    if sigma2 <= 0 or D <= 0:
+        raise ValueError("D and sigma2 must be positive")
+    return 0.0 if D >= sigma2 else 0.5 * log2(sigma2 / D)
+
+
+def bernoulli_rate_distortion(D):
+    """R(D)=1-h2(D) for a fair Bernoulli source under Hamming distortion (0<D<=0.5)."""
+    if not 0 < D <= 0.5:
+        raise ValueError("D must lie in (0, 0.5]")
+    return 1 - (-D * log2(D) - (1 - D) * log2(1 - D))
+
+
 if __name__=="__main__":
     weights={"A":.4,"B":.3,"C":.2,"D":.1}
     codebook=huffman_codebook(weights)

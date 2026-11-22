@@ -5,10 +5,21 @@ import unittest
 
 from examples.coding import (
     entropy, kraft_sum, shannon_lengths, huffman_codebook, decode_prefix,
-    arithmetic_interval, arithmetic_decode, dyadic_prefix, typical_mass, adaptive_interval, adaptive_decode
+    arithmetic_interval, arithmetic_decode, dyadic_prefix, typical_mass, adaptive_interval, adaptive_decode,
+    gaussian_rate_distortion, bernoulli_rate_distortion
 )
 
 class CodingTests(unittest.TestCase):
+    def test_rate_distortion(self):
+        self.assertEqual(gaussian_rate_distortion(0.25), 1.0)
+        self.assertEqual(gaussian_rate_distortion(0.0625), 2.0)
+        self.assertEqual(gaussian_rate_distortion(1.0), 0.0)
+        self.assertEqual(round(bernoulli_rate_distortion(0.1), 3), 0.531)
+        self.assertEqual(round(bernoulli_rate_distortion(0.25), 3), 0.189)
+        with self.assertRaises(ValueError):
+            gaussian_rate_distortion(0.0)
+        with self.assertRaises(ValueError):
+            bernoulli_rate_distortion(0.6)
     def test_entropy_and_kraft(self):
         p=[.4,.3,.2,.1]
         self.assertAlmostEqual(entropy(p),1.8464393446710154)

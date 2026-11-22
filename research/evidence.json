@@ -21,7 +21,8 @@
     "Forney1973": "https://doi.org/10.1109/PROC.1973.9030",
     "Shannon1949Secrecy": "https://doi.org/10.1002/j.1538-7305.1949.tb00928.x",
     "Wyner1975": "https://doi.org/10.1109/TIT.1975.1055374",
-    "Dwork2006": "https://doi.org/10.1007/11681878_14"
+    "Dwork2006": "https://doi.org/10.1007/11681878_14",
+    "Shannon1959RD": "https://doi.org/10.1002/j.1538-7305.1959.tb01533.x"
   },
   "claims": [
     {
@@ -191,6 +192,16 @@
         "CoverThomas"
       ],
       "toy": "m=[1,0,1,1], k=[0,1,1,0] -> c=[1,1,0,1]; reuse: c1 XOR c2 = m1 XOR m2 independent of k"
+    },
+    {
+      "chapter": 19,
+      "statement": "R(D)=min_{p(xhat|x): E[d]<=D} I(X;Xhat) is non-increasing and convex; R(0)=H(X) for discrete sources, R(D)=0 for D>=Dmax. Gaussian with squared error: R(D)=0.5*log2(sigma^2/D) for 0<D<=sigma^2. Parallel components use reverse water-filling.",
+      "evidence": [
+        "Shannon1959RD",
+        "Blahut1972",
+        "CoverThomas"
+      ],
+      "toy": "sigma^2=1: R(0.25)=1.0, R(0.0625)=2.0, R(1)=0; fair Bernoulli Hamming R(0.1)=0.531, R(0.25)=0.189"
     }
   ]
 }

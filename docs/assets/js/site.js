@@ -119,6 +119,11 @@
         const c1=x("01",k),c2=x("10",k);
         return "k="+k+"：c₁="+c1+"，c₂="+c2+"，c₁⊕c₂="+x(c1,c2)+" = m₁⊕m₂";
       }
+      case "gaussian-rd": {
+        const D=Math.round(v)/100;
+        const R=D>=1?0:0.5*Math.log2(1/D);
+        return "D="+D.toFixed(2)+"，σ²=1：R(D)="+fmt(R)+" bit/sample"+(D>=1?"（已达 D_max）":"");
+      }
       default: return null;
     }
   }
