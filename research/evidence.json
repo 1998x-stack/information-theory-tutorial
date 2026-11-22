@@ -22,7 +22,10 @@
     "Shannon1949Secrecy": "https://doi.org/10.1002/j.1538-7305.1949.tb00928.x",
     "Wyner1975": "https://doi.org/10.1109/TIT.1975.1055374",
     "Dwork2006": "https://doi.org/10.1007/11681878_14",
-    "Shannon1959RD": "https://doi.org/10.1002/j.1538-7305.1959.tb01533.x"
+    "Shannon1959RD": "https://doi.org/10.1002/j.1538-7305.1959.tb01533.x",
+    "Cover1972BC": "T. Cover (1972), Broadcast Channels, IEEE Trans. Inf. Theory 18(1)",
+    "Ahlswede2000": "R. Ahlswede et al. (2000), Network Information Flow, IEEE Trans. Inf. Theory 46(4)",
+    "HanKobayashi1981": "T. Han & K. Kobayashi (1981), A New Achievable Rate Region for the Interference Channel, IEEE Trans. Inf. Theory 27(1)"
   },  "claims": [
     {
       "chapter": 1,
@@ -211,6 +214,17 @@
         "CoverThomas"
       ],
       "toy": "C(SNR=1)=0.5, C(SNR=3)=1.0; water_filling([0.1,0.5,2.0],2.0) -> mu=1.3, power [1.2,0.8,0.0]"
+    },
+    {
+      "chapter": 21,
+      "statement": "Two-user Gaussian MAC capacity region is the pentagon R1<=C(P1), R2<=C(P2), R1+R2<=C(P1+P2); corner points via successive interference cancellation, interior via time-sharing. Degraded broadcast uses superposition coding (Cover 1972); general BC, relay and interference channels remain open. Network coding reaches multicast max-flow min-cut.",
+      "evidence": [
+        "Cover1972BC",
+        "Ahlswede2000",
+        "HanKobayashi1981",
+        "CoverThomas"
+      ],
+      "toy": "P1=2, P2=1.5, sigma2=1: R1max=0.7925, R2max=0.6610, Rsum=1.0850"
     }
   ]
 }

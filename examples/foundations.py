@@ -92,6 +92,14 @@ def water_filling(noise_variances, total_power, tolerance=1e-9):
     return mu, [max(mu - n, 0.0) for n in noise]
 
 
+def mac_capacity_corners(P1, P2, sigma2=1.0):
+    """Two-user Gaussian MAC bounds: (R1max, R2max, Rsum) in bits/symbol."""
+    if min(P1, P2, sigma2) <= 0:
+        raise ValueError("powers and noise variance must be positive")
+    return (awgn_capacity(P1 / sigma2), awgn_capacity(P2 / sigma2),
+            awgn_capacity((P1 + P2) / sigma2))
+
+
 if __name__ == "__main__":
     p, q = (.75,.25), (.5,.5)
     print("H(p)",entropy(p),"H(p,q)",cross_entropy(p,q),"KL",kl(p,q))

@@ -128,6 +128,13 @@
         const db=Math.round(v),snr=Math.pow(10,db/10),C=0.5*Math.log2(1+snr);
         return "SNR="+db+" dB（线性 "+snr.toFixed(2)+"）：C="+fmt(C)+" bit/symbol";
       }
+      case "mac-region": {
+        const a=Math.round(v)/100;
+        const r1m=0.5*Math.log2(3),r2m=0.5*Math.log2(2.5),rs=0.5*Math.log2(4.5);
+        const c1=[r1m,rs-r1m],c2=[rs-r2m,r2m];
+        const R1=a*c1[0]+(1-a)*c2[0],R2=a*c1[1]+(1-a)*c2[1];
+        return "α="+a.toFixed(2)+"：R₁="+fmt(R1)+"，R₂="+fmt(R2)+"，和="+fmt(R1+R2);
+      }
       default: return null;
     }
   }
