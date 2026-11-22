@@ -68,6 +68,30 @@ def min_entropy(probabilities):
     ps = checked(probabilities)
     return -log2(max(ps))
 
+def awgn_capacity(snr):
+    """Per-symbol AWGN capacity C=0.5*log2(1+snr) bits; snr is the linear P/sigma^2."""
+    if snr < 0:
+        raise ValueError("signal-to-noise ratio must be nonnegative")
+    from math import log2
+    return 0.5 * log2(1 + snr)
+
+
+def water_filling(noise_variances, total_power, tolerance=1e-9):
+    """Optimal parallel-Gaussian power allocation P_i=max(mu-sigma_i^2,0)."""
+    noise = list(noise_variances)
+    if not noise or total_power < 0 or any(n < 0 for n in noise):
+        raise ValueError("need nonnegative variances and power")
+    lo, hi = min(noise), max(noise) + total_power
+    while hi - lo > tolerance:
+        mid = (lo + hi) / 2
+        if sum(max(mid - n, 0.0) for n in noise) < total_power:
+            lo = mid
+        else:
+            hi = mid
+    mu = (lo + hi) / 2
+    return mu, [max(mu - n, 0.0) for n in noise]
+
+
 if __name__ == "__main__":
     p, q = (.75,.25), (.5,.5)
     print("H(p)",entropy(p),"H(p,q)",cross_entropy(p,q),"KL",kl(p,q))

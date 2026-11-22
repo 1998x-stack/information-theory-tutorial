@@ -124,6 +124,10 @@
         const R=D>=1?0:0.5*Math.log2(1/D);
         return "D="+D.toFixed(2)+"，σ²=1：R(D)="+fmt(R)+" bit/sample"+(D>=1?"（已达 D_max）":"");
       }
+      case "awgn-capacity": {
+        const db=Math.round(v),snr=Math.pow(10,db/10),C=0.5*Math.log2(1+snr);
+        return "SNR="+db+" dB（线性 "+snr.toFixed(2)+"）：C="+fmt(C)+" bit/symbol";
+      }
       default: return null;
     }
   }

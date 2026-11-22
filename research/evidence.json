@@ -23,8 +23,7 @@
     "Wyner1975": "https://doi.org/10.1109/TIT.1975.1055374",
     "Dwork2006": "https://doi.org/10.1007/11681878_14",
     "Shannon1959RD": "https://doi.org/10.1002/j.1538-7305.1959.tb01533.x"
-  },
-  "claims": [
+  },  "claims": [
     {
       "chapter": 1,
       "statement": "I(x)=-log2 p(x); entropy is average surprisal",
@@ -202,6 +201,16 @@
         "CoverThomas"
       ],
       "toy": "sigma^2=1: R(0.25)=1.0, R(0.0625)=2.0, R(1)=0; fair Bernoulli Hamming R(0.1)=0.531, R(0.25)=0.189"
+    },
+    {
+      "chapter": 20,
+      "statement": "Differential entropy h(X)=-integral f log2 f can be negative (U(0,1/4) gives -2 bits) and shifts under scaling: h(aX+c)=h(X)+log2|a|. For fixed variance the Gaussian maximizes h=0.5log2(2 pi e sigma^2); AWGN capacity is C=0.5log2(1+P/sigma^2), and parallel channels use water-filling P_i=max(mu-sigma_i^2,0).",
+      "evidence": [
+        "Shannon1948",
+        "MIT2016",
+        "CoverThomas"
+      ],
+      "toy": "C(SNR=1)=0.5, C(SNR=3)=1.0; water_filling([0.1,0.5,2.0],2.0) -> mu=1.3, power [1.2,0.8,0.0]"
     }
   ]
 }
