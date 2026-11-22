@@ -7,10 +7,11 @@ for bit in message + "000":       # 追加 r 个零
     if feedback:
         reg ^= poly_low
 # reg = 0b001，即 CRC 余数</code></pre><p>对消息 1101，依次送入 1101 和三个补零，寄存器状态依次为 001、011、110、110、111、101、001。这里的“左移、最高位反馈、输入位从右侧进入”是一套明确的位序约定；反射 CRC 实现会使用相反方向的移位和相应反射多项式，不能只把移位符号改掉而保留原抽头。</p><figure><img src="../assets/figures/16-lfsr.svg" alt="三个寄存器级联，最高位反馈经异或门注入后两级，输入位从右端进入"><figcaption>G(x)=x³+x+1 对应三个寄存器级与反馈抽头。旧最高位决定是否对低三位掩码 011 异或；这与前面的多项式长除法逐步同构。</figcaption></figure></section><section id="implementation" aria-labelledby="s-implementation"><h2 id="s-implementation">可运行实现：教学多项式与标准 CRC-32 分开测试</h2><p>教学版函数使用 MSB-first、init=0、xorout=0 的简单多项式长除法；标准 CRC-32/ISO-HDLC 则使用反射输入/输出和非零初值。两种实现分别验证，避免把简化伪代码误当成标准兼容实现。</p><pre><code>from examples.advanced_information import (
-    crc_encode, crc_remainder, crc32_iso_hdlc
+    crc_encode, crc_remainder, crc_lfsr_remainder, crc32_iso_hdlc
 )
 codeword = crc_encode("1101", "1011")
 assert codeword == "1101001"
 assert crc_remainder(codeword, "1011") == "000"
+assert crc_lfsr_remainder("1101", "1011") == "001"
 assert crc32_iso_hdlc(b"123456789") == 0xCBF43926
 print(codeword, hex(crc32_iso_hdlc(b"123456789")))</code></pre><div class="lab" data-lab="crc-syndrome"><label for="lab16">翻转教学码字中的一个位置（0 表示不翻转）</label><input id="lab16" type="range" min="0" max="7" step="1" value="5"><output for="lab16" aria-live="polite">翻转位置 5：收到 1101101；综合征 101，检测到错误</output><p class="micro">发送码字 1101001，生成多项式 1011。这里只演示单比特错误综合征，不模拟所有 CRC 标准的反射和初值参数。</p></div></section><section id="limits" aria-labelledby="s-limits"><h2 id="s-limits">CRC 的工程边界：覆盖范围和协议语义同样重要</h2><p>CRC 计算覆盖哪些字段、长度字段是否包含在校验范围、帧头与填充位如何处理、比特以何种顺序进入寄存器，都是协议的一部分。一次可靠的校验实现应以标准给出的测试向量为准，而不是只比较两个程序对某个自选样本是否相同。</p><p>CRC 也不会自动修复数据；检测到错误后，协议需要另行决定重传、丢帧或上层恢复。对文件存储而言，CRC 能发现偶发损坏，但若还需抵抗恶意替换，应使用数字签名或认证哈希体系。</p></section><section id="sources" aria-labelledby="s-sources"><h2 id="s-sources">来源与延伸阅读</h2><ol class="references"><li><a href="https://reveng.sourceforge.io/crc-catalogue/all.htm">CRC RevEng Catalogue</a>：CRC-32/ISO-HDLC 的完整参数、check 与 residue。</li><li><a href="https://reveng.sourceforge.io/readme.htm">CRC RevEng README</a>：多项式、反射、初值和 xorout 参数约定。</li><li><a href="https://www.rfc-editor.org/rfc/rfc1662.html">RFC 1662, PPP in HDLC-like Framing</a>：PPP 帧 FCS 的 CRC 参数与线上处理。</li><li><a href="https://doi.org/10.1109/TIT.1960.1057586">W. W. Peterson &amp; D. T. Brown, Cyclic Codes for Error Detection</a>：循环码检错理论。</li></ol></section></div><nav class="chapter-nav" aria-label="相邻章节"><a href="15.html">← 第 15 章</a><a href="161.html">第 161 章 →</a></nav></article></main></div></body></html>

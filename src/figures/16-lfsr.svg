@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lfsr16-title lfsr16-desc" viewBox="0 0 920 380">
 <title id="lfsr16-title">CRC LFSR 三位寄存器与反馈抽头</title>
-<desc id="lfsr16-desc">旧最高位反馈到第二、第三级的异或门，输入位从最右侧移入。生成多项式1011的反馈掩码为011。</desc>
+<desc id="lfsr16-desc">状态从右向左移位，输入位从右端进入。旧最高位Q2作为反馈，注入Q1与Q0的异或门；生成多项式1011的低位抽头掩码为011。</desc>
 <rect x="1" y="1" width="918" height="378" rx="18" fill="#fbfdfb" stroke="#dce8e4" stroke-width="1.5"/>
-<text x="28" y="38" fill="#203035" font-size="21" font-weight="750" font-family="system-ui,sans-serif">CRC LFSR：最高位反馈与 011 抽头</text><path d="M28 53H892" stroke="#dce8e4"/>
+<text x="28" y="38" fill="#203035" font-size="21" font-weight="750" font-family="system-ui,sans-serif">CRC LFSR：旧最高位反馈与 011 抽头</text><path d="M28 53H892" stroke="#dce8e4"/>
 <g font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle">
-<rect x="220" y="135" width="150" height="86" rx="12" fill="#eeeaff" stroke="#7461ba" stroke-width="2"/>
-<rect x="425" y="135" width="150" height="86" rx="12" fill="#e7f5f2" stroke="#147f80" stroke-width="2"/>
-<rect x="630" y="135" width="150" height="86" rx="12" fill="#e7f5f2" stroke="#147f80" stroke-width="2"/>
-<text x="295" y="170" fill="#7461ba" font-size="18">Q₂</text><text x="295" y="198" fill="#203035" font-size="15">旧最高位</text>
-<text x="500" y="170" fill="#147f80" font-size="18">Q₁</text><text x="500" y="198" fill="#203035" font-size="15">中间位</text>
-<text x="705" y="170" fill="#147f80" font-size="18">Q₀</text><text x="705" y="198" fill="#203035" font-size="15">低位</text></g>
+<rect x="200" y="135" width="160" height="86" rx="12" fill="#eeeaff" stroke="#7461ba" stroke-width="2"/>
+<rect x="410" y="135" width="160" height="86" rx="12" fill="#e7f5f2" stroke="#147f80" stroke-width="2"/>
+<rect x="620" y="135" width="150" height="86" rx="12" fill="#e7f5f2" stroke="#147f80" stroke-width="2"/>
+<text x="280" y="170" fill="#7461ba" font-size="18">Q₂</text><text x="280" y="198" fill="#203035" font-size="15">最高位</text>
+<text x="490" y="170" fill="#147f80" font-size="18">Q₁</text><text x="490" y="198" fill="#203035" font-size="15">中间位</text>
+<text x="695" y="170" fill="#147f80" font-size="18">Q₀</text><text x="695" y="198" fill="#203035" font-size="15">低位</text></g>
 <g fill="none" stroke="#147f80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-<path d="M370 178H425m150 0h55"/><path d="M780 178H850V75H295V130"/>
-<path d="M500 221V275H705V221"/><path d="M705 221V305H850V75"/>
-<path d="M36 178H203L220 178"/>
+<path d="M620 178H606m-32 0H570"/><path d="M410 178H360"/>
+<path d="M200 178H115V285H590V198M590 285H805V198"/>
+<path d="M890 178H822"/>
 </g>
-<g fill="#fff0e8" stroke="#d06d4d" stroke-width="2"><circle cx="400" cy="178" r="16"/><circle cx="605" cy="178" r="16"/></g>
-<g fill="#d06d4d" font-family="system-ui,sans-serif" font-weight="750" text-anchor="middle" font-size="21"><text x="400" y="185">⊕</text><text x="605" y="185">⊕</text></g>
+<g fill="#fff0e8" stroke="#d06d4d" stroke-width="2"><circle cx="590" cy="178" r="16"/><circle cx="805" cy="178" r="16"/></g>
+<g fill="#d06d4d" font-family="system-ui,sans-serif" font-weight="750" text-anchor="middle" font-size="21"><text x="590" y="185">⊕</text><text x="805" y="185">⊕</text></g>
 <g fill="#203035" font-family="system-ui,sans-serif" font-size="15">
-<text x="36" y="150">输入位 bₜ</text><text x="36" y="201">从右端移入</text>
-<text x="295" y="65" text-anchor="middle" fill="#7461ba" font-weight="700">feedback = old Q₂</text>
-<text x="500" y="294" text-anchor="middle">反馈抽头：旧 Q₂ 控制后两级异或</text>
-<text x="35" y="350">reg ← ((reg &lt;&lt; 1) | bₜ) &amp; 111；若旧 Q₂=1，则 reg ← reg XOR 011</text></g></svg>
+<text x="855" y="148" text-anchor="middle">输入 bₜ</text><text x="855" y="207" text-anchor="middle">从右端移入</text>
+<text x="112" y="166" text-anchor="middle" fill="#7461ba" font-weight="700">f = old Q₂</text>
+<text x="460" y="314" text-anchor="middle">反馈 f 分别注入 Q₁、Q₀ 两个异或门</text>
+<text x="35" y="350">Q₂′=Q₁；Q₁′=Q₀⊕f；Q₀′=bₜ⊕f；f=旧 Q₂；低位掩码 011</text></g></svg>
