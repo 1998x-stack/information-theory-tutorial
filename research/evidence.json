@@ -1,5 +1,5 @@
 {
-  "scope": "01–25: foundations, coding, multiuser channels, statistical inference, cross-entropy and deep learning, information bottleneck, and finite-sample information estimation; logarithms base 2 unless stated",
+  "scope": "01–28: complete course from Shannon foundations and coding through multi-user channels, statistical inference, semantic/task communication, quantum entropy, time-directed information, PID, and a reproducible end-to-end source/channel coding capstone. log2 for bit formulas; natural log explicitly marked where needed.",
   "sources": {
     "Shannon1948": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x",
     "CoverThomas": "https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2",
@@ -50,7 +50,17 @@
     "KSG2004": "https://doi.org/10.1103/PhysRevE.69.066138",
     "MINE2018": "https://proceedings.mlr.press/v80/belghazi18a.html",
     "CPCInfoNCE2018": "https://arxiv.org/abs/1807.03748",
-    "SklearnMutualInfo": "https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_regression.html"
+    "SklearnMutualInfo": "https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_regression.html",
+    "ShannonSemantic1948": "https://www.cs.yale.edu/homes/yry/readings/general/shannon1948.pdf",
+    "SemanticSurvey2024": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10888479/",
+    "SemanticFunctionalRD2025": "https://ieeexplore.ieee.org/abstract/document/10946974",
+    "SemanticTheory2024": "https://doi.org/10.1109/TMC.2024.3406375",
+    "ITURM2160": "https://www.itu.int/rec/R-REC-M.2160-0-202311-I/en",
+    "PreskillQuantum": "https://www.preskill.caltech.edu/ph219/ph219_2005-06.html",
+    "PreskillHolevo2025": "https://www.preskill.caltech.edu/ph219/chap10_6A_2025.pdf",
+    "SchreiberTE2000": "https://doi.org/10.1103/PhysRevLett.85.461",
+    "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
+    "BerutLandauer2012": "https://doi.org/10.1038/nature10872"
   },
   "claims": [
     {
@@ -300,6 +310,43 @@
         "SklearnMutualInfo"
       ],
       "toy": "Bivariate Gaussian rho=.7 => I=−.5log2(1−.7²)≈.485 bit; InfoNCE with K candidates has upper bound log K nats"
+    },
+    {
+      "chapter": 26,
+      "statement": "For task-defined semantic S=g(X,K), H(S|K)≤H(X|K) when the map is deterministic. The equal Bernoulli task under Hamming distortion has R(D)=1−h2(D) for D≤1/2 under iid and asymptotic coding assumptions. Proposed semantic entropy/capacity definitions vary across papers; representation cosine similarity is not a probability. IMT-2030 AIAC is an ITU usage scenario, not proof of a single standardized semantic-codec theory.",
+      "evidence": [
+        "ShannonSemantic1948",
+        "SemanticSurvey2024",
+        "SemanticFunctionalRD2025",
+        "SemanticTheory2024",
+        "ITURM2160",
+        "ShannonRateDistortion1959"
+      ],
+      "toy": "Eight equally likely messages mapped to two equally likely task labels give H(X)=3 and H(S)=1 bit; R_task(0.1)=1−h2(.1)=0.5310044 bit/task label, excluding channel and model overhead."
+    },
+    {
+      "chapter": 27,
+      "statement": "Von Neumann entropy equals the Shannon entropy of a density matrix eigenvalue spectrum. A Bell state AB is globally pure (S_AB=0) with maximally mixed marginals (S_A=S_B=1) and quantum I(A:B)=2 bits. Holevo accessible information is bounded by chi; the naive one-bit-per-unassisted-qubit bound assumes no preshared entanglement (superdense coding uses it). Transfer entropy is conditional mutual information, not causal proof. Independent Bernoulli source X_t and Y_(t+1)=X_t XOR E_t imply TE(X→Y)=1−h2(q) and reverse zero. In two-source independent XOR, I(X1;Y)=I(X2;Y)=0 and joint MI=1, pure synergy under standard nonnegative PID. Landauer k_B T ln2 is a conditional unknown-bit erasure bound, not a universal gate cost.",
+      "evidence": [
+        "PreskillQuantum",
+        "PreskillHolevo2025",
+        "SchreiberTE2000",
+        "WilliamsBeerPID2010",
+        "BerutLandauer2012"
+      ],
+      "toy": "rho=diag(lambda,1-lambda) -> S=h2(lambda). Bell state S_A+S_B-S_AB=2. BSC(q=.1) transfer entropy≈.5310044 bits. XOR synergy 1 bit at q=0."
+    },
+    {
+      "chapter": 28,
+      "statement": "Fixed shared Huffman codebook on AAAABBCD (frequency 4,2,1,1) uses 14 payload bits; pad to 16 before four Hamming(7,4) blocks, producing 28 physical channel bits excluding header/codebook/length. Exact rational arithmetic and unframed LZW integer indices demonstrate roundtrips but do not implement a production streaming compressed file. With parity at Hamming positions 1,2,4, input 1011 encodes to 0110011, one-bit error at fifth gives syndrome 5, while ≥2 errors are not guaranteed correctable. BSC hard-decision Hamming(7,4) decoder block error equals 1−(1−p)^7−7p(1−p)^6.",
+      "evidence": [
+        "Huffman1952",
+        "WittenNealCleary1987",
+        "ZivLempel1978",
+        "Hamming1950",
+        "MIT"
+      ],
+      "toy": "AAAABBCD -> Huffman 14 bits, pad 2, four Hamming blocks = 28 physical bits; Hamming(7,4) 1011 -> 0110011; source/channel bitstream roundtrips under p=0, single-bit errors per block corrected."
     }
   ]
 }

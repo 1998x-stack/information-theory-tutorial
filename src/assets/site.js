@@ -15,6 +15,35 @@
   function digammaInt(n){let s=0;for(let i=1;i<n;i++)s+=1/i;return s-0.5772156649015329;}
   const ksgPairs=(()=>{let seed=20261122;const rand=()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;seed>>>=0;return (seed+.5)/4294967296;};const normal=()=>{const u=Math.max(rand(),1e-12),v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};const a=[],rho=.7,scale=Math.sqrt(1-rho*rho);for(let i=0;i<160;i++){const x=normal(),y=rho*x+scale*normal();a.push([x,y]);}return a;})();
   function ksgDemo(k){const a=ksgPairs,n=a.length,terms=[];for(let i=0;i<n;i++){let ds=[];for(let j=0;j<n;j++)if(i!==j)ds.push(Math.max(Math.abs(a[i][0]-a[j][0]),Math.abs(a[i][1]-a[j][1])));ds.sort((x,y)=>x-y);const eps=ds[k-1];let nx=0,ny=0;for(let j=0;j<n;j++)if(i!==j){if(Math.abs(a[i][0]-a[j][0])<eps)nx++;if(Math.abs(a[i][1]-a[j][1])<eps)ny++;}terms.push(digammaInt(nx+1)+digammaInt(ny+1));}const nats=digammaInt(k)+digammaInt(n)-terms.reduce((s,v)=>s+v,0)/n;return nats/Math.LN2;}
+
+  // Capstone lab uses the same 32-bit LCG as examples/capstone.py.
+  function lcg(seed){let state=seed>>>0;return ()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return (state+.5)/4294967296;};}
+  function hamming74Encode(nibble){
+    const [a,b,c,d]=nibble.split("").map(Number),p1=a^b^d,p2=a^c^d,p4=b^c^d;
+    return [p1,p2,a,p4,b,c,d].join("");
+  }
+  function hamming74Decode(word){
+    const bits=word.split("").map(Number);let syndrome=0;
+    bits.forEach((b,i)=>{if(b)syndrome^=i+1;});
+    if(syndrome)bits[syndrome-1]^=1;
+    return {nibble:[bits[2],bits[4],bits[5],bits[6]].join(""),syndrome};
+  }
+  function capstoneLab(p){
+    const message="AAAABBCD",src="00001010110111";
+    const padded=src+"00";
+    const encoded=padded.match(/.{4}/g).map(hamming74Encode).join("");
+    const rnd=lcg(2026),flips=[];
+    const received=[...encoded].map((b,i)=>{if(rnd()<p){flips.push(i);return b==="0"?"1":"0";}return b;}).join("");
+    const blocks=received.match(/.{7}/g).map(hamming74Decode);
+    const raw=blocks.map(x=>x.nibble).join("").slice(0,src.length);
+    const residual=[...src].reduce((a,b,i)=>a+(b!==raw[i]),0);
+    const codebook={0:"A",10:"B",110:"C",111:"D"};
+    let prefix="",recovered="",invalid=false;
+    for(const bit of raw){prefix+=bit;if(Object.prototype.hasOwnProperty.call(codebook,prefix)){recovered+=codebook[prefix];prefix="";}else if(!["1","11"].includes(prefix)){invalid=true;break;}}
+    const success=!invalid&&!prefix&&recovered===message;
+    return "p="+p.toFixed(2)+"；正文="+src.length+" bit；信道="+encoded.length+" bit；翻转="+flips.length+"；综合征非零="+blocks.filter(x=>x.syndrome).length+"；译后残余 bit 错误="+residual+"；消息恢复="+(success?"成功":"失败");
+  }
+
   function typicalMass(n, p=.25, eps=.15) {
     const H = h2(p);
     let binomial = Math.pow(1-p, n), mass = 0;
@@ -100,6 +129,12 @@
       case "softmax-ce": {const z=[2,v,-1],p=softmax(z),ce=logsumexp(z)-v;return "z₁="+v.toFixed(1)+"；p₁="+fmt(p[1])+"；CE="+fmt(ce)+"；目标类梯度="+fmt(p[1]-1)+"；梯度向量("+p.map((x,i)=>fmt(x-(i===1?1:0))).join(", ")+")";}
       case "ib-tradeoff": {const pts=[[0,0],[.5,.35],[1,.62],[1.5,.78],[2,.86],[2.5,.9]],best=pts.map(([x,y])=>({x,y,j:x-v*y})).sort((a,b)=>a.j-b.j)[0];return "β="+v.toFixed(2)+"；选择 I(X;T)="+best.x.toFixed(2)+" bit，I(T;Y)="+best.y.toFixed(2)+" bit；J="+best.j.toFixed(3);}
       case "mi-estimator": {const k=Math.round(v),estimate=ksgDemo(k),truth=-.5*Math.log2(1-.7*.7);return "k="+k+"；KSG-1 ≈ "+estimate.toFixed(4)+" bit；解析真值="+truth.toFixed(4)+" bit；样本 N=160";}
+
+      case "semantic-rd": return "D="+v.toFixed(2)+"；R(D)="+fmt(1-h2(v))+" bit/任务符号（理想渐近）";
+      case "quantum-entropy": return "λ="+v.toFixed(2)+"；S(ρ)="+fmt(h2(v))+" bit；Tr(ρ²)="+fmt(v*v+(1-v)*(1-v));
+      case "transfer-entropy-bsc": return "q="+v.toFixed(2)+"；T(X→Y)="+fmt(1-h2(v))+" bit；T(Y→X)=0（指定单向驱动模型）";
+      case "xor-synergy": return "q="+v.toFixed(2)+"；I(X₁;Y)=I(X₂;Y)=0；纯协同="+fmt(1-h2(v))+" bit";
+      case "capstone-bsc": return capstoneLab(v);
       default: return null;
     }
   }

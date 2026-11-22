@@ -38,3 +38,13 @@
     word-break:break-word;
   }
 }
+
+/* Long inline mathematical/code expressions must wrap within narrow reading
+   columns. Do not affect preformatted code blocks (which scroll separately). */
+.article-body p code,
+.article-body li code,
+.article-body figcaption code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
