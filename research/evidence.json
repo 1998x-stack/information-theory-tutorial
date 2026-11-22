@@ -1,5 +1,5 @@
 {
-  "scope": "01–10: finite discrete information theory; AEP assumes i.i.d. where stated; logarithm base 2 unless noted",
+  "scope": "01–15: finite discrete information theory, data compression, DMC capacity, coding theorem, linear codes; base-2 logs unless stated",
   "sources": {
     "Shannon1948": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x",
     "CoverThomas": "https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2",
@@ -8,7 +8,13 @@
     "StanfordEE376A": "https://web.stanford.edu/class/ee376a/outline.html",
     "Huffman1952": "https://web.stanford.edu/class/ee398a/handouts/papers/Huffman%20-%20Min%20Redundancy%20Codes%20-%20IRE52.pdf",
     "WittenNealCleary1987": "https://doi.org/10.1145/214762.214771",
-    "WileyCoverThomas": "https://www.wiley.com/en-us/elements-of-information-theory-2nd-edition-p-9780471748823"
+    "WileyCoverThomas": "https://www.wiley.com/en-us/elements-of-information-theory-2nd-edition-p-9780471748823",
+    "ZivLempel1977": "https://doi.org/10.1109/TIT.1977.1055714",
+    "ZivLempel1978": "https://doi.org/10.1109/TIT.1978.1055934",
+    "RFC1951": "https://www.rfc-editor.org/rfc/rfc1951.html",
+    "Blahut1972": "https://doi.org/10.1109/TIT.1972.1054855",
+    "MITChannel": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/pages/lecture-notes/",
+    "Hamming1950": "https://doi.org/10.1002/j.1538-7305.1950.tb00463.x"
   },
   "claims": [
     {
@@ -100,6 +106,54 @@
         "WileyCoverThomas"
       ],
       "toy": "p(A)=.6,p(B)=.4, ABA->[.36,.504), binary prefix 011->[.375,.5) subset"
+    },
+    {
+      "chapter": 11,
+      "statement": "LZ77 copies from an already decoded sliding window and may overlap; LZ78 builds phrase indices; DEFLATE couples LZ77 matches and Huffman codes with a 32KiB history limit.",
+      "evidence": [
+        "ZivLempel1977",
+        "ZivLempel1978",
+        "RFC1951"
+      ],
+      "toy": "ABCABCABC -> literal A,B,C plus match(distance=3,length=6); LZ78 ABABABA -> A|B|AB|ABA"
+    },
+    {
+      "chapter": 12,
+      "statement": "DMC channel kernels are conditional row-normalized matrices. BSC/BEC have distinct noise semantics and two independent BSCs cascade with epsilon=p+q-2pq.",
+      "evidence": [
+        "MIT",
+        "MITChannel"
+      ],
+      "toy": "BSC(.1) with uniform input I=.5310044; cascade BSC(.1),BSC(.2) => effective error .26"
+    },
+    {
+      "chapter": 13,
+      "statement": "DMC capacity is max over input distributions, not mutual information at arbitrary prior; symmetric BSC/BEC admit closed forms and BA optimizes general finite channel capacity.",
+      "evidence": [
+        "MIT",
+        "Blahut1972",
+        "MITChannel"
+      ],
+      "toy": "Z-channel W=((1,0),(.2,.8)) optimum p(X=1)≈.436, capacity≈.618231"
+    },
+    {
+      "chapter": 14,
+      "statement": "For stationary finite DMC, rate R<C admits a sequence of codes with vanishing average block error; weak converse via Fano and I(M;Y^n)≤nC forbids vanishing error for R>C.",
+      "evidence": [
+        "Shannon1948",
+        "MIT",
+        "MITChannel"
+      ],
+      "toy": "BSC(.1) C≈.5310044; repetition n=3 p=.1: block error=.028 with rate=1/3"
+    },
+    {
+      "chapter": 15,
+      "statement": "Hamming(7,4) with parity at positions 1,2,4 corrects one bit by s=Hr^T; 16 radius-one balls size 8 partition all 128 seven-bit vectors.",
+      "evidence": [
+        "Hamming1950",
+        "MITChannel"
+      ],
+      "toy": "message 1011 -> codeword 0110011, flip fifth -> 0110111, syndrome=5"
     }
   ]
 }

@@ -52,6 +52,31 @@
         const i=Math.round(v), [prefix,lo,hi]=stages[i];
         return "步骤 "+i+" / 3："+prefix+"，区间 ["+lo.toFixed(3)+", "+hi.toFixed(3)+")，宽度 "+(hi-lo).toFixed(3);
       }
+
+      case "lz-window": {
+        const d=Math.round(v);
+        let result="ABC";
+        for(let i=0;i<6;i++)result+=result[result.length-d];
+        return "历史 ABC；d="+d+"，复制6字符 → "+result;
+      }
+      case "bsc-channel": return "ε="+v.toFixed(2)+"，均匀输入互信息="+fmt(1-h2(v))+" bit/次";
+      case "z-capacity": return "q="+v.toFixed(2)+"，I(X;Y)="+fmt(h2(.8*v)-v*h2(.2))+" bit；理论容量约0.6182 bit";
+      case "repetition-error": {
+        const n=Math.round(v),p=.1;
+        let sum=0;
+        for(let k=(n+1)/2;k<=n;k++){
+          let binomial=1;
+          for(let j=1;j<=k;j++)binomial=binomial*(n-j+1)/j;
+          sum+=binomial*Math.pow(p,k)*Math.pow(1-p,n-k);
+        }
+        return "n="+n+"，R="+fmt(1/n)+"，块错误概率 "+(sum*100).toFixed(4)+"%";
+      }
+      case "hamming-syndrome": {
+        const position=Math.round(v),bits="0110011".split("");
+        if(position===0)return "未翻转：收到0110011；syndrome=000₂";
+        bits[position-1]=bits[position-1]==="0"?"1":"0";
+        return "翻转位置"+position+"：收到"+bits.join("")+"；syndrome="+position.toString(2).padStart(3,"0")+"₂ → 纠正第"+position+"位";
+      }
       default: return null;
     }
   }

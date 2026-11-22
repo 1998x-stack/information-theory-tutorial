@@ -17,7 +17,7 @@ DOCS = ROOT / "docs"
 def verify(output):
     output.mkdir(parents=True,exist_ok=True)
     failures,records=[],[]
-    filenames=["index.html"]+[f"chapters/{n:02d}.html" for n in range(1,11)]
+    filenames=["index.html"]+[f"chapters/{n:02d}.html" for n in range(1,16)]
     with sync_playwright() as pw:
         browser=pw.chromium.launch(headless=True)
         for width in (1440,390,360):
@@ -96,7 +96,9 @@ def verify(output):
                                 faults.append("keyboard range control did not update output")
                     if width in (1440,390) and name in (
                         "index.html","chapters/06.html","chapters/07.html",
-                        "chapters/08.html","chapters/09.html","chapters/10.html"
+                        "chapters/08.html","chapters/09.html","chapters/10.html",
+                        "chapters/11.html","chapters/12.html","chapters/13.html",
+                        "chapters/14.html","chapters/15.html"
                     ):
                         page.screenshot(
                             path=str(output/f"{Path(name).stem}-{width}.png"),
@@ -116,12 +118,12 @@ def verify(output):
             context.close()
         # A representative chapter in print media; check equations remain visible.
         page=browser.new_page(viewport={"width":1440,"height":900})
-        page.goto((DOCS/"chapters/10.html").resolve().as_uri())
+        page.goto((DOCS/"chapters/15.html").resolve().as_uri())
         page.emulate_media(media="print")
         print_check=page.evaluate("""() => [...document.querySelectorAll('math')].every(
             el=>el.getBoundingClientRect().width>0 && el.getBoundingClientRect().height>0
         )""")
-        if not print_check: failures.append("Print mode: chapter 10 math invisible")
+        if not print_check: failures.append("Print mode: chapter 15 math invisible")
         page.close()
         browser.close()
     (output/"report.json").write_text(json.dumps({
