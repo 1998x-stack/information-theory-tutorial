@@ -6,12 +6,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-def redirect(target: str, title: str, text: str) -> str:
+def redirect(target: str, title: str, text: str, prefix: str = "") -> str:
     return ('<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f'<meta http-equiv="refresh" content="0;url={target}">'
         f'<link rel="canonical" href="{target}"><title>{title}</title></head>'
-        f'<body><p><a href="{target}">{text}</a></p></body></html>')
+        f'<body><p>{prefix}<a href="{target}">{text}</a></p></body></html>')
 
 def entries():
     pairs = [
@@ -30,7 +30,7 @@ def entries():
         chapter = (ROOT / f"src/chapters/{nn}.html").read_text(encoding="utf-8")
         yield f"docs/chapters/{nn}.html", chapter
         dest = f"docs/chapters/{nn}.html"
-        yield f"{nn}.html", redirect(dest, "章节已迁移", f"前往第 {nn} 章")
+        yield f"{nn}.html", redirect(dest, "章节已迁移", f"前往第 {nn} 章", prefix="此章节已迁移：")
     yield "index.html", redirect("docs/index.html", "信息论课程首页", "打开信息论课程首页")
     yield "docs/chapters/index.html", ('<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=../index.html"><title>返回课程首页</title><a href="../index.html">返回课程首页</a>')
     yield ".nojekyll", ""
