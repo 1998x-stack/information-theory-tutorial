@@ -36,11 +36,11 @@ assert lzw_decode(codes) == text.encode("utf-8")
 print("Huffman 正文比特:", len(hbits))  # 14
 print("算术正文比特:", len(abits), "需要模型及长度元数据")
 print("LZW 输出整数索引数:", len(codes), "非序列化比特数")</code></pre>
-<table><thead><tr><th>编码方法</th><th>此处验证目标</th><th>未包括的实际成本</th></tr></thead><tbody>
+<div class="table-scroll" tabindex="0" role="region" aria-label="编码器能力和元数据边界对照表"><table><thead><tr><th>编码方法</th><th>此处验证目标</th><th>未包括的实际成本</th></tr></thead><tbody>
 <tr><td>Huffman</td><td>前缀性质、往返、平均码长</td><td>码本、原始长度、帧头</td></tr>
 <tr><td>算术</td><td>区间更新、dyadic 子区间、精确往返</td><td>频率模型、长度、流式有限精度</td></tr>
 <tr><td>LZW</td><td>字典增长、特殊 KwKwK 分支、整数码往返</td><td>码宽、字节打包、字典重置与封装</td></tr>
-</tbody></table></section>
+</tbody></table></div></section>
 <section id="frame" aria-labelledby="s28-frame"><h2 id="s28-frame">每一比特都要有位置：码本、填充与帧协议</h2>
 <p>压缩正文 14 bit 要交给 Hamming(7,4) 信道码，每四个数据位形成七个传输位。为了分块，我们补 2 个已知零，变成 16 bit 的输入，共四块，传输 <code>4×7=28</code> bit。接收方必须知道原始正文长 14 bit，才能在纠错后删除填充位，不把它们误当消息。</p>
 <figure><img src="../assets/figures/28-frame-accounting.svg" alt="八字符消息的 16 bit 固定符号数据，经 Huffman 压成 14 bit，补齐为 16 bit，Hamming(7,4) 扩展为 28 bit" loading="lazy"><figcaption>比较压缩效果必须区分原始符号编码、源编码正文、补零后的信道输入和最终物理传输四个边界；共享 Huffman 码本和元数据尚未计入。</figcaption></figure>

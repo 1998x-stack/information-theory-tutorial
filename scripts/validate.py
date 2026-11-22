@@ -41,8 +41,8 @@ def validate():
             local = (page.parent / parsed.path).resolve() if parsed.path else page
             if not local.is_file():
                 errors.append(f"Broken {page.relative_to(ROOT)} -> {url}")
-        if page.name in {f"{i:02d}.html" for i in range(1,26)}:
-            minimum_figures = 3 if int(page.stem) >= 6 else 2
+        if page.name in {f"{i:02d}.html" for i in range(1,29)}:
+            minimum_figures = 4 if int(page.stem) >= 26 else (3 if int(page.stem) >= 6 else 2)
             if scan.tags.get("h1",0) != 1 or scan.tags.get("math",0) < 1 or scan.tags.get("figure",0) < minimum_figures:
                 errors.append(f"New chapter semantic tags: {page}")
             if not all(token in content for token in ('class="math-scroll"', 'aria-label=', 'id="sources"', 'data-lab=', 'aria-live="polite"')):
@@ -56,14 +56,14 @@ def validate():
                 errors.append(f"SVG a11y: {figure}")
         except ET.ParseError as e:
             errors.append(f"SVG parse: {figure}: {e}")
-    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 73:
-        errors.append("Expected at least seventy-three original SVG diagrams")
+    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 88:
+        errors.append("Expected at least eighty-eight original SVG diagrams")
     data = json.loads((DOCS / "data/courses.json").read_text(encoding="utf-8"))
     if data.get("chapterCount") != 28 or len(data.get("chapters", [])) != 28:
         errors.append("Course metadata inconsistent with 28 chapters")
     if errors:
         print("\\n".join(errors))
         raise SystemExit(1)
-    print(f"Static validation passed: {len(names)} HTML, 73+ SVG, local links and semantic checks")
+    print(f"Static validation passed: {len(names)} HTML, 88+ SVG, local links and semantic checks")
 if __name__ == "__main__":
     validate()

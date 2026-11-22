@@ -8,7 +8,7 @@
 
 - 维护源：`src/home/index.html`、`src/chapters/{NN}.html`、`src/assets/`、`src/figures/`、`src/data/courses.json`。
 - 构建产物：`docs/` 由 `scripts/build.py` 复制生成，不能只修改 `docs/`；根目录 `index.html` 与 28 个兼容重定向同为产物。
-- 26–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
+- 全部 01–28 章已改用统一 `site.css` 与 `site.js`；`src/assets/legacy.css` / `docs/chapters/theme.css` 仅保留作历史兼容，不能用于新增内容。
 
 ## 逐章工作流
 
@@ -59,3 +59,11 @@
 - IB 假设 T−X−Y；经典目标与 VIB KL 权重约定须明确。连续 X 的确定性连续表示可能导致 I(X;T) 发散；信息平面压缩轨迹不是普遍深度学习定律。
 - 离散插件熵在固定支持集有限样本下通常向下偏；Miller–Madow 是一阶近似修正。经验 MI 在独立性原假设下常有正偏。KSG 的单位默认 nats，转 bits 需除 ln 2；KSG、KDE、MINE 与 InfoNCE 的假设不同。
 - InfoNCE 是受负样本数约束的互信息下界，通常至多 log(K) nats；MINE 的 DV 目标是总体分布下界，有限样本训练值不保证是无偏估计。所有 MI 实验必须报告估计器、参数、单位、样本量、随机种子和不确定性。
+
+- 语义通信必须首先定义 X、上下文 K、任务/语义变量 S=g(X,K)、失真函数 d 与假设；同义词嵌入的 cosine similarity 不是概率，不能对其随意取 −log₂ 并称“语义熵”。S 的条件熵 H(S|K) 在确定性映射时不超过 H(X|K)，并不意味着物理信道容量因此提高。
+- 任务率失真 R(D) 的二元闭式 1−h₂(D) 只适用于 i.i.d. 等概 Bernoulli、Hamming 失真与渐近块长。语义编码必须另计模型、算力、同步、元数据和物理传输开销。ITU-R 的 AIAC 使用场景不是统一语义通信协议认证。
+- 量子密度矩阵需要 Hermitian、半正定、迹一；von Neumann 熵由特征谱计算。Bell 态全局纯、局部最大混合，量子互信息是 2 bit 且永不为负。Holevo 约束须注明无预共享纠缠的资源口径，超密编码并不违规。
+- 传递熵 T(X→Y)=I(Y_{t+1};X_t|Y_t) 是指定历史深度的条件预测增益，单凭非零 TE 不能声称因果。若有共同驱动、反馈、非平稳性与估计偏差，需要专门的因果可识别性假设及控制。
+- PID 非唯一，须指定分解公理/冗余定义；独立公平 X1/X2 的 XOR 输出是纯协同的可解析示例。Landauer kBT ln2 下界针对等概率未知经典比特的准静态不可逆擦除，不能套到所有计算操作。
+- 综合项目需要双向往返测试和端到端检验；Huffman 元数据、变长码错误传播、算术编码有限精度协议、LZW 码宽封装、Hamming 双错误纠正、BSC 种子与码率必须显式描述。不得把固定样本包的总发送比特数说成不包含码本/帧头的真实压缩率。
+- 发布前必须验证全部 28 篇：原生 MathML、SVG title/desc、每篇交互、移动端 1440/390/360、全文打印与 CI 产物。全站 88 张独立 SVG 的数量变更需同步元数据与验收。
