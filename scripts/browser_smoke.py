@@ -128,11 +128,11 @@ def verify(output: Path):
                         sliders = page.locator(".lab input[type='range']")
                         for index in range(sliders.count()):
                             slider = sliders.nth(index)
-                            output = slider.locator("xpath=..").locator("output").first
-                            before = output.inner_text()
+                            output_locator = slider.locator("xpath=..").locator("output").first
+                            before = output_locator.inner_text()
                             slider.focus()
                             slider.press("ArrowRight")
-                            after = output.inner_text()
+                            after = output_locator.inner_text()
                             if not before or before == after:
                                 faults.append(f"keyboard range control {index + 1} did not update output")
                     if runtime_errors:
