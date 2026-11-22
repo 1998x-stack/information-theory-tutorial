@@ -29,7 +29,8 @@ def verify(output):
                 page.on("pageerror",lambda exc:runtime_errors.append(str(exc)))
                 try:
                     page.goto(file.resolve().as_uri(),wait_until="load",timeout=15000)
-                    page.wait_for_timeout(80)
+                    page.evaluate("""() => document.querySelectorAll('figure img').forEach(img=>{img.loading='eager'})""")
+                    page.wait_for_function("""() => [...document.querySelectorAll('figure img')].every(i=>i.complete)""",timeout=6000)
                     state=page.evaluate("""() => {
                         const math=[...document.querySelectorAll('math')];
                         const fractions=[...document.querySelectorAll('mfrac')];
@@ -53,7 +54,15 @@ def verify(output):
                     }""")
                     faults=[]
                     if state["overflow"]>1:
-                        faults.append(f"horizontal overflow {state['overflow']}px")
+                        offenders=page.evaluate("""() => [...document.querySelectorAll('body *')]
+                            .filter(el=>el.getBoundingClientRect().right>innerWidth+1 &&
+                                 !el.closest('figure'))
+                            .slice(0,12).map(el=>({
+                              tag:el.tagName,cls:el.className?.baseVal||el.className||'',
+                              right:Math.round(el.getBoundingClientRect().right),
+                              left:Math.round(el.getBoundingClientRect().left)
+                            }))""")
+                        faults.append(f"horizontal overflow {state['overflow']}px, elements={offenders}")
                     if state["brokenImages"]:
                         faults.append("unloaded figures: "+str(state["brokenImages"]))
                     if name!="index.html":
