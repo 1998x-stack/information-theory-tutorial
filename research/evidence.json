@@ -1,5 +1,5 @@
 {
-  "scope": "01–20: discrete and continuous information theory, source/channel coding, CRC, secrecy, rate-distortion and Gaussian channels; logarithms base 2 unless stated",
+  "scope": "01–25: foundations, coding, multiuser channels, statistical inference, cross-entropy and deep learning, information bottleneck, and finite-sample information estimation; logarithms base 2 unless stated",
   "sources": {
     "Shannon1948": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x",
     "CoverThomas": "https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2",
@@ -27,7 +27,30 @@
     "CoverThomasRD": "https://static.ias.edu/pitp/archive/2012files/Cover_and_Thomas_Chptr13.pdf",
     "ITUT81": "https://www.itu.int/rec/T-REC-T.81",
     "StanfordEE376ALec8": "https://web.stanford.edu/class/ee376a/files/lecture_8.pdf",
-    "WiegandSchwarz": "https://web.stanford.edu/class/ee398a/BookWiegandSchwarz.pdf"
+    "WiegandSchwarz": "https://web.stanford.edu/class/ee398a/BookWiegandSchwarz.pdf",
+    "MultipleUser1980": "https://isl.stanford.edu/~cover/papers/paper51.pdf",
+    "MITMACLecture20": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/resources/mit6_441s10_lec20/",
+    "MITBroadcastLecture21": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/25a6f68fbf02116707e29afc40a07abe_MIT6_441S10_lec21.pdf",
+    "CoverElGamalRelay1979": "https://isl.stanford.edu/~cover/papers/transIT/0572cove.pdf",
+    "AhlswedeNetworkCoding2000": "https://doi.org/10.1109/18.850663",
+    "BerkeleyFisher": "https://stat210a.berkeley.edu/fall-2024/reader/score-fisher.html",
+    "Akaike1974": "https://doi.org/10.1109/TAC.1974.1100705",
+    "SchwarzBIC1978": "https://www.andrew.cmu.edu/user/kk3n/simplicity/schwarzbic.pdf",
+    "RissanenMDL1978": "https://doi.org/10.1016/0005-1098(78)90005-5",
+    "JaynesMaxEnt1957": "https://doi.org/10.1103/PhysRev.106.620",
+    "PyTorchCrossEntropy": "https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html",
+    "SzegedyLabelSmoothing2016": "https://arxiv.org/abs/1512.00567",
+    "HintonDistillation2015": "https://arxiv.org/abs/1503.02531",
+    "KingmaWellingVAE2013": "https://arxiv.org/abs/1312.6114",
+    "ProperScoringRules": "https://sites.stat.washington.edu/wxs/Learning-papers/paper-proper-scoring.pdf",
+    "TishbyZaslavskyIB2015": "https://arxiv.org/abs/1503.02406",
+    "SaxeIB2019": "https://doi.org/10.1088/1742-5468/ab3985",
+    "AlemiVIB2017": "https://arxiv.org/abs/1612.00410",
+    "PaninskiEntropyMI2003": "https://www.cns.nyu.edu/pub/eero/paninski-infoEst-2003.pdf",
+    "KSG2004": "https://doi.org/10.1103/PhysRevE.69.066138",
+    "MINE2018": "https://proceedings.mlr.press/v80/belghazi18a.html",
+    "CPCInfoNCE2018": "https://arxiv.org/abs/1807.03748",
+    "SklearnMutualInfo": "https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_regression.html"
   },
   "claims": [
     {
@@ -218,6 +241,65 @@
         "WiegandSchwarz"
       ],
       "toy": "U(0,.25) h=-2; N(0,1) h≈2.0471; AWGN SNR2 C≈.79248; noise(1,2,4), power6 -> (3.333,2.333,.333), C≈1.67322"
+    },
+    {
+      "chapter": 21,
+      "statement": "For the two-user real Gaussian MAC with independent Gaussian codebooks and average powers P1,P2 over noise variance N, the capacity region is R1≤1/2log2(1+P1/N), R2≤1/2log2(1+P2/N), R1+R2≤1/2log2(1+(P1+P2)/N). SIC decoding orders attain the two dominant-face corner points. For general relay DMCs, cut-set is an upper bound and decode-forward is an achievable lower bound; general relay capacity is not characterized by the cut-set bound. Network coding can improve multicast rates in the butterfly topology.",
+      "evidence": [
+        "MultipleUser1980",
+        "MITMACLecture20",
+        "MITBroadcastLecture21",
+        "CoverElGamalRelay1979",
+        "AhlswedeNetworkCoding2000"
+      ],
+      "toy": "P1=2,P2=1.5,N=1 => C1=.79248,C2=.66096,Csum=1.08496; SIC corners (.79248,.29248) and (.42400,.66096); butterfly sends a XOR b"
+    },
+    {
+      "chapter": 22,
+      "statement": "Under regularity conditions Fisher information is the variance of the score and local KL curvature; n iid samples add information. The scalar CRLB for an unbiased estimator of g(theta) is g'(theta)^2/(n J1(theta)). Standard CRLB fails for parameter-dependent support such as U(0,theta). AIC estimates asymptotic predictive KL risk; BIC is a regular-model Laplace approximation to marginal likelihood; MDL is a family of code-length principles.",
+      "evidence": [
+        "BerkeleyFisher",
+        "Akaike1974",
+        "SchwarzBIC1978",
+        "RissanenMDL1978",
+        "JaynesMaxEnt1957"
+      ],
+      "toy": "N(mu,4), n=100 => Fisher information 25 and sample-mean variance/CRLB=.04; logL=-50,k=3,n=100 => AIC=106,BIC≈113.8155"
+    },
+    {
+      "chapter": 23,
+      "statement": "For normalized target distribution y and softmax q, cross-entropy is H(y)+KL(y||q) and its logit gradient is q-y. Brier/squared probability error is also a proper scoring rule; CE is not universally superior. Label smoothing mixes one-hot targets with uniform mass. VAE ELBO combines expected reconstruction log likelihood with KL(q(z|x)||p(z)).",
+      "evidence": [
+        "PyTorchCrossEntropy",
+        "SzegedyLabelSmoothing2016",
+        "HintonDistillation2015",
+        "KingmaWellingVAE2013",
+        "ProperScoringRules"
+      ],
+      "toy": "logits=(2,0,-1), target class 1 => p1≈.1142, CE≈2.1698, target-logit gradient≈−.8858; binary Brier logit gradient is 2(q−y)q(1−q)"
+    },
+    {
+      "chapter": 24,
+      "statement": "The classical IB objective minimizes I(X;T)-beta I(T;Y) under T-X-Y. Under this Markov condition, expected KL task distortion E D_KL(p(y|x)||p(y|t)) equals I(X;Y)-I(T;Y). VIB upper-bounds I(X;T) with E KL(q(t|x)||r(t)) and optimizes a predictive likelihood lower bound. Information-plane compression is not universal; deterministic continuous representations can have divergent mutual information.",
+      "evidence": [
+        "TishbyZaslavskyIB2015",
+        "SaxeIB2019",
+        "AlemiVIB2017",
+        "ShannonRateDistortion1959"
+      ],
+      "toy": "Illustrative Pareto points (I(X;T),I(T;Y))={(0,0),(.5,.35),(1,.62),(1.5,.78),(2,.86),(2.5,.90)}; β selects argmin IXT−βITY"
+    },
+    {
+      "chapter": 25,
+      "statement": "Finite-sample plug-in entropy is typically downward biased for fixed finite support; Miller–Madow is a first-order correction. KSG-1 estimates continuous MI from joint max-norm k-neighbor radii and marginal counts, yielding nats before conversion to bits. MINE is a neural DV variational lower bound; InfoNCE is a contrastive MI lower bound capped by log K nats. Neither neural objective is an unbiased finite-sample MI measurement.",
+      "evidence": [
+        "PaninskiEntropyMI2003",
+        "KSG2004",
+        "MINE2018",
+        "CPCInfoNCE2018",
+        "SklearnMutualInfo"
+      ],
+      "toy": "Bivariate Gaussian rho=.7 => I=−.5log2(1−.7²)≈.485 bit; InfoNCE with K candidates has upper bound log K nats"
     }
   ]
 }

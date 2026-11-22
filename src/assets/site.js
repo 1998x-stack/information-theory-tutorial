@@ -8,6 +8,13 @@
   function convEncode(bits){let state=0,out="";for(const ch of bits+"00"){const b=Number(ch),p=(state>>1)&1,o=state&1;out+=(b^p^o).toString()+(b^o).toString();state=(b<<1)|p;}return out;}
   function viterbiDecode(received){const pairs=received.match(/../g)||[];let m=[0,Infinity,Infinity,Infinity],backs=[];for(const pair of pairs){const next=[Infinity,Infinity,Infinity,Infinity],pred=[null,null,null,null];for(let s=0;s<4;s++){if(!Number.isFinite(m[s]))continue;const p=(s>>1)&1,o=s&1;for(let b=0;b<=1;b++){const out=[b^p^o,b^o],ns=(b<<1)|p,cost=(Number(pair[0])!==out[0])+(Number(pair[1])!==out[1]),v=m[s]+cost;if(v<next[ns]){next[ns]=v;pred[ns]={state:s,bit:b};}}}m=next;backs.push(pred);}let state=0,bits="";for(let t=backs.length-1;t>=0;t--){const p=backs[t][state];if(!p)return {bits:"?",metric:Infinity};bits=p.bit+bits;state=p.state;}return {bits:bits.slice(0,-2),metric:m[0]};}
   function waterFill(noise,power){let lo=Math.min(...noise),hi=Math.max(...noise)+power;for(let k=0;k<80;k++){const mid=(lo+hi)/2,total=noise.reduce((s,n)=>s+Math.max(mid-n,0),0);if(total>power)hi=mid;else lo=mid;}const level=(lo+hi)/2,powers=noise.map(n=>Math.max(level-n,0)),capacity=powers.reduce((s,p,i)=>s+.5*Math.log2(1+p/noise[i]),0);return {level,powers,capacity};}
+
+  function macRegion(p2){const p1=2,n=1,c1=.5*Math.log2(1+p1/n),c2=.5*Math.log2(1+p2/n),cs=.5*Math.log2(1+(p1+p2)/n);return {c1,c2,cs,corner1:[c1,cs-c1],corner2:[cs-c2,c2]};}
+  function softmax(z){const m=Math.max(...z),e=z.map(v=>Math.exp(v-m)),s=e.reduce((a,b)=>a+b,0);return e.map(v=>v/s);}
+  function logsumexp(z){const m=Math.max(...z);return m+Math.log(z.reduce((a,v)=>a+Math.exp(v-m),0));}
+  function digammaInt(n){let s=0;for(let i=1;i<n;i++)s+=1/i;return s-0.5772156649015329;}
+  const ksgPairs=(()=>{let seed=20261122;const rand=()=>{seed=(1664525*seed+1013904223)>>>0;return (seed+.5)/4294967296;};const normal=()=>{const u=Math.max(rand(),1e-12),v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};const a=[],rho=.7,scale=Math.sqrt(1-rho*rho);for(let i=0;i<160;i++){const x=normal(),y=rho*x+scale*normal();a.push([x,y]);}return a;})();
+  function ksgDemo(k){const a=ksgPairs,n=a.length,terms=[];for(let i=0;i<n;i++){let ds=[];for(let j=0;j<n;j++)if(i!==j)ds.push(Math.max(Math.abs(a[i][0]-a[j][0]),Math.abs(a[i][1]-a[j][1])));ds.sort((x,y)=>x-y);const eps=ds[k-1];let nx=0,ny=0;for(let j=0;j<n;j++)if(i!==j){if(Math.abs(a[i][0]-a[j][0])<eps)nx++;if(Math.abs(a[i][1]-a[j][1])<eps)ny++;}terms.push(digammaInt(nx+1)+digammaInt(ny+1));}const nats=digammaInt(k)+digammaInt(n)-terms.reduce((s,v)=>s+v,0)/n;return nats/Math.LN2;}
   function typicalMass(n, p=.25, eps=.15) {
     const H = h2(p);
     let binomial = Math.pow(1-p, n), mass = 0;
@@ -88,6 +95,11 @@
       case "otp-leakage": return "q="+v.toFixed(2)+"；均匀明文下泄漏 I(M;C)="+fmt(1-h2(v))+" bit";
       case "binary-rd": return "D="+v.toFixed(3)+"；R(D)="+fmt(v>=.2?0:h2(.2)-h2(v))+" bit/符号";
       case "water-filling": {const z=waterFill([1,2,4],v);return "P="+v.toFixed(1)+"；μ="+fmt(z.level)+"；分配("+z.powers.map(x=>x.toFixed(3)).join(", ")+")；容量="+fmt(z.capacity)+" bit/组三次使用";}
+      case "mac-region": {const p=Math.max(0,v),z=macRegion(p);return "P₂="+p.toFixed(1)+"；C₁="+fmt(z.c1)+"，C₂="+fmt(z.c2)+"；总和上限="+fmt(z.cs)+" bit/real-use；SIC 角点("+fmt(z.corner1[0])+","+fmt(z.corner1[1])+") / ("+fmt(z.corner2[0])+","+fmt(z.corner2[1])+")";}
+      case "fisher-crb": {const n=Math.round(v),info=n/4,bound=4/n;return "n="+n+"；Jₙ="+fmt(info)+"；Var(样本均值) ≥ "+fmt(bound);}
+      case "softmax-ce": {const z=[2,v,-1],p=softmax(z),ce=logsumexp(z)-v;return "z₁="+v.toFixed(1)+"；p₁="+fmt(p[1])+"；CE="+fmt(ce)+"；目标类梯度="+fmt(p[1]-1)+"；梯度向量("+p.map((x,i)=>fmt(x-(i===1?1:0))).join(", ")+")";}
+      case "ib-tradeoff": {const pts=[[0,0],[.5,.35],[1,.62],[1.5,.78],[2,.86],[2.5,.9]],best=pts.map(([x,y])=>({x,y,j:x-v*y})).sort((a,b)=>a.j-b.j)[0];return "β="+v.toFixed(2)+"；选择 I(X;T)="+best.x.toFixed(2)+" bit，I(T;Y)="+best.y.toFixed(2)+" bit；J="+best.j.toFixed(3);}
+      case "mi-estimator": {const k=Math.round(v),estimate=ksgDemo(k),truth=-.5*Math.log2(1-.7*.7);return "k="+k+"；KSG-1 ≈ "+estimate.toFixed(4)+" bit；解析真值="+truth.toFixed(4)+" bit；样本 N=160";}
       default: return null;
     }
   }

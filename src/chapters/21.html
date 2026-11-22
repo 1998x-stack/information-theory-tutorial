@@ -1,278 +1,38 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>第21章 网络信息论</title>
-    <link rel="stylesheet" href="theme.css">
-</head>
-<body>
-<div class="double-border">
-<div class="container">
-    <div class="sidebar">
-        <h3>📡 课程目录</h3>
-        <ul class="chapter-list">
-            <li><a href="01.html">第1章 什么是信息</a></li>
-            <li><a href="02.html">第2章 概率论回顾</a></li>
-            <li><a href="03.html">第3章 自信息与熵</a></li>
-            <li><a href="04.html">第4章 互信息</a></li>
-            <li><a href="05.html">第5章 KL散度与交叉熵</a></li>
-            <li><a href="06.html">第6章 熵的性质深入</a></li>
-            <li><a href="07.html">第7章 渐进均分性AEP</a></li>
-            <li><a href="08.html">第8章 信源编码定理</a></li>
-            <li><a href="09.html">第9章 Huffman编码</a></li>
-            <li><a href="10.html">第10章 算术编码</a></li>
-            <li><a href="11.html">第11章 字典编码</a></li>
-            <li><a href="12.html">第12章 离散信道</a></li>
-            <li><a href="13.html">第13章 信道容量</a></li>
-            <li><a href="14.html">第14章 信道编码定理</a></li>
-            <li><a href="15.html">第15章 线性分组码</a></li>
-            <li><a href="16.html">第16章 循环码与CRC</a></li>
-            <li><a href="17.html">第17章 卷积码与Viterbi译码</a></li>
-            <li><a href="18.html">第18章 信息论与安全</a></li>
-            <li><a href="19.html">第19章 率失真理论</a></li>
-            <li><a href="20.html">第20章 连续信源与微分熵</a></li>
-            <li><a href="21.html" class="active">第21章 网络信息论</a></li>
-            <li><a href="22.html">第22章 信息论与统计推断</a></li>
-            <li><a href="23.html">第23章 交叉熵与深度学习</a></li>
-            <li><a href="24.html">第24章 信息瓶颈理论</a></li>
-            <li><a href="25.html">第25章 信息论工具实战</a></li>
-            <li><a href="26.html">第26章 语义信息论</a></li>
-            <li><a href="27.html">第27章 信息论前沿</a></li>
-            <li><a href="28.html">第28章 综合项目</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-
-        <p>大家好，我是你们的讲师。今天的话题从一个日常现象开始。</p>
-
-        <p>你在咖啡店里，周围五六张桌子都有顾客在聊天。你的朋友坐在对面说话，你能听懂他——尽管旁边有人在讨论股市、后面有人在大声点单、背景里还有研磨咖啡机的轰鸣。你甚至能做到一件更神奇的事：当另一个人叫你的名字时，你会下意识地侧耳过去——"鸡尾酒会效应"从生理到心理都在发挥作用。</p>
-
-        <p>在通信世界里，我们也面临类似的问题：多个用户共享同一个"听觉环境"——即同一个物理信道。手机用户同时向基站发送数据（上行），基站同时向多个手机广播数据（下行），Wi-Fi 网络中多个设备共享一个频率。这和"一对一"通信的本质区别在于：<strong>干扰</strong>。A的信息对B来说是噪声，B的信息对A来说也是噪声。</p>
-
-        <p>网络信息论（Network Information Theory）就是研究在这种多用户、有干扰的场景下，信息传输的理论极限。这个领域由香农在1960年代奠基，但和"点对点"通信不同——网络信息论中相当多的基本问题至今仍未完全解决。这是一个充满了开放性问题的学科。</p>
-
-        <h2>多址接入信道 (MAC)</h2>
-
-        <p><strong>多址接入信道</strong>（Multiple Access Channel, MAC）是最简单的多用户信道模型：多个发送者，一个接收者。典型的例子是5G网络的上行链路——几十部手机同时向一个基站发送数据。</p>
-
-        <p>对于两用户高斯 MAC：</p>
-
-        <pre><code>Y = X₁ + X₂ + N,   N ~ N(0, σ²)
-E[X₁²] ≤ P₁, E[X₂²] ≤ P₂</code></pre>
-
-        <p>这里的<strong>容量域</strong>（Capacity Region）不再是单一的数值，而是一个二维区域——所有可达的速率对 (R₁, R₂) 的集合。对于两用户高斯 MAC，容量域是一个五边形：</p>
-
-        <ul>
-            <li>R₁ ≤ ½ log₂(1 + P₁/σ²) —— 当用户2不通信时</li>
-            <li>R₂ ≤ ½ log₂(1 + P₂/σ²) —— 当用户1不通信时</li>
-            <li>R₁ + R₂ ≤ ½ log₂(1 + (P₁+P₂)/σ²) —— 总速率上限</li>
-        </ul>
-
-        <p>这个五边形区域的关键含义是：<strong>两个用户可以同时以各自的全速通信吗？</strong>——不行。它们必须为彼此"让路"。总速率的上限不是独立速率上限的简单相加——两个用户共享功率可以带来"功率合并增益"（总功率 P₁+P₂ 比两个独立功率的信噪比之和更高效）。</p>
-
-        <p>容量域边界上的两个角点对应于<strong>连续干扰消除</strong>（Successive Interference Cancellation, SIC）的策略：接收端先解码一个用户的信号（把另一个用户视为噪声），然后减去该信号后再解码另一个。解码顺序不同，得到两个不同的角点。而五边形内的任意点可以通过<strong>时分</strong>（Time-Sharing）在角点之间做时间分割来达到。</p>
-
-        <p>用 Python 画出两用户 MAC 的容量域：</p>
-
-        <pre><code>import numpy as np
-import matplotlib.pyplot as plt
-
-def mac_capacity_region(P1, P2, noise_var):
-    """两用户高斯MAC容量域的信道参数"""
-    # 独立速率上限
-    R1_max = 0.5 * np.log2(1 + P1 / noise_var)
-    R2_max = 0.5 * np.log2(1 + P2 / noise_var)
-    R_sum  = 0.5 * np.log2(1 + (P1 + P2) / noise_var)
-
-    # 五个顶点（顺时针）
-    pts = [(0, 0),
-           (R1_max, 0),
-           (R1_max, R_sum - R1_max),
-           (R_sum - R2_max, R2_max),
-           (0, R2_max)]
-    return pts, R_sum
-
-P1, P2, sigma2 = 2.0, 1.5, 1.0
-pts, R_sum = mac_capacity_region(P1, P2, sigma2)
-
-print(f"用户1最大速率: {0.5*np.log2(1+P1/sigma2):.3f} bits/symbol")
-print(f"用户2最大速率: {0.5*np.log2(1+P2/sigma2):.3f} bits/symbol")
-print(f"总速率上限: {R_sum:.3f} bits/symbol")
-print(f"时分可达速率: ")
-for alpha in np.linspace(0, 1, 5):
-    # 两个角点之间时分
-    cp1 = (pts[1][0], pts[1][1])  # 先解用户1
-    cp2 = (pts[3][0], pts[3][1])  # 先解用户2
-    R1_td = alpha * cp1[0] + (1-alpha) * cp2[0]
-    R2_td = alpha * cp1[1] + (1-alpha) * cp2[1]
-    print(f"  α={alpha:.2f}: R1={R1_td:.3f}, R2={R2_td:.3f}")</code></pre>
-
-        <h2>广播信道 (BC)</h2>
-
-        <p>与 MAC 相对，<strong>广播信道</strong>（Broadcast Channel, BC）是一个发送者、多个接收者。典型例子：5G下行链路——基站同时向多个手机发送数据。</p>
-
-        <p>广播信道的研究比 MAC 困难得多。原因在于：发送者只有一份发射信号，不同的接收者经历不同的"视角"（不同的信道条件）。最经典的模型是<strong>退化广播信道</strong>（Degraded Broadcast Channel）：</p>
-
-        <pre><code>X → Y₁ → Y₂  (马尔可夫链)
-
-Y₁ = X + N₁,   Y₂ = X + N₂ = Y₁ + Ñ</code></pre>
-
-        <p>其中 <code>N₁ ~ N(0, σ₁²)</code>, <code>N₂ ~ N(0, σ₂²)</code>，且 <code>σ₂² > σ₁²</code>（用户2的信道更差）。</p>
-
-        <p>退化广播容量的核心编码技术是<strong>叠加编码</strong>（Superposition Coding）：发送端用两种不同的"功率层"来发送两个不同的消息。公共消息（对两个用户都重要）用高功率编码，私密消息（只对"好"用户）在剩余功率上编码。"差"用户只能解出公共部分，而"好"用户可以先解公共部分，减去后再解私密部分。这和 MAC 中的 SIC 有异曲同工之妙。</p>
-
-        <div class="tip">
-            <strong>日常类比：</strong>想象你在一个嘈杂的广场上喊话。你要同时告诉远处的人（信道差）和近处的人（信道好）。你会怎么做？你会先用一个"公共音量"把所有人都要听的关键信息喊出来。如果你还有精力，再用一个"较低音量"补充细节——这些细节只有近处的人能听清。这就是叠加编码的直觉。
-        </div>
-
-        <p>值得注意的是，广播信道的容量域在一般（非退化）情况下仍然是一个开放问题。Cover 在1972年提出了退化广播信道的容量域，但非退化广播信道的完整容量域至今未知。</p>
-
-        <h2>中继信道与干扰信道</h2>
-
-        <p>更复杂的网络拓扑包括中继和干扰：</p>
-
-        <h3>中继信道 (Relay Channel)</h3>
-
-        <p>源 → 中继 → 目的。中继可以帮助改善通信质量——当源和目的之间的直接链路太差时。典型应用场景：蜂窝网络中的信号中继站、卫星通信、Mesh Wi-Fi 网络。</p>
-
-        <p>中继的基本策略有两种：</p>
-
-        <ul>
-            <li><strong>解码转发</strong>（Decode-and-Forward, DF）：中继先完全解码收到的消息，再重新编码转发。虽然简单，但中继可能引入错误传播。</li>
-            <li><strong>压缩转发</strong>（Compress-and-Forward, CF）：中继不试图解码，而是将收到的信号做有损压缩后转发给目的端，让目的端自己去"拼图"。CF 在弱中继链路下通常优于 DF。</li>
-        </ul>
-
-        <p>中继信道的容量域同样是一个开放问题，目前最好的已知结果是由 Cover 和 El Gamal 在1979年给出的上下界——但上下界之间存在间隙。</p>
-
-        <h3>干扰信道 (Interference Channel)</h3>
-
-        <p>这是网络信息论中最"臭名昭著"的问题。两对发送-接收对在同一信道上通信：发送者1想和接收者1通信，发送者2想和接收者2通信——但每个发送者的信号都干扰了另一个接收者。</p>
-
-        <div class="warning">
-            <strong>开放问题：</strong>干扰信道的容量域——即使是最简单的双用户高斯干扰信道——经过了40多年的研究仍未被完全确定。这是信息论中最重要的开放问题之一。
-        </div>
-
-        <p>对于干扰信道，已知的结果包括：</p>
-        <ul>
-            <li><strong>强干扰</strong>：此时可以把干扰当作信号的一部分来解码（类似于把邻居的信号解码出来），容量域由 Han-Kobayashi 界描述</li>
-            <li><strong>弱干扰</strong>：此时把干扰当作噪声——但这不是最优的。Han-Kobayashi 方案（部分解码干扰）是目前已知最好的可达策略，但一般情况下的最优性仍未被证明</li>
-            <li><strong>干扰对齐</strong>（Interference Alignment）：Cadambe 和 Jafar 在2008年的一项突破性工作，展示了在干扰信道中自由度可以随用户数线性增长——但这需要无限维的信号空间</li>
-        </ul>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>信道模型</th>
-                    <th>发送端数</th>
-                    <th>接收端数</th>
-                    <th>容量结果</th>
-                    <th>典型应用</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>多址接入信道 (MAC)</td>
-                    <td>≥ 2</td>
-                    <td>1</td>
-                    <td>完全已知（五边形区域）</td>
-                    <td>5G上行、Wi-Fi多用户</td>
-                </tr>
-                <tr>
-                    <td>广播信道 (BC)</td>
-                    <td>1</td>
-                    <td>≥ 2</td>
-                    <td>退化情况已知，一般情况开放</td>
-                    <td>5G下行、数字电视</td>
-                </tr>
-                <tr>
-                    <td>中继信道</td>
-                    <td>1</td>
-                    <td>1（+中继）</td>
-                    <td>上下界已知，有间隙</td>
-                    <td>卫星通信、IoT中继</td>
-                </tr>
-                <tr>
-                    <td>干扰信道</td>
-                    <td>≥ 2</td>
-                    <td>≥ 2</td>
-                    <td>Han-Kobayashi界，一般情况开放</td>
-                    <td>D2D通信、未授权频段</td>
-                </tr>
-                <tr>
-                    <td>双向信道</td>
-                    <td>2（各发各收）</td>
-                    <td>2</td>
-                    <td>完全已知</td>
-                    <td>对讲机、全双工</td>
-                </tr>
-                <tr>
-                    <td>X信道</td>
-                    <td>2</td>
-                    <td>2（交叉连接）</td>
-                    <td>自由度已知，容量开放</td>
-                    <td>多天线干扰管理</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p>这张表说明了一个事实：<strong>一旦通信从"一对一"变成"多对多"，很多看似简单的问题就变成了数学难题</strong>。这就是为什么网络信息论至今仍是一个活跃的研究领域。</p>
-
-        <h2>网络编码基础</h2>
-
-        <p>传统的网络通信中，中间节点（路由器、交换机）扮演的角色很简单：<strong>存储转发</strong>——收到一个数据包，查路由表，转发出去。网络编码（Network Coding）颠覆了这个思路：中间节点可以对收到的数据包做<strong>代数运算</strong>（比如 XOR），然后将运算结果转发出去。</p>
-
-        <p>最经典的例子是<strong>蝴蝶网络</strong>（Butterfly Network）：</p>
-
-        <pre><code>         S
-        / \
-       /   \
-      A     B       S: 源（有a、b两份数据）
-       \   /        A, B, C, D: 节点
-        \ /         t₁: 要a和b
-         C          t₂: 要a和b
-        / \
-       /   \
-      t₁   t₂</code></pre>
-
-        <p>传统路由：中继链路 C 一次只能传 a 或 b——接收端永远无法同时获得两份数据。如果 C 轮流传 a 和 b，需要两倍的时间。</p>
-
-        <p>网络编码的解法：C 将 a 和 b 做 XOR（<code>c = a ⊕ b</code>），然后广播这一个数据包。接收端 t₁ 收到 a（从另一条路径）和 c，计算出 <code>b = a ⊕ c</code>；t₂ 用同样的方法得到 a。这样，中继链路 C 只需要一次传输就同时服务了两个接收者！</p>
-
-        <p>这个思想的关键在于：<strong>传统路由把信息当作"原子"来搬运，而网络编码把信息当作"数据流"来混合</strong>——就像把两封信拆开、把其中的半封信混合在一起重新装封，收信人通过某些"密钥"（自己所知的部分信息）可以解码出完整内容。</p>
-
-        <div class="highlight">
-            <strong>网络编码的深层意义：</strong>传统路由只能达到"存储转发"的吞吐量上限——即最大流最小割定理所确定的容量。但网络编码告诉我们：通过允许中间节点编码，可以达到多播（multicast）的理论最大容量。换句话说，<strong>最大流最小割定理是路由的极限，而网络编码可以触及这个极限</strong>。
-        </div>
-
-        <p>实际应用方面，网络编码已经走出了单纯的学术研究范畴：</p>
-        <ul>
-            <li><strong>P2P文件共享</strong>：BitTorrent 的一些变种使用网络编码来提高块调度效率。传统方法中，文件被分成很多块，每个节点要协调"哪些块我有、哪些块你需要"——在大量节点时这非常复杂。使用线性网络编码，节点可以发送"块线性组合"，接收节点只要收到足够多的独立组合就能解码出原始文件。</li>
-            <li><strong>卫星通信</strong>：利用网络编码的"自然"擦除纠正能力，可以减少丢包重传的开销。</li>
-            <li><strong>无线Mesh网络</strong>：COPE 协议是第一个在真实无线路由器上实现网络编码的系统，在实验环境中(通过编码机会)实现了数倍的吞吐量提升。</li>
-        </ul>
-
-        <p>线性网络编码的数学基础是<strong>有限域上的线性代数</strong>——每个数据包被看作是有限域 GF(2^m) 上的一个向量，中间节点生成这些向量的线性组合。只要组合系数保持充分随机性，接收端收到足够多的独立方程后就能解出所有原始数据。</p>
-
-        <hr>
-
-        <p>这一章我们进入了网络信息论的世界——多个用户、多种拓扑、充满开放问题。关键 takeaways：</p>
-        <ul>
-            <li>MAC信道（多对一）：容量域是五边形，可用 SIC 达到角点</li>
-            <li>广播信道（一对多）：叠加编码是关键，退化情况容量已知</li>
-            <li>中继信道和干扰信道的基本问题至今仍是开放研究</li>
-            <li>网络编码让中间节点从"搬运工"变成"计算者"——一个简单的 XOR 操作就能大幅提升多播容量</li>
-        </ul>
-
-        <p>下一章，我们将视野从通信工程转向统计学。信息论与统计推断有着深刻的联系——Fisher信息、最小描述长度（MDL）、最大熵原理——信息论为统计学提供了独特的视角。</p>
-
-        <div class="footer-nav">
-            <a href="20.html">← 上一章</a>
-            <a href="index.html">📖 返回目录</a>
-            <a href="22.html">下一章 →</a>
-        </div>
-    </div>
-</div>
-</div>
-</body>
-</html>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="从一对一信道走向多用户网络：建立 MAC 容量域、退化广播信道叠加编码、中继上下界、干扰管理与蝶形网络编码的统一视角。"><title>第 21 章 · 网络信息论：多个用户如何共享一张信道网 | 信息论</title><link rel="stylesheet" href="../assets/css/site.css"><script defer src="../assets/js/site.js"></script></head><body><a class="skip-link" href="#content">跳转至正文</a><header class="top"><a class="brand" href="../index.html">信息论 / INFORMATION THEORY</a><nav aria-label="课程导航"><a href="../index.html">课程首页</a><a href="../index.html#chapters">全部章节</a></nav></header><div class="layout"><nav class="toc" aria-label="本章目录"><strong>第 21 章 · 网络信息论：多个用户如何共享一张信道网</strong><a href="#question">为什么单用户容量不够用？</a><a href="#mac">多址接入：容量是区域，不是一个数</a><a href="#sic">SIC：解码顺序决定边界角点</a><a href="#broadcast">广播信道：叠加编码与退化结构</a><a href="#relay">中继：切集上界与可达下界</a><a href="#interference">干扰信道：把干扰当噪声还是消息</a><a href="#network-code">网络编码：中间节点也能计算</a><a href="#summary">多用户信道的建模检查</a><a href="#sources">来源与延伸阅读</a></nav><main id="content"><article><header class="article-header"><p class="chapter-label">NETWORK INFORMATION THEORY / CHAPTER 21</p><h1>网络信息论：多个用户如何共享一张信道网</h1><p class="dek">从一对一信道走向多用户网络：建立 MAC 容量域、退化广播信道叠加编码、中继上下界、干扰管理与蝶形网络编码的统一视角。</p></header><div class="article-body">
+<section id="question" aria-labelledby="s-question"><h2 id="s-question">为什么单用户容量不够用？</h2>
+<p>点到点信道只需回答一个问题：发送者每次使用信道，最多能可靠传送多少比特？多用户网络则要同时描述多个消息流。用户之间共享功率、频谱、接收端和中继节点，一个用户的输入可能成为另一个用户的干扰，因此答案通常是<strong>可达速率向量的集合</strong>，而不是单个容量数字。</p>
+<p>本章先区分四种基本拓扑：多个发送者汇聚到一个接收者的多址接入信道（MAC）；一个发送者服务多个接收者的广播信道（BC）；中继协助源—宿通信的 Relay；以及多个发送—接收对互相干扰的 Interference Channel。网络编码再把“节点只能转发比特”的直觉扩展为“节点可以对收到的信息做代数运算”。</p>
+<figure><img src="../assets/figures/21-network-models.svg" alt="MAC、广播、中继和双用户干扰信道四种拓扑图" loading="lazy"><figcaption>四种拓扑的节点数量和箭头方向不同；同一条物理链路在不同用户的解码任务中可能是有用信号，也可能是干扰。</figcaption></figure>
+<p>统一的离散无记忆多址信道由条件分布 <code>W(y|x₁,x₂)</code> 描述。发送端独立编码各自消息，接收端观察同一个 Y 并尝试联合恢复消息。容量域的边界取决于信道转移规律、输入分布、功率约束和允许的编码策略。</p></section>
+<section id="mac" aria-labelledby="s-mac"><h2 id="s-mac">多址接入：容量是区域，不是一个数</h2>
+<p>考虑实值两用户高斯 MAC：<code>Y = X₁ + X₂ + Z</code>，噪声 <code>Z∼N(0,N)</code>，两用户满足平均功率约束 <code>E[Xᵢ²]≤Pᵢ</code>。采用独立高斯码本时，所有可达速率对必须满足三条约束：</p>
+<div class="math-equation" role="group" aria-label="两用户高斯多址信道容量域约束"><div class="math-scroll" tabindex="0" role="region" aria-label="两用户高斯多址信道容量域约束，可横向滚动"><math display="block" aria-label="两用户高斯多址信道容量域约束"><mtable><mtr><mtd><msub><mi>R</mi><mn>1</mn></msub><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>log</mi><mn>2</mn></msub><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><msub><mi>P</mi><mn>1</mn></msub><mi>N</mi></mfrac><mo>)</mo></mtd></mtr><mtr><mtd><msub><mi>R</mi><mn>2</mn></msub><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>log</mi><mn>2</mn></msub><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><msub><mi>P</mi><mn>2</mn></msub><mi>N</mi></mfrac><mo>)</mo></mtd></mtr><mtr><mtd><msub><mi>R</mi><mn>1</mn></msub><mo>+</mo><msub><mi>R</mi><mn>2</mn></msub><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>log</mi><mn>2</mn></msub><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>+</mo><msub><mi>P</mi><mn>2</mn></msub></mrow><mi>N</mi></mfrac><mo>)</mo></mtd></mtr></mtable></math></div><div class="eq-label">(21.1)</div></div>
+<p>前两条是各用户单独面对噪声时的速率上限；第三条限制两条消息的总速率。第三条不是前两条简单相加：接收端联合处理两个码本，观测中包含二者叠加后的总信号功率。公式中的 1/2 对应<strong>每次实值信道使用</strong>；若改用复基带符号或每秒单位，归一化会改变。</p>
+<figure><img src="../assets/figures/21-gaussian-mac-region.svg" alt="两用户高斯 MAC 的五边形容量区域和两个 SIC 角点" loading="lazy"><figcaption>阴影五边形表示满足三条不等式的速率对；右上斜边是总速率约束，两个角点分别对应不同的连续干扰消除顺序。</figcaption></figure>
+<p>例如取 <code>P₁=2</code>、<code>P₂=1.5</code>、<code>N=1</code>，则单用户上限约为 0.7925 和 0.6610 bit/real-use，总速率上限约为 1.0850。若只盯着某一个用户的单独上限，就会忽略两人同时高速发送时必须满足的总和约束。</p>
+<div class="lab" data-lab="mac-region"><label for="lab-mac-region">调整用户 2 的发射功率 P₂（P₁=2，N=1）</label><input id="lab-mac-region" type="range" min="0" max="4" step="0.1" value="1.5"><output for="lab-mac-region" aria-live="polite">P₂=1.5；C₁=0.7925，C₂=0.6610，总和上限=1.0850 bit/real-use</output><p class="micro">这是实值高斯 MAC 的解析容量域，不是随机仿真。拖动滑块观察用户 2 的单用户边界和总速率边界如何变化。</p></div></section>
+<section id="sic" aria-labelledby="s-sic"><h2 id="s-sic">SIC：解码顺序决定边界角点</h2>
+<p>连续干扰消除（SIC）不是把两个用户的干扰“凭空消掉”，而是先把其中一条消息可靠解码，再重构并减去对应码字，最后解码另一条消息。先解用户 1 时，用户 1 把用户 2 视作噪声；成功恢复 X₁ 后，用户 2 的解码可利用已知 X₁。交换顺序会得到另一处边界角点。</p>
+<p>在高斯 MAC 中，联合典型性解码可达到整个容量域；SIC 的两个顺序给出两个极端角点，时分/时间共享形成凸包边界。实践系统还要考虑有限码长、信道估计误差、功率控制与误码传播：若第一步误译，后续抵消可能反而放大错误。</p></section>
+<section id="broadcast" aria-labelledby="s-broadcast"><h2 id="s-broadcast">广播信道：叠加编码与退化结构</h2>
+<p>广播信道只有一个发送者，却要服务多个接收者。先看物理退化的两用户高斯模型：<code>Yₛ=X+Zₛ</code>、<code>Y𝓌=X+Z𝓌</code>，且 <code>Nₛ&lt;N𝓌</code>，强用户观测更干净；若能构造 <code>X→Yₛ→Y𝓌</code> 的退化 Markov 链，就可用退化广播信道的单字母容量表达式分析。</p>
+<p>叠加编码把发射信号拆成弱用户层和强用户层：<code>X=X𝓌+Xₛ</code>，功率满足 <code>P𝓌+Pₛ≤P</code>。弱用户把强用户层当噪声；强用户先解弱用户层、抵消后再解自己的层：</p>
+<div class="math-equation" role="group" aria-label="退化高斯广播信道叠加编码速率约束"><div class="math-scroll" tabindex="0" role="region" aria-label="退化高斯广播信道叠加编码速率约束，可横向滚动"><math display="block" aria-label="退化高斯广播信道叠加编码速率约束"><mtable><mtr><mtd><msub><mi>R</mi><mi>𝓌</mi></msub><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>log</mi><mn>2</mn></msub><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><msub><mi>P</mi><mi>𝓌</mi></msub><mrow><msub><mi>P</mi><mi>s</mi></msub><mo>+</mo><msub><mi>N</mi><mi>𝓌</mi></msub></mrow></mfrac><mo>)</mo></mtd></mtr><mtr><mtd><msub><mi>R</mi><mi>s</mi></msub><mo>≤</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><msub><mi>log</mi><mn>2</mn></msub><mo>(</mo><mn>1</mn><mo>+</mo><mfrac><msub><mi>P</mi><mi>s</mi></msub><msub><mi>N</mi><mi>s</mi></msub></mfrac><mo>)</mo></mtd></mtr></mtable></math></div><div class="eq-label">(21.2)</div></div>
+<p>这里的层次和用户强弱必须说清楚：弱用户只解自己的层；强用户有能力先解弱层并做串行抵消。一般非退化广播信道的容量区域并没有同样简单的完整表达式，不能把退化信道的结论推广到任意 BC。</p></section>
+<section id="relay" aria-labelledby="s-relay"><h2 id="s-relay">中继：切集上界与可达下界</h2>
+<p>中继信道包含源 S、中继 R 和目的端 D。中继观察 <code>Yᵣ</code>，并在后续时刻根据过去观测发送 <code>Xᵣ</code>；目的端收到 <code>Y</code>。源和中继共同发射可能改善目的端的信噪比，但中继必须先获得足够的信息才能帮助转发。</p>
+<p>对一般离散无记忆中继信道，切集（cut-set）论证给出容量上界：把网络切成两侧，信息流不能超过穿过任一切面的互信息。译码转发（decode-and-forward, DF）则给出一种可达下界：中继先可靠解出源消息，再与源协同发送。</p>
+<div class="math-equation" role="group" aria-label="一般离散无记忆中继信道 cut-set 上界"><div class="math-scroll" tabindex="0" role="region" aria-label="一般离散无记忆中继信道 cut-set 上界，可横向滚动"><math display="block" aria-label="一般离散无记忆中继信道 cut-set 上界"><mrow><mi>C</mi><mo>≤</mo><munder><mo>max</mo><mrow><mi>p</mi><mo>(</mo><mi>x</mi><mo>,</mo><msub><mi>x</mi><mi>r</mi></msub><mo>)</mo></mrow></munder><mo>min</mo><mo>{</mo><mi>I</mi><mo>(</mo><mi>X</mi><mo>,</mo><msub><mi>X</mi><mi>r</mi></msub><mo>;</mo><mi>Y</mi><mo>)</mo><mo>,</mo><mi>I</mi><mo>(</mo><mi>X</mi><mo>;</mo><mi>Y</mi><mo>,</mo><msub><mi>Y</mi><mi>r</mi></msub><mo>|</mo><msub><mi>X</mi><mi>r</mi></msub><mo>)</mo><mo>}</mo></mrow></math></div><div class="eq-label">(21.3)</div></div>
+<p>DF 的典型可达率包含两个瓶颈：中继必须能从自己的观测中解出源消息，目的端也必须能解出源与中继协同发送的消息。一般信道中这两个界之间可能有差距；只有在特定退化条件下，才能得到相应的精确容量定理。不能把 cut-set 上界称作“中继容量公式”。</p>
+<p>Cover 与 El Gamal 的经典工作系统化了中继信道的容量定理、上下界和 block-Markov 编码；后续 compress-and-forward 则让中继压缩观测而不必完整解码源消息。不同策略的优势取决于信道拓扑和相关性。</p></section>
+<section id="interference" aria-labelledby="s-interference"><h2 id="s-interference">干扰信道：把干扰当噪声还是消息</h2>
+<p>双用户干扰信道可写成 <code>Y₁=X₁+a₁₂X₂+Z₁</code>、<code>Y₂=a₂₁X₁+X₂+Z₂</code>。每个接收端都想恢复自己的消息，同时面对另一个发送端的信号。弱干扰时，把干扰当噪声可能足够；强干扰时，接收端解码干扰消息可能更好；中间区域则需要把消息拆成公共部分和私有部分。</p>
+<p>Han–Kobayashi 思路将每个用户消息分成公共与私有两层：公共层可被两个接收端解码，私有层主要由目标接收端解码。它揭示了干扰管理并非只有“全解码”或“全当噪声”两种极端。一般干扰信道的完整容量区域仍是困难问题，特殊强/弱/退化条件下才有已知精确结果或紧界。</p>
+<div class="note warning">不要把一个具体高斯干扰信道的近似界说成所有网络的精确容量；必须同时写清楚交叉增益、噪声方差、功率约束和解码假设。</div></section>
+<section id="network-code" aria-labelledby="s-network-code"><h2 id="s-network-code">网络编码：中间节点也能计算</h2>
+<p>在传统路由中，中间节点通常复制并转发收到的比特流。网络编码允许节点对多个流做代数运算。蝶形网络是经典例子：两个源分别发送 a、b，瓶颈链路只有一个比特容量；中间节点发送 <code>a⊕b</code>，两个目的端各自已知其中一个源比特，因此都能恢复另一个。</p>
+<figure><img src="../assets/figures/21-butterfly-network-coding.svg" alt="蝶形网络瓶颈链路发送 a XOR b，两个接收端利用侧信息恢复消息" loading="lazy"><figcaption>网络编码并没有增加瓶颈链路容量，而是利用两个接收端已有的侧信息，让同一个 XOR 广播同时服务两条流。</figcaption></figure>
+<p>对单源 multicast 网络，线性网络编码与最大流—最小割思想有深刻联系。网络编码的收益依赖多播需求、拓扑、有限域和边容量；不能推断任意单播网络都能通过 XOR 获益。</p></section>
+<section id="summary" aria-labelledby="s-summary"><h2 id="s-summary">多用户信道的建模检查</h2>
+<ul><li>先画清楚谁发送、谁接收、谁能看到哪个输出，再写条件分布。</li><li>容量域描述多个速率的联合可达性；每条边界不等式都对应一个信息流瓶颈。</li><li>区分精确容量、可达下界、切集上界与数值近似。</li><li>说明实/复信道、每次使用/每秒、独立输入/相关输入和平均功率约束。</li><li>SIC、叠加编码、DF、compress-and-forward 与网络编码是不同机制，不能混用名称。</li></ul></section>
+<section id="sources" aria-labelledby="s-sources"><h2 id="s-sources">来源与延伸阅读</h2><ol class="references"><li><a href="https://isl.stanford.edu/~cover/papers/paper51.pdf">El Gamal &amp; Cover (1980), Multiple User Information Theory</a>：MAC、广播、Relay 与多用户网络的统一综述。</li><li><a href="https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/resources/mit6_441s10_lec20/">MIT 6.441 Lecture 20</a>：多址信道容量域与高斯 MAC。</li><li><a href="https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/25a6f68fbf02116707e29afc40a07abe_MIT6_441S10_lec21.pdf">MIT 6.441 Lecture 21</a>：广播信道和退化广播信道。</li><li><a href="https://isl.stanford.edu/~cover/papers/transIT/0572cove.pdf">Cover &amp; El Gamal (1979), Capacity Theorems for the Relay Channel</a>：中继信道的精确结果和一般上下界。</li><li><a href="https://doi.org/10.1109/18.850663">Ahlswede et al. (2000), Network Information Flow</a>：网络编码与多播信息流。</li></ol></section></div><nav class="chapter-nav" aria-label="相邻章节"><a href="20.html">← 第 20 章</a><a href="../index.html">返回课程首页</a><a href="22.html">第 22 章 →</a></nav></article></main></div></body></html>

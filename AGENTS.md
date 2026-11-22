@@ -8,7 +8,7 @@
 
 - 维护源：`src/home/index.html`、`src/chapters/{NN}.html`、`src/assets/`、`src/figures/`、`src/data/courses.json`。
 - 构建产物：`docs/` 由 `scripts/build.py` 复制生成，不能只修改 `docs/`；根目录 `index.html` 与 28 个兼容重定向同为产物。
-- 21–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
+- 26–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
 
 ## 逐章工作流
 
@@ -48,3 +48,14 @@
 - 完善保密要求 I(M;C)=0。H(K)≥H(M) 是正确解密系统的必要条件，不是充分条件；OTP 要求密钥均匀、独立、等长、保密且只使用一次。
 - 率失真函数依赖源分布与失真函数，约束是期望块平均失真；高斯平方误差公式不能推广到任意源/感知度量。向量高斯源的反向注水应区分单标量公式。
 - 微分熵会随坐标尺度变化；h(aX+b)=h(X)+log₂|a|。高斯最大熵需注明协方差约束。实值 AWGN 每次使用容量含 1/2；带宽容量需单独说明自由度归一化。并联高斯信道注水与源编码反向注水方向相反。
+
+- 多用户容量域必须注明信道模型、输入独立性、实/复维度和每次使用单位。两用户实高斯 MAC 三条约束分别是两个单用户上限与总和速率上限；MAC SIC 角点由解码顺序决定。
+- 退化广播信道的叠加编码结论不得推广到一般非退化 BC。Relay 的 cut-set 是上界、decode-forward 是可达下界；一般中继容量未必已知。干扰信道要说明干扰系数和解码策略；网络编码示例要写清侧信息。
+- Fisher 信息与 Cramér–Rao 界需要可微性、支持集等正则条件；参数依赖支撑集的模型（如 U(0,θ)）不能机械套用标准 CRLB。n 个 i.i.d. 样本的 Fisher 信息相加。
+- MDL 是描述长度原则族，不应等同于单一 MAP 公式。AIC 近似预测 KL 风险，BIC 是边际似然的 Laplace 近似；记录自然对数、参数数目、样本独立性与模型正则条件。
+- 最大熵必须列明约束；“最随机”只在给定约束类内有意义。不要把最大熵解直接称为真实生成分布。
+- Softmax + CE 对 logits 的梯度为 q−y，目标 y 应是归一化概率。Brier / squared error 是适当评分规则，不能声称 MSE 没有概率解释或 CE 在所有任务上必胜。Label smoothing、distillation 与 VAE KL 是不同目标。
+- VAE ELBO 的重构项取决于观测似然；Bernoulli 对应 BCE，固定方差 Gaussian 对应带尺度的平方误差。KL 项比较近似后验与先验。
+- IB 假设 T−X−Y；经典目标与 VIB KL 权重约定须明确。连续 X 的确定性连续表示可能导致 I(X;T) 发散；信息平面压缩轨迹不是普遍深度学习定律。
+- 离散插件熵在固定支持集有限样本下通常向下偏；Miller–Madow 是一阶近似修正。经验 MI 在独立性原假设下常有正偏。KSG 的单位默认 nats，转 bits 需除 ln 2；KSG、KDE、MINE 与 InfoNCE 的假设不同。
+- InfoNCE 是受负样本数约束的互信息下界，通常至多 log(K) nats；MINE 的 DV 目标是总体分布下界，有限样本训练值不保证是无偏估计。所有 MI 实验必须报告估计器、参数、单位、样本量、随机种子和不确定性。
