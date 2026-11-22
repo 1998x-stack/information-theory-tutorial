@@ -1,9 +1,14 @@
 {
-  "scope": "01–05: finite discrete alphabets, log base 2 unless explicitly noted",
+  "scope": "01–10: finite discrete information theory; AEP assumes i.i.d. where stated; logarithm base 2 unless noted",
   "sources": {
     "Shannon1948": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x",
     "CoverThomas": "https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2",
-    "MIT": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/pages/lecture-notes/"
+    "MIT": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/pages/lecture-notes/",
+    "MIT2016": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/pages/lecture-notes/",
+    "StanfordEE376A": "https://web.stanford.edu/class/ee376a/outline.html",
+    "Huffman1952": "https://web.stanford.edu/class/ee398a/handouts/papers/Huffman%20-%20Min%20Redundancy%20Codes%20-%20IRE52.pdf",
+    "WittenNealCleary1987": "https://doi.org/10.1145/214762.214771",
+    "WileyCoverThomas": "https://www.wiley.com/en-us/elements-of-information-theory-2nd-edition-p-9780471748823"
   },
   "claims": [
     {
@@ -47,6 +52,54 @@
         "CoverThomas"
       ],
       "toy": "p=(.75,.25), q=(.5,.5): H=.811278, cross=1, KL=.188722"
+    },
+    {
+      "chapter": 6,
+      "statement": "Entropy for finite alphabets is concave and bounded above by log2 M; conditioning reduces entropy only on average; the discrete maximum entropy problem requires explicit constraints",
+      "evidence": [
+        "WileyCoverThomas",
+        "MIT2016"
+      ],
+      "toy": "X1 fair, X2=X1, X3 independent fair -> joint entropy=2 bits"
+    },
+    {
+      "chapter": 7,
+      "statement": "For i.i.d. finite-alphabet sources -log2 P(X^n)/n converges in probability to entropy. Typical set high-probability and cardinality bounds are asymptotic.",
+      "evidence": [
+        "WileyCoverThomas",
+        "MIT",
+        "StanfordEE376A"
+      ],
+      "toy": "Bernoulli(.25), n=8, epsilon=.15 -> mass=.31146240234375"
+    },
+    {
+      "chapter": 8,
+      "statement": "For binary uniquely decodable source codes, H(X)<=L; Shannon prefix lengths ceil(-log2 p) achieve L<H+1; prefix lengths satisfy Kraft.",
+      "evidence": [
+        "MIT2016",
+        "WileyCoverThomas"
+      ],
+      "toy": "p=(.4,.3,.2,.1): H≈1.84644, Shannon L=2.4, Huffman L=1.9"
+    },
+    {
+      "chapter": 9,
+      "statement": "Huffman greedy merge produces minimum mean length among binary symbol-by-symbol prefix codes with known symbol weights.",
+      "evidence": [
+        "Huffman1952",
+        "MIT2016",
+        "WileyCoverThomas"
+      ],
+      "toy": "A=.4,B=.3,C=.2,D=.1 -> lengths=(1,2,3,3), L=1.9"
+    },
+    {
+      "chapter": 10,
+      "statement": "Arithmetic encoding refines [L,U) using both new endpoints from old bounds, and exact dyadic inclusion allows a finite prefix; finite precision requires renormalization and termination protocol.",
+      "evidence": [
+        "WittenNealCleary1987",
+        "MIT2016",
+        "WileyCoverThomas"
+      ],
+      "toy": "p(A)=.6,p(B)=.4, ABA->[.36,.504), binary prefix 011->[.375,.5) subset"
     }
   ]
 }

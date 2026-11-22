@@ -2,7 +2,7 @@
 
 [课程首页（GitHub Pages）](https://1998x-stack.github.io/information-theory-tutorial/) · [源码仓库](https://github.com/1998x-stack/information-theory-tutorial)
 
-28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–05 章已进行首批深度精修；06–28 保留原版，待后续逐章审核。**
+28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–10 章已完成两批深度精修（25 张原创 SVG、10 个交互小实验）；11–28 保留原版，等待逐章审查。**
 
 ## 本地阅读与构建
 
@@ -11,6 +11,8 @@ python3 scripts/build.py
 python3 scripts/build.py --check
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -v
+# 可选本地浏览器验收：pip install playwright && python -m playwright install chromium
+# python3 scripts/browser_smoke.py
 python3 -m http.server 8000     # http://localhost:8000/docs/
 ```
 
@@ -28,13 +30,15 @@ src/
 docs/                    # GitHub Pages 可直接读取的静态发布产物
   index.html
   chapters/01.html…28.html
-  chapters/theme.css      # 旧版 06–28 的样式兼容层
+  chapters/theme.css      # 旧版 11–28 的样式兼容层
   assets/css, assets/js, assets/figures
 scripts/build.py          # 构建 & --check 一致性校验
 scripts/validate.py       # 链接、SVG 和基本 HTML 验收
 examples/foundations.py   # 离散信息量计算样例
-tests/                    # 数值断言
+examples/coding.py        # Huffman、Kraft、精确算术编码及译码
+tests/                    # 数值与编码往返断言
 research/evidence.json    # 关键论断的来源
+scripts/browser_smoke.py  # Playwright 浏览器视觉与交互烟测
 AGENTS.md                 # 章节维护规范
 ```
 
