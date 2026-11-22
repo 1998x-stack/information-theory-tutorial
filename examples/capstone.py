@@ -11,7 +11,6 @@ from __future__ import annotations
 import heapq
 import json
 import math
-import random
 from collections import Counter
 from fractions import Fraction
 from itertools import count
@@ -277,11 +276,12 @@ def bsc_transmit(bits, flip_probability, seed):
     _binary(bits)
     if not 0 <= flip_probability <= 1:
         raise ValueError("flip probability must lie in [0,1]")
-    randomizer = random.Random(seed)
+    state = seed & 0xffffffff
     received = []
     flips = []
     for position, bit in enumerate(bits):
-        flipped = randomizer.random() < flip_probability
+        state = (1664525 * state + 1013904223) & 0xffffffff
+        flipped = (state + 0.5) / 4294967296 < flip_probability
         received.append(str(1 - int(bit)) if flipped else bit)
         if flipped:
             flips.append(position)
