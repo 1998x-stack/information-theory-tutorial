@@ -485,7 +485,7 @@
       {
         "chapter": 13,
         "example": "Binary Z-channel W=[[1,0],[0.2,0.8]]",
-        "result": "Capacity approximately 0.6182313659 bits/use at P(X=1) approximately 0.435661978."
+        "result": "Capacity 0.618231365928 bits/use at q≈0.435661978 (dense-grid independent recheck q=0.43566)."
       },
       {
         "chapter": 19,
@@ -495,22 +495,22 @@
       {
         "chapter": 20,
         "example": "Real scalar AWGN with P/N0=2",
-        "result": "Capacity 0.5 log2(3) approximately 0.79248125 bits/real-use."
+        "result": "Real scalar AWGN: 0.5 log2(3)=0.792481250361 bits/real-use."
       },
       {
         "chapter": 21,
         "example": "Two-user real Gaussian MAC P1=2, P2=1.5, N=1",
-        "result": "C1=0.79248125, C2=0.66096405, sum bound=1.08496250 bits/real-use."
+        "result": "C1=0.792481250361, C2=0.660964047444, sum bound=1.084962500721 bits/real-use."
       },
       {
         "chapter": 23,
         "example": "Softmax logits (2,0,-1), target class index 1",
-        "result": "Target probability approximately 0.114195; natural-log cross entropy approximately 2.169846 nats; target-logit gradient approximately -0.885805."
+        "result": "Target probability 0.114195199385; cross-entropy 2.169846019556 nats; target-logit gradient −0.885804800615."
       },
       {
         "chapter": 25,
         "example": "Bivariate Gaussian correlation ρ=0.7",
-        "result": "Analytic mutual information -0.5 log2(1-ρ²) approximately 0.485 bits."
+        "result": "Analytic MI −0.5 log2(1−0.7²)=0.485715423902 bits."
       },
       {
         "chapter": 28,
@@ -565,9 +565,39 @@
       "policy": "Every MathML fragment must parse as XML; mfrac/msub/msup/munder/mover/munderover arities are checked; empty structural rows and legacy mfenced are rejected."
     },
     "automated_verification": {
-      "status": "pending-github-actions",
-      "static": "expanded XML, anchors, duplicate IDs, SVG accessibility, labs and evidence checks",
-      "browser": "Chromium 1440/768/390/360 plus keyboard, offline asset, MathML geometry and representative print checks"
+      "status": "passed",
+      "workflow": "Validate tutorial",
+      "workflow_run_id": 45046745689,
+      "tested_head": "145d216bdbbd354a5db19f4a905ca2d7faba51fb",
+      "static": {
+        "generated_pages": "passed",
+        "html_pages": 29,
+        "chapters": 28,
+        "mathml_formulas": 110,
+        "svg_assets": 88,
+        "local_file_and_fragment_links": "passed",
+        "navigation": "passed",
+        "lab_handler_mapping": "passed",
+        "evidence_sources": "passed",
+        "python_unit_tests": "passed"
+      },
+      "browser": {
+        "engine": "Chromium",
+        "page_viewport_checks": 116,
+        "viewports": [
+          1440,
+          768,
+          390,
+          360
+        ],
+        "print_checks": 7,
+        "image_loading": "passed",
+        "mathml_namespace_and_geometry": "passed",
+        "keyboard_range_controls": "passed",
+        "no_horizontal_page_overflow": "passed",
+        "no_external_runtime_requests": "passed",
+        "no_console_or_page_errors": "passed"
+      }
     }
   }
 }
