@@ -241,6 +241,56 @@ def crc32_msb(data: bytes) -> int:
     return crc ^ 0xFFFFFFFF
 
 
+def conv_encode(bits, tail: int = 0):
+    """Rate 1/2, K=3 convolutional encoder with g0=111, g1=101 (octal 7,5)."""
+    if not all(b in (0, 1) for b in bits):
+        raise ValueError("convolutional input must be bits")
+    state = [0, 0]
+    out = []
+    for b in list(bits) + [0] * tail:
+        u = (b, state[0], state[1])
+        out.append(u[0] ^ u[1] ^ u[2])
+        out.append(u[0] ^ u[2])
+        state = [b, state[0]]
+    return out
+
+
+def viterbi_decode(received):
+    """Hard-decision Viterbi decoder for the (2,1,3) code above."""
+    if not all(b in (0, 1) for b in received) or len(received) % 2:
+        raise ValueError("received must be an even number of bits")
+    states = [(0, 0), (0, 1), (1, 0), (1, 1)]
+    steps = len(received) // 2
+    inf = float("inf")
+    metric = [0.0, inf, inf, inf]
+    trace = []
+    for t in range(steps):
+        o = (received[2 * t], received[2 * t + 1])
+        nxt = [inf] * 4
+        back = [None] * 4
+        for si, st in enumerate(states):
+            if metric[si] == inf:
+                continue
+            for b in (0, 1):
+                u = (b, st[0], st[1])
+                oo = (u[0] ^ u[1] ^ u[2], u[0] ^ u[2])
+                ns = (b, st[0])
+                ni = states.index(ns)
+                d = (o[0] ^ oo[0]) + (o[1] ^ oo[1])
+                if metric[si] + d < nxt[ni]:
+                    nxt[ni] = metric[si] + d
+                    back[ni] = (si, b)
+        metric = nxt
+        trace.append(back)
+    best = min(range(4), key=lambda i: metric[i])
+    bits = []
+    for t in range(steps - 1, -1, -1):
+        si, b = trace[t][best]
+        bits.append(b)
+        best = si
+    return list(reversed(bits))
+
+
 if __name__ == "__main__":
     text="ABCABCABC"
     print("LZ77",lz77_tokens(text))

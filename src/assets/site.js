@@ -85,6 +85,34 @@
         const s=m.slice(-3).join("");
         return (p===0?"未翻转":"翻转第"+p+"位")+"：接收 "+recv+"；余数 s(x)="+s+(s==="000"?" → 接受":" → 检出错误");
       }
+      case "viterbi-flip": {
+        const states=[[0,0],[0,1],[1,0],[1,1]];
+        const step=(st,b)=>{const u=[b,st[0],st[1]];return [[u[0]^u[1]^u[2],u[0]^u[2]],[b,st[0]]];};
+        let st=[0,0],tx=[];
+        for(const b of [1,0,1,1,0,0]){const r=step(st,b);tx.push(r[0][0],r[0][1]);st=r[1];}
+        const p=Math.round(v);
+        if(p>0) tx[p-1]^=1;
+        const T=tx.length/2,INF=1e9;
+        let met=[0,INF,INF,INF],trace=[];
+        for(let t=0;t<T;t++){
+          const nm=[INF,INF,INF,INF],tr=[null,null,null,null];
+          for(let si=0;si<4;si++){
+            if(met[si]>=INF)continue;
+            for(const b of [0,1]){
+              const r=step(states[si],b),o=r[0],ns=r[1];
+              const ni=states.findIndex(s=>s[0]===ns[0]&&s[1]===ns[1]);
+              const d=(tx[2*t]^o[0])+(tx[2*t+1]^o[1]);
+              if(met[si]+d<nm[ni]){nm[ni]=met[si]+d;tr[ni]=[si,b];}
+            }
+          }
+          met=nm;trace.push(tr);
+        }
+        let best=met.indexOf(Math.min(...met)),out=[];
+        for(let t=T-1;t>=0;t--){const rec=trace[t][best];out.push(rec[1]);best=rec[0];}
+        out.reverse();
+        const msg=out.slice(0,4).join("");
+        return (p===0?"未翻转":"翻转第"+p+"位")+"：接收 "+tx.join("")+" → 译码 "+msg+(msg==="1011"?" ✓":" ✗");
+      }
       default: return null;
     }
   }

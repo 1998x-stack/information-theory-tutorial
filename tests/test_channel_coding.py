@@ -8,6 +8,7 @@ from examples.channel_coding import (
     exact_bsc_block_error,hamming74_encode,hamming74_correct,
     hamming74_syndrome,hamming74_extract,
     crc32_reflected,crc32_msb,
+    conv_encode,viterbi_decode,
 )
 
 class ChannelCodingTests(unittest.TestCase):
@@ -84,6 +85,18 @@ class ChannelCodingTests(unittest.TestCase):
         self.assertNotEqual(crc32_reflected(b"payload"),crc32_reflected(b"payloae"))
         with self.assertRaises(ValueError):
             crc32_reflected("not bytes")
+    def test_convolutional_viterbi(self):
+        msg=[1,0,1,1,0,0]
+        tx=conv_encode(msg)
+        self.assertEqual(tx,[1,1,1,0,0,0,0,1,0,1,1,1])
+        self.assertEqual(viterbi_decode(tx),msg)
+        for i in range(len(tx)):
+            rx=tx[:]; rx[i]^=1
+            self.assertEqual(viterbi_decode(rx),msg)
+        with self.assertRaises(ValueError):
+            conv_encode([0,1,2])
+        with self.assertRaises(ValueError):
+            viterbi_decode([1,0,1])
 
 if __name__=="__main__":
     unittest.main()

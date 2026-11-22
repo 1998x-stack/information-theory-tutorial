@@ -16,7 +16,9 @@
     "MITChannel": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/pages/lecture-notes/",
     "Hamming1950": "https://doi.org/10.1002/j.1538-7305.1950.tb00463.x",
     "PetersonBrown1961": "https://doi.org/10.1109/JRPROC.1961.287814",
-    "Koopman2004": "https://doi.org/10.1109/DSN.2004.1317278"
+    "Koopman2004": "https://doi.org/10.1109/DSN.2004.1317278",
+    "Viterbi1967": "https://doi.org/10.1109/TIT.1967.1054010",
+    "Forney1973": "https://doi.org/10.1109/PROC.1973.9030"
   },
   "claims": [
     {
@@ -166,6 +168,16 @@
         "MIT2016"
       ],
       "toy": "(7,4) g=1+x+x^3: m=1011 -> 1111111; CRC r=3 g=1011: d=1101 -> remainder 001, frame 1101001; CRC-32 check 123456789 -> reflected 0xCBF43926, non-reflected 0xFC891918"
+    },
+    {
+      "chapter": 17,
+      "statement": "A rate-1/2 K=3 convolutional encoder (g0=111, g1=101) is a 4-state finite-state machine; Viterbi decoding keeps one minimum-metric survivor per state and runs in O(T*2^(K-1)).",
+      "evidence": [
+        "Viterbi1967",
+        "Forney1973",
+        "MIT2016"
+      ],
+      "toy": "msg 1011 + tail 00 -> 1110 0001 0111; flipping any single output bit still decodes to 101100"
     }
   ]
 }
