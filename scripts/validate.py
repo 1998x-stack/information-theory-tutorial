@@ -56,14 +56,14 @@ def validate():
                 errors.append(f"SVG a11y: {figure}")
         except ET.ParseError as e:
             errors.append(f"SVG parse: {figure}: {e}")
-    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 72:
-        errors.append("Expected at least seventy-two original SVG diagrams")
+    if len(list((DOCS / "assets/figures").glob("*.svg"))) < 73:
+        errors.append("Expected at least seventy-three original SVG diagrams")
     data = json.loads((DOCS / "data/courses.json").read_text(encoding="utf-8"))
     if data.get("chapterCount") != 28 or len(data.get("chapters", [])) != 28:
         errors.append("Course metadata inconsistent with 28 chapters")
     if errors:
         print("\\n".join(errors))
         raise SystemExit(1)
-    print(f"Static validation passed: {len(names)} HTML, 72+ SVG, local links and semantic checks")
+    print(f"Static validation passed: {len(names)} HTML, 73+ SVG, local links and semantic checks")
 if __name__ == "__main__":
     validate()

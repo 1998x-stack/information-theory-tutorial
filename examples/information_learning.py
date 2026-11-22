@@ -45,10 +45,11 @@ def relay_rate_bounds(cut_destination: float, cut_relay: float,
     values = (cut_destination, cut_relay, decode_relay, decode_destination)
     if any(v < 0 or not isfinite(v) for v in values):
         raise ValueError("mutual-information terms must be finite and nonnegative")
-    return {
-        "cut_set_upper": min(cut_destination, cut_relay),
-        "decode_forward_lower": min(decode_relay, decode_destination),
-    }
+    upper = min(cut_destination, cut_relay)
+    lower = min(decode_relay, decode_destination)
+    if lower > upper + 1e-9:
+        raise ValueError("decode-forward lower bound cannot exceed the cut-set upper bound")
+    return {"cut_set_upper": upper, "decode_forward_lower": lower}
 
 
 def butterfly_network_code(bit_a: int, bit_b: int):
@@ -126,8 +127,8 @@ def label_smoothing(target_index: int, num_classes: int,
 def brier_score(probabilities: Sequence[float], target: Sequence[float]) -> float:
     if len(probabilities) != len(target) or not probabilities:
         raise ValueError("probability and target vectors must have equal nonzero length")
-    if any(p < 0 or not isfinite(p) for p in probabilities):
-        raise ValueError("probabilities must be finite and nonnegative")
+    if any(p < 0 or not isfinite(p) for p in probabilities + tuple(target)):
+        raise ValueError("probabilities and targets must be finite and nonnegative")
     if abs(sum(probabilities) - 1.0) > 1e-9 or abs(sum(target) - 1.0) > 1e-9:
         raise ValueError("both vectors must be normalized")
     return sum((float(p) - float(y)) ** 2
@@ -153,8 +154,8 @@ def information_bottleneck_objective(i_x_t: float, i_t_y: float,
 def variational_ib_loss(task_nll: float, kl_to_prior: float,
                         beta: float) -> float:
     """Common VIB minimization convention: task NLL + beta * KL."""
-    if task_nll < 0 or kl_to_prior < 0 or beta < 0:
-        raise ValueError("loss terms and beta must be nonnegative")
+    if not isfinite(task_nll) or kl_to_prior < 0 or beta < 0:
+        raise ValueError("task loss must be finite; KL and beta must be nonnegative")
     return task_nll + beta * kl_to_prior
 
 

@@ -13,7 +13,7 @@
   function softmax(z){const m=Math.max(...z),e=z.map(v=>Math.exp(v-m)),s=e.reduce((a,b)=>a+b,0);return e.map(v=>v/s);}
   function logsumexp(z){const m=Math.max(...z);return m+Math.log(z.reduce((a,v)=>a+Math.exp(v-m),0));}
   function digammaInt(n){let s=0;for(let i=1;i<n;i++)s+=1/i;return s-0.5772156649015329;}
-  const ksgPairs=(()=>{let seed=20261122;const rand=()=>{seed=(1664525*seed+1013904223)>>>0;return (seed+.5)/4294967296;};const normal=()=>{const u=Math.max(rand(),1e-12),v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};const a=[],rho=.7,scale=Math.sqrt(1-rho*rho);for(let i=0;i<160;i++){const x=normal(),y=rho*x+scale*normal();a.push([x,y]);}return a;})();
+  const ksgPairs=(()=>{let seed=20261122;const rand=()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;seed>>>=0;return (seed+.5)/4294967296;};const normal=()=>{const u=Math.max(rand(),1e-12),v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};const a=[],rho=.7,scale=Math.sqrt(1-rho*rho);for(let i=0;i<160;i++){const x=normal(),y=rho*x+scale*normal();a.push([x,y]);}return a;})();
   function ksgDemo(k){const a=ksgPairs,n=a.length,terms=[];for(let i=0;i<n;i++){let ds=[];for(let j=0;j<n;j++)if(i!==j)ds.push(Math.max(Math.abs(a[i][0]-a[j][0]),Math.abs(a[i][1]-a[j][1])));ds.sort((x,y)=>x-y);const eps=ds[k-1];let nx=0,ny=0;for(let j=0;j<n;j++)if(i!==j){if(Math.abs(a[i][0]-a[j][0])<eps)nx++;if(Math.abs(a[i][1]-a[j][1])<eps)ny++;}terms.push(digammaInt(nx+1)+digammaInt(ny+1));}const nats=digammaInt(k)+digammaInt(n)-terms.reduce((s,v)=>s+v,0)/n;return nats/Math.LN2;}
   function typicalMass(n, p=.25, eps=.15) {
     const H = h2(p);
