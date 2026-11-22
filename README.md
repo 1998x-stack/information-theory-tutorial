@@ -1,67 +1,47 @@
-# 📡 信息论 · 从入门到精通
+# 信息论 · 从概率到通信极限
 
-> 📘 28章 实战体系
+[课程首页（GitHub Pages）](https://1998x-stack.github.io/information-theory-tutorial/) · [源码仓库](https://github.com/1998x-stack/information-theory-tutorial)
 
-一套完整的 **信息论 · 从入门到精通** 全中文实战课程体系，共 **28 章**。本课程以 HTML 可视化的形式呈现，从基础原理到工程实践循序渐进，适合系统性学习与复习。
+28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–05 章已进行首批深度精修；06–28 保留原版，待后续逐章审核。**
 
-## 🚀 快速开始
-
-无需安装任何依赖，直接用浏览器打开 `index.html` 即可在线阅读全部章节：
+## 本地阅读与构建
 
 ```bash
-open index.html   # macOS
-# 或在浏览器中直接打开 index.html
+python3 scripts/build.py
+python3 scripts/build.py --check
+python3 scripts/validate.py
+python3 -m unittest discover -s tests -v
+python3 -m http.server 8000     # http://localhost:8000/docs/
 ```
 
-## 📖 章节目录
+无需 Node.js 或 CDN，静态 HTML 在现代浏览器中无需网络即可阅读。站外参考链接需要联网。
 
-| # | 章节 | 核心主题 |
-|---|------|----------|
-| 01 | 什么是信息 | 香农的信息定义、通信系统模型、比特的含义 |
-| 02 | 概率论回顾 | 随机变量、条件概率与贝叶斯、Jensen不等式 |
-| 03 | 自信息与熵 | 自信息量、香农熵、联合熵与条件熵 |
-| 04 | 互信息 | 互信息定义、维恩图理解、数据处理不等式 |
-| 05 | KL散度与交叉熵 | 相对熵定义、KL不对称性、交叉熵损失 |
-| 06 | 熵的性质深入 | 极值性质、条件作用不增熵、最大熵原理 |
-| 07 | 渐进均分性AEP | 典型集、AEP定理、压缩理论极限 |
-| 08 | 信源编码定理 | 无失真编码、Kraft不等式、编码效率 |
-| 09 | Huffman编码 | Huffman树构造、最优性证明、前缀码 |
-| 10 | 算术编码 | 区间编码、自适应算术编码、精度问题 |
-| 11 | 字典编码 | LZ77/LZ78、LZW、gzip/DEFLATE |
-| 12 | 离散信道 | 信道转移矩阵、BSC/BEC、对称信道 |
-| 13 | 信道容量 | 容量公式、BSC容量、Blahut-Arimoto算法 |
-| 14 | 信道编码定理 | Shannon第二定理、随机编码、错误指数衰减 |
-| 15 | 线性分组码 | 生成矩阵与校验矩阵、汉明码、标准阵列译码 |
-| 16 | 循环码与CRC | 多项式表示、CRC校验、LFSR硬件实现 |
-| 17 | 卷积码与Viterbi译码 | 状态转移图、网格图、Viterbi算法 |
-| 18 | 信息论与安全 | 完善保密性、一次一密、Shannon保密定理 |
-| 19 | 率失真理论 | 率失真函数、Shannon第三定理、JPEG/MP3原理 |
-| 20 | 连续信源与微分熵 | 微分熵性质、最大熵分布、高斯信道容量 |
-| 21 | 网络信息论 | 多址信道MAC、广播信道BC、网络编码 |
-| 22 | 信息论与统计推断 | Fisher信息、Cramér-Rao界、MDL原理 |
-| 23 | 交叉熵与深度学习 | softmax损失、MLE等价性、VAE与KL正则化 |
-| 24 | 信息瓶颈理论 | IB原则、信息平面、深度学习可解释性 |
-| 25 | 信息论工具实战 | infomeasure库、MI估计方法、KSG估计器 |
-| 26 | 语义信息论 | 语义熵、同义映射、6G语义通信 |
-| 27 | 信息论前沿 | 量子信息论、传递熵与因果、部分信息分解 |
-| 28 | 综合项目 | 端到端通信系统、压缩算法对比、可视化工具开发 |
-
-## 📂 项目结构
+## 结构
 
 ```text
-information-theory-tutorial/
-├── index.html      # 课程主入口（在线阅读全部章节）
-├── 01.html ~ 28.html   # 各章节正文
-├── courses.json    # 课程元数据（标题/章节/主题）
-└── theme.css       # 统一主题样式
+src/
+  home/index.html         # 首页可维护源文件
+  chapters/01.html…28.html
+  data/courses.json
+  assets/site.css, site.js, legacy.css
+  figures/*.svg            # 独立的原绘信息论图解
+docs/                    # GitHub Pages 可直接读取的静态发布产物
+  index.html
+  chapters/01.html…28.html
+  chapters/theme.css      # 旧版 06–28 的样式兼容层
+  assets/css, assets/js, assets/figures
+scripts/build.py          # 构建 & --check 一致性校验
+scripts/validate.py       # 链接、SVG 和基本 HTML 验收
+examples/foundations.py   # 离散信息量计算样例
+tests/                    # 数值断言
+research/evidence.json    # 关键论断的来源
+AGENTS.md                 # 章节维护规范
 ```
 
-## ✨ 课程特色
+根目录的 `01.html`…`28.html` 与 `index.html` 保留兼容跳转到 `docs/`。既有 Pages 使用仓库根目录时无需改源设置；若配置为 `/docs` 则直接使用 `docs/index.html`。实际 Pages 是否发布成功须在部署后验证。
 
-- **全中文实战体系**：面向中文读者，由浅入深，覆盖原理与工程实践
-- **28 章完整内容**：系统化章节编排，形成完整知识闭环
-- **可视化呈现**：HTML 图文并茂，适合快速浏览与重点回顾
-- **即开即用**：无需构建、无需服务器，纯静态页面随开随看
+## 编辑规范
 
----
-*本课程由 `information-theory-tutorial/` 项目维护。*
+按 [AGENTS.md](AGENTS.md) 中的逐篇流程维护文章。所有数学式明确基底、支持集和零概率约定；优先使用离线原生 MathML；SVG 要有独立标题、描述和图注，移动端阅读、键盘操作和屏幕阅读器均需验收。
+
+资料与方法参考：Shannon (1948)、Cover & Thomas (2006)、[MIT 6.441](https://ocw.mit.edu/courses/6-441-information-theory-spring-2010/pages/lecture-notes/)、[Olah-style-posts](https://github.com/1998x-stack/Olah-style-posts)。文章和图解均重新组织，不复制其示例的图文。
