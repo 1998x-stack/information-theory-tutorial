@@ -19,3 +19,23 @@ jobs:
         run: python3 scripts/validate.py
       - name: Test information theory examples
         run: python3 -m unittest discover -s tests -v
+  browser-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium browser verifier
+        run: |
+          python3 -m pip install playwright
+          python3 -m playwright install --with-deps chromium
+      - name: Inspect desktop and mobile HTML
+        run: python3 scripts/browser_smoke.py --output reports/browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-qa
+          path: reports/browser/
+          if-no-files-found: ignore
