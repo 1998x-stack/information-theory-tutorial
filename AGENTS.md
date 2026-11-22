@@ -8,7 +8,7 @@
 
 - 维护源：`src/home/index.html`、`src/chapters/{NN}.html`、`src/assets/`、`src/figures/`、`src/data/courses.json`。
 - 构建产物：`docs/` 由 `scripts/build.py` 复制生成，不能只修改 `docs/`；根目录 `index.html` 与 28 个兼容重定向同为产物。
-- 11–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
+- 16–28 章仍用旧版布局，并引用 `docs/chapters/theme.css`；未重构前必须保留对应 `src/assets/legacy.css`。
 
 ## 逐章工作流
 
@@ -31,6 +31,10 @@
 - Huffman 的最优性仅指给定符号分布下最短平均前缀码；编码树的父子关系必须与实际码字相符。
 - 算术编码须用旧边界同时更新新上下界；教学版有理数区间并不等于可交付的有限精度位流协议。
 - 不可把单次 toy 计算说成一般性数学证明。
+- 区分 LZ77 回距与 LZ78 词典索引；DEFLATE 的 LZ77+Huffman 二阶段和 gzip 封装不能混淆。
+- 信道条件核 W(y|x) 每行必须归一化；互信息 I(X;Y) 不等于对输入优化后的容量 C；对非对称信道必须测试非均匀先验。
+- 信道编码定理的可靠性是随块长增长、R<C 的渐近存在性结论，不是有限长度任意码的承诺。
+- Hamming(7,4) 的位置与 H 矩阵列序必须一致，syndrome=5 对应第 5 位翻转；不可把多错当成可纠正单错。
 
 ## 外部规范与来源
 

@@ -2,7 +2,7 @@
 
 [课程首页（GitHub Pages）](https://1998x-stack.github.io/information-theory-tutorial/) · [源码仓库](https://github.com/1998x-stack/information-theory-tutorial)
 
-28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–10 章已完成两批深度精修（26 张原创 SVG、10 个交互小实验）；11–28 保留原版，等待逐章审查。**
+28 章中文信息论教程，从概率、熵、互信息走到压缩、可靠通信、统计学习和信息瓶颈。**01–15 章已完成三批深度精修（41 张独立 SVG、15 个交互小实验）；16–28 保留原版，等待逐章审查。**
 
 ## 本地阅读与构建
 
@@ -30,13 +30,14 @@ src/
 docs/                    # GitHub Pages 可直接读取的静态发布产物
   index.html
   chapters/01.html…28.html
-  chapters/theme.css      # 旧版 11–28 的样式兼容层
+  chapters/theme.css      # 旧版 16–28 的样式兼容层
   assets/css, assets/js, assets/figures
 scripts/build.py          # 构建 & --check 一致性校验
 scripts/validate.py       # 链接、SVG 和基本 HTML 验收
 examples/foundations.py   # 离散信息量计算样例
 examples/coding.py        # Huffman、Kraft、精确算术编码及译码
-tests/                    # 数值与编码往返断言
+examples/channel_coding.py # LZ77/LZ78、容量、块错误、Hamming(7,4)
+tests/                    # 数值、编码往返及单错纠正穷举断言
 research/evidence.json    # 关键论断的来源
 scripts/browser_smoke.py  # Playwright 浏览器视觉与交互烟测
 AGENTS.md                 # 章节维护规范
