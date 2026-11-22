@@ -138,10 +138,6 @@ def validate_chapter(page, number, parser, content, errors):
         fail(errors, page, f"duplicate id values: {sorted(set(parser.duplicate_ids))}")
     if not re.search(r'class="math-scroll"[^>]*tabindex="0"[^>]*role="region"', content):
         fail(errors, page, "long-formula region must be keyboard focusable and named")
-    if parser.tags["math"] != parser.tags["div"] or "class=\"math-equation\"" not in content:
-        # The count comparison is intentionally not used as a pass criterion:
-        # there are many non-equation divs. The explicit wrapper count is checked above.
-        pass
     bad_tokens = ("oplus", "R&amp;lt;C", "&amp;lt;", "&amp;gt;", "TODO", "FIXME", "Lorem ipsum", "讲义介绍了")
     for token in bad_tokens:
         if token in content:

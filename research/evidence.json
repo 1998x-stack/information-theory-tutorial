@@ -61,9 +61,9 @@
     "SchreiberTE2000": "https://doi.org/10.1103/PhysRevLett.85.461",
     "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
     "BerutLandauer2012": "https://doi.org/10.1038/nature10872",
-    "CRCTheoryNotes": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf",
     "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860",
-    "PetersonBrown1961DOI": "https://doi.org/10.1109/JRPROC.1961.287814"
+    "PetersonBrown1961DOI": "https://doi.org/10.1109/JRPROC.1961.287814",
+    "PetersonBrown1961FullText": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf"
   },
   "claims": [
     {
@@ -211,7 +211,7 @@
         "CRCRevEng",
         "CRCRevEngReadme",
         "RFC1662",
-        "CRCTheoryNotes"
+        "PetersonBrown1961FullText"
       ],
       "toy": "G=1011, message 1101 -> codeword 1101001, remainder 000; CRC32 check vector 123456789 -> CBF43926"
     },
@@ -466,6 +466,18 @@
         "section": "browser-gates",
         "issue": "Chromium coverage omitted the 768px tablet viewport and did not assert absence of external runtime requests or check print rendering across representative math-heavy chapters.",
         "resolution": "Expand Chromium coverage to 1440/768/390/360, record console/runtime/network errors, verify MathML limits and accessible controls, and check print output on seven representative chapters."
+      },
+      {
+        "chapter": 15,
+        "section": "MathML-spacing",
+        "issue": "The GF(2) notation used a whitespace-only mo element as spacing.",
+        "resolution": "Replace the empty presentation operator with an explicit mspace node."
+      },
+      {
+        "chapter": 18,
+        "section": "one-time-pad-notation",
+        "issue": "A second prose occurrence of XOR remained as the literal string oplus in the OTP construction.",
+        "resolution": "Use the explicit code expression C=M⊕K, consistent with the equation and key-reuse discussion."
       }
     ],
     "numerical_rechecks": [
