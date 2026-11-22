@@ -2,7 +2,7 @@ import unittest
 from itertools import product
 from math import inf
 from examples.advanced_information import (
-    crc_remainder, crc_encode, crc_burst_detects_all, crc32_iso_hdlc,
+    crc_remainder, crc_encode, crc_lfsr_remainder, crc_burst_detects_all, crc32_iso_hdlc,
     conv_encode, viterbi_decode, otp_encrypt, otp_decrypt, otp_binary_leakage,
     binary_hamming_rate_distortion, gaussian_rate_distortion,
     reverse_water_filling, differential_entropy_uniform,
@@ -15,6 +15,7 @@ class AdvancedInformationTests(unittest.TestCase):
         code=crc_encode("1101","1011")
         self.assertEqual(code,"1101001")
         self.assertEqual(crc_remainder(code,"1011"),"000")
+        self.assertEqual(crc_lfsr_remainder("1101","1011"),"001")
         self.assertTrue(crc_burst_detects_all("1011"))
         for length in range(1,4):
             patterns=("1",) if length==1 else (("11",) if length==2 else

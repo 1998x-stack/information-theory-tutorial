@@ -57,6 +57,23 @@ def crc_burst_detects_all(generator: str) -> bool:
     return True
 
 
+def crc_lfsr_remainder(message: str, generator: str) -> str:
+    """MSB-first left-shifting LFSR equivalent to augmented polynomial division."""
+    bits, g = _bits(message), _bits(generator)
+    if len(g) < 2 or g[0] != 1 or g[-1] != 1:
+        raise ValueError("generator must have positive degree and nonzero constant term")
+    width = len(g) - 1
+    mask = (1 << width) - 1
+    feedback_mask = int("".join(map(str, g[1:])), 2)
+    register = 0
+    for bit in bits + [0] * width:
+        feedback = (register >> (width - 1)) & 1
+        register = ((register << 1) | bit) & mask
+        if feedback:
+            register ^= feedback_mask
+    return format(register, f"0{width}b")
+
+
 def crc32_iso_hdlc(data: bytes) -> int:
     """CRC-32/ISO-HDLC: poly=04C11DB7, init/xorout=FFFFFFFF, refin/refout."""
     if not isinstance(data, (bytes, bytearray, memoryview)):
