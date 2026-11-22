@@ -18,7 +18,10 @@
     "PetersonBrown1961": "https://doi.org/10.1109/JRPROC.1961.287814",
     "Koopman2004": "https://doi.org/10.1109/DSN.2004.1317278",
     "Viterbi1967": "https://doi.org/10.1109/TIT.1967.1054010",
-    "Forney1973": "https://doi.org/10.1109/PROC.1973.9030"
+    "Forney1973": "https://doi.org/10.1109/PROC.1973.9030",
+    "Shannon1949Secrecy": "https://doi.org/10.1002/j.1538-7305.1949.tb00928.x",
+    "Wyner1975": "https://doi.org/10.1109/TIT.1975.1055374",
+    "Dwork2006": "https://doi.org/10.1007/11681878_14"
   },
   "claims": [
     {
@@ -178,6 +181,16 @@
         "MIT2016"
       ],
       "toy": "msg 1011 + tail 00 -> 1110 0001 0111; flipping any single output bit still decodes to 101100"
+    },
+    {
+      "chapter": 18,
+      "statement": "Perfect secrecy is P(M=m|C=c)=P(M=m), equivalently H(M|C)=H(M) and I(M;C)=0. For c=m XOR k with uniform independent key it holds; Shannon proved it forces H(K)>=H(M). Reusing a pad key leaks c1 XOR c2 = m1 XOR m2.",
+      "evidence": [
+        "Shannon1949Secrecy",
+        "Wyner1975",
+        "CoverThomas"
+      ],
+      "toy": "m=[1,0,1,1], k=[0,1,1,0] -> c=[1,1,0,1]; reuse: c1 XOR c2 = m1 XOR m2 independent of k"
     }
   ]
 }

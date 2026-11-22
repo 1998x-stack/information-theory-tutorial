@@ -44,6 +44,30 @@ def bsc_information(error_probability):
         raise ValueError("crossover probability outside [0, 1]")
     return 1 - entropy((error_probability, 1-error_probability))
 
+def _bits(seq, n):
+    if len(seq) != n or not all(b in (0, 1) for b in seq):
+        raise ValueError(f"expected {n} bits")
+    return list(seq)
+
+def otp_encrypt(message, key):
+    """One-time pad: message XOR key on equal-length bit lists."""
+    message, key = _bits(message, len(message)), _bits(key, len(message))
+    return [m ^ k for m, k in zip(message, key)]
+
+def otp_decrypt(ciphertext, key):
+    return otp_encrypt(ciphertext, key)
+
+def otp_reuse_xor(first, second):
+    """XOR of two equal-length plaintexts: the reused key cancels out."""
+    first, second = _bits(first, len(first)), _bits(second, len(first))
+    return [a ^ b for a, b in zip(first, second)]
+
+def min_entropy(probabilities):
+    """H_inf = -log2(max p): worst-case unpredictability for guessing attacks."""
+    from math import log2
+    ps = checked(probabilities)
+    return -log2(max(ps))
+
 if __name__ == "__main__":
     p, q = (.75,.25), (.5,.5)
     print("H(p)",entropy(p),"H(p,q)",cross_entropy(p,q),"KL",kl(p,q))

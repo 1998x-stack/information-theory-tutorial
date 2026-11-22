@@ -113,6 +113,12 @@
         const msg=out.slice(0,4).join("");
         return (p===0?"未翻转":"翻转第"+p+"位")+"：接收 "+tx.join("")+" → 译码 "+msg+(msg==="1011"?" ✓":" ✗");
       }
+      case "otp-reuse": {
+        const k=Math.round(v).toString(2).padStart(2,"0");
+        const x=(a,b)=>a.split("").map((d,i)=>d^b[i]).join("");
+        const c1=x("01",k),c2=x("10",k);
+        return "k="+k+"：c₁="+c1+"，c₂="+c2+"，c₁⊕c₂="+x(c1,c2)+" = m₁⊕m₂";
+      }
       default: return null;
     }
   }

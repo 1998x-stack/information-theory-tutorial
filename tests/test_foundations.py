@@ -3,9 +3,18 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "examples"))
-from foundations import entropy, surprisal, kl, cross_entropy, bayes_positive, bsc_information
+from foundations import entropy, surprisal, kl, cross_entropy, bayes_positive, bsc_information, otp_encrypt, otp_decrypt, otp_reuse_xor, min_entropy
 
 class FoundationTests(unittest.TestCase):
+    def test_otp_and_min_entropy(self):
+        m, k = [1,0,1,1], [0,1,1,0]
+        c = otp_encrypt(m, k)
+        self.assertEqual(c, [1,1,0,1])
+        self.assertEqual(otp_decrypt(c, k), m)
+        self.assertEqual(otp_reuse_xor([0,1],[1,1]), [1,0])
+        self.assertEqual(min_entropy([0.5,0.25,0.25]), 1.0)
+        with self.assertRaises(ValueError):
+            otp_encrypt([1,0,1],[0,1])
     def test_entropy(self):
         self.assertAlmostEqual(entropy([.5,.25,.125,.125]), 1.75)
         self.assertAlmostEqual(entropy([.5,.5]), 1.0)
