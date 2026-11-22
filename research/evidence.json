@@ -60,7 +60,9 @@
     "PreskillHolevo2025": "https://www.preskill.caltech.edu/ph219/chap10_6A_2025.pdf",
     "SchreiberTE2000": "https://doi.org/10.1103/PhysRevLett.85.461",
     "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
-    "BerutLandauer2012": "https://doi.org/10.1038/nature10872"
+    "BerutLandauer2012": "https://doi.org/10.1038/nature10872",
+    "CRCTheoryNotes": "https://perswww.kuleuven.be/~u0068190/Onderwijs/Extra_info/crc.pdf",
+    "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860"
   },
   "claims": [
     {
@@ -207,7 +209,8 @@
       "evidence": [
         "CRCRevEng",
         "CRCRevEngReadme",
-        "RFC1662"
+        "RFC1662",
+        "CRCTheoryNotes"
       ],
       "toy": "G=1011, message 1101 -> codeword 1101001, remainder 000; CRC32 check vector 123456789 -> CBF43926"
     },
@@ -226,7 +229,8 @@
       "statement": "Perfect secrecy is I(M;C)=0 or posterior invariance. H(K)>=H(M) is necessary, not sufficient. OTP needs a uniform independent equal-length key used once. The degraded wiretap formula requires the stated DMC assumptions.",
       "evidence": [
         "ShannonSecrecy1949",
-        "Wyner1975"
+        "Wyner1975",
+        "HoMasseyPerfectSecrecy2012"
       ],
       "toy": "uniform M and Bernoulli(q) XOR key: I(M;C)=1-h2(q), zero only at q=.5"
     },
@@ -348,5 +352,109 @@
       ],
       "toy": "AAAABBCD -> Huffman 14 bits, pad 2, four Hamming blocks = 28 physical bits; Hamming(7,4) 1011 -> 0110011; source/channel bitstream roundtrips under p=0, single-bit errors per block corrected."
     }
-  ]
+  ],
+  "second_pass": {
+    "date": "2026-11-23",
+    "scope": "All 28 standalone chapter pages, their mathematical markup, examples, diagrams/captions, source references, cross-chapter navigation, metadata and browser quality gates.",
+    "method": "Re-derive numerical examples; compare theorem assumptions and units to primary sources or university notes; distinguish exact derivations from finite-sample demonstrations; validate MathML structure and HTML references; run full Python and Chromium CI before release.",
+    "corrections": [
+      {
+        "chapter": 12,
+        "section": "channel-kernel",
+        "issue": "An unbounded summation was represented with munderover and an empty upper-limit node.",
+        "resolution": "Use munder for the y∈Y lower limit; retain row-stochastic normalization."
+      },
+      {
+        "chapter": 13,
+        "section": "capacity",
+        "issue": "The conditional-entropy sum had an empty upper-limit node.",
+        "resolution": "Use munder for the x∈X lower limit; BA objective and units remain bits."
+      },
+      {
+        "chapter": 14,
+        "section": "theorem",
+        "issue": "The condition R<C was double-escaped in navigation and theorem copy.",
+        "resolution": "Render a single HTML less-than entity."
+      },
+      {
+        "chapter": 16,
+        "section": "references-and-navigation",
+        "issue": "Next-chapter label was 161 rather than 17; CRC burst-error theorem needed a direct explanatory source.",
+        "resolution": "Correct navigation and add CRC polynomial error-detection notes."
+      },
+      {
+        "chapter": 17,
+        "section": "navigation",
+        "issue": "Next-chapter label was 171 rather than 18.",
+        "resolution": "Correct the label and include the next chapter topic."
+      },
+      {
+        "chapter": 18,
+        "section": "perfect-secrecy-bound",
+        "issue": "The independence assumptions behind H(K)≥H(M) were underspecified; next-chapter label was 181.",
+        "resolution": "State zero-error unique decryption and perfect secrecy explicitly; distinguish the general entropy lower bound from the independent uniform OTP construction; correct navigation."
+      },
+      {
+        "chapter": 19,
+        "section": "reverse-water-filling",
+        "issue": "The vector Gaussian rate expression had malformed TeX-like prose and an empty upper summation node; next-chapter label was 191.",
+        "resolution": "Add a numbered MathML rate formula, specify the active set σᵢ²>θ, and recompute (1,4,9), D=4, θ=1.5, R=2 bits/vector."
+      },
+      {
+        "chapter": 20,
+        "section": "high-resolution-quantization",
+        "issue": "A closing parenthesis was unmatched and the quantization entropy approximation was too broadly qualified.",
+        "resolution": "State the Δ→0 high-resolution condition and compute finite-step entropy from the quantized distribution."
+      },
+      {
+        "chapter": 22,
+        "section": "fisher-information",
+        "issue": "The score logarithm and local KL unit were implicit.",
+        "resolution": "Use ln in the Fisher score and state the local KL expansion is in nats; bit-valued KL scales the quadratic term by 1/ln 2."
+      },
+      {
+        "chapter": 23,
+        "section": "cross-entropy",
+        "issue": "The logarithm base underlying NLL and the q−y gradient was implicit.",
+        "resolution": "State natural-log loss units as nats/sample and the conversion to bits."
+      }
+    ],
+    "numerical_rechecks": [
+      {
+        "chapter": 13,
+        "example": "Binary Z-channel W=[[1,0],[0.2,0.8]]",
+        "result": "Capacity approximately 0.6182313659 bits/use at P(X=1) approximately 0.435661978."
+      },
+      {
+        "chapter": 19,
+        "example": "Independent Gaussian component variances (1,4,9), total distortion 4",
+        "result": "Water level 1.5; distortions (1,1.5,1.5); rate 0.5[log2(4/1.5)+log2(9/1.5)]=2 bits/vector."
+      },
+      {
+        "chapter": 20,
+        "example": "Real scalar AWGN with P/N0=2",
+        "result": "Capacity 0.5 log2(3) approximately 0.79248125 bits/real-use."
+      },
+      {
+        "chapter": 21,
+        "example": "Two-user real Gaussian MAC P1=2, P2=1.5, N=1",
+        "result": "C1=0.79248125, C2=0.66096405, sum bound=1.08496250 bits/real-use."
+      },
+      {
+        "chapter": 23,
+        "example": "Softmax logits (2,0,-1), target class index 1",
+        "result": "Target probability approximately 0.114195; natural-log cross entropy approximately 2.169846 nats; target-logit gradient approximately -0.885805."
+      },
+      {
+        "chapter": 25,
+        "example": "Bivariate Gaussian correlation ρ=0.7",
+        "result": "Analytic mutual information -0.5 log2(1-ρ²) approximately 0.485 bits."
+      },
+      {
+        "chapter": 28,
+        "example": "AAAABBCD source/channel coding",
+        "result": "Huffman payload 14 bits; 2 padding bits; four Hamming(7,4) codewords; 28 transmitted bits excluding shared codebook, framing and length metadata."
+      }
+    ]
+  }
 }
