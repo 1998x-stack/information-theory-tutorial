@@ -62,8 +62,7 @@
     "WilliamsBeerPID2010": "https://arxiv.org/abs/1004.2515",
     "BerutLandauer2012": "https://doi.org/10.1038/nature10872",
     "HoMasseyPerfectSecrecy2012": "https://arxiv.org/abs/1207.1860",
-    "PetersonBrown1961DOI": "https://doi.org/10.1109/JRPROC.1961.287814",
-    "PetersonBrown1961FullText": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf"
+    "PetersonBrown1961DOI": "https://ieeexplore.ieee.org/abstract/document/4066263/"
   },
   "claims": [
     {
@@ -211,7 +210,7 @@
         "CRCRevEng",
         "CRCRevEngReadme",
         "RFC1662",
-        "PetersonBrown1961FullText"
+        "PetersonBrown1961DOI"
       ],
       "toy": "G=1011, message 1101 -> codeword 1101001, remainder 000; CRC32 check vector 123456789 -> CBF43926"
     },
@@ -429,7 +428,7 @@
         "chapter": 16,
         "section": "source-integrity",
         "issue": "The Peterson–Brown title linked to Peterson's unrelated 1960 BCH paper DOI; the added KU Leuven personal-site PDF was retired in February 2026.",
-        "resolution": "Correct the DOI to 10.1109/JRPROC.1961.287814 and replace the retired URL with the original paper's accessible PDF mirror."
+        "resolution": "Correct the DOI and link directly to the verified IEEE Xplore record; remove the purported full-text mirror because the old KU Leuven URL is retired and the Manchester URL now redirects to a generic group page."
       },
       {
         "chapter": 17,
@@ -523,14 +522,14 @@
         "reference": "Peterson & Brown, Cyclic Codes for Error Detection",
         "previous": "https://doi.org/10.1109/TIT.1960.1057586",
         "finding": "The DOI resolves to W. W. Peterson's different 1960 BCH paper; Peterson & Brown's 1961 Proceedings of the IRE paper is DOI 10.1109/JRPROC.1961.287814.",
-        "replacement": "https://doi.org/10.1109/JRPROC.1961.287814"
+        "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
       },
       {
         "chapter": 16,
         "reference": "CRC burst-error proof",
         "previous": "https://perswww.kuleuven.be/~u0068190/Onderwijs/Extra_info/crc.pdf",
-        "finding": "The personal-web-hosting service was discontinued in February 2026; the URL redirects to the university shutdown notice.",
-        "replacement": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf"
+        "finding": "The KU Leuven personal-web-hosting service was retired; a second purported full-text mirror at Manchester now redirects to a generic research-group page. Remove the PDF claim and consolidate on the IEEE Xplore record.",
+        "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
       },
       {
         "chapter": 24,
@@ -538,6 +537,13 @@
         "previous": "https://arxiv.org/abs/1801.04062",
         "finding": "The cited paper is arXiv:1612.00410, ICLR 2017; 1801.04062 is not the cited original.",
         "replacement": "https://arxiv.org/abs/1612.00410"
+      },
+      {
+        "chapter": 16,
+        "reference": "Peterson & Brown full-text mirror",
+        "previous": "https://apt.cs.manchester.ac.uk/ftp/pub/amulet/papers/Peterson-Brown_61.pdf",
+        "finding": "The URL now redirects to the University of Manchester Advanced Processor Technologies group page rather than the paper PDF.",
+        "replacement": "https://ieeexplore.ieee.org/abstract/document/4066263/"
       }
     ],
     "mathml_audit": {
