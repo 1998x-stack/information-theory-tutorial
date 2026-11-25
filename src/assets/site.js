@@ -160,6 +160,13 @@
         const bits=Math.log2(ppl), nats=bits*Math.LN2;
         return "困惑度="+ppl.toFixed(1)+"，每 token "+bits.toFixed(3)+" bit；自然对数交叉熵="+nats.toFixed(3);
       }
+      case "pid": {
+        const i=Math.min(3,Math.max(0,Math.round(v)));
+        const names=["复制 Y=X₁=X₂","独特 Y=X₁，X₂ 独立","XOR Y=X₁⊕X₂","独立无信息"];
+        const rows=[[1,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,0,0]];
+        const r=rows[i];
+        return names[i]+"：Red="+r[0]+"，Unq₁="+r[1]+"，Unq₂="+r[2]+"，Syn="+r[3]+" bit";
+      }
       default: return null;
     }
   }

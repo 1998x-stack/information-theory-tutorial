@@ -1,280 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>第27章 信息论前沿</title>
-    <link rel="stylesheet" href="theme.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="信息论前沿导览：冯·诺依曼熵与 Holevo 界的量子信息论、度量有向信息流的传递熵及其与因果的区别、部分信息分解（PID）的冗余-独特-协同结构，以及信息动力学与 Landauer 原理。">
+<title>第 27 章 · 信息论前沿 | 信息论</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+<script defer src="../assets/js/site.js"></script>
 </head>
 <body>
-<div class="double-border">
-<div class="container">
-    <div class="sidebar">
-        <h3>📡 课程目录</h3>
-        <ul class="chapter-list">
-            <li><a href="01.html">第1章 什么是信息</a></li>
-            <li><a href="02.html">第2章 概率论回顾</a></li>
-            <li><a href="03.html">第3章 自信息与熵</a></li>
-            <li><a href="04.html">第4章 互信息</a></li>
-            <li><a href="05.html">第5章 KL散度与交叉熵</a></li>
-            <li><a href="06.html">第6章 熵的性质深入</a></li>
-            <li><a href="07.html">第7章 渐进均分性AEP</a></li>
-            <li><a href="08.html">第8章 信源编码定理</a></li>
-            <li><a href="09.html">第9章 Huffman编码</a></li>
-            <li><a href="10.html">第10章 算术编码</a></li>
-            <li><a href="11.html">第11章 字典编码</a></li>
-            <li><a href="12.html">第12章 离散信道</a></li>
-            <li><a href="13.html">第13章 信道容量</a></li>
-            <li><a href="14.html">第14章 信道编码定理</a></li>
-            <li><a href="15.html">第15章 线性分组码</a></li>
-            <li><a href="16.html">第16章 循环码与CRC</a></li>
-            <li><a href="17.html">第17章 卷积码与Viterbi译码</a></li>
-            <li><a href="18.html">第18章 信息论与安全</a></li>
-            <li><a href="19.html">第19章 率失真理论</a></li>
-            <li><a href="20.html">第20章 连续信源与微分熵</a></li>
-            <li><a href="21.html">第21章 网络信息论</a></li>
-            <li><a href="22.html">第22章 信息论与统计推断</a></li>
-            <li><a href="23.html">第23章 交叉熵与深度学习</a></li>
-            <li><a href="24.html">第24章 信息瓶颈理论</a></li>
-            <li><a href="25.html">第25章 信息论工具实战</a></li>
-            <li><a href="26.html">第26章 语义信息论</a></li>
-            <li><a href="27.html" class="active">第27章 信息论前沿</a></li>
-            <li><a href="28.html">第28章 综合项目</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-
-        <p>信息论已经75岁了——但它远未"完成"。从量子比特到基因调控网络，从大脑神经元到金融市场的波动，信息论的方法正在渗透到每一个需要理解"不确定性"和"因果"的领域。本章是一次"前沿导览"——带你看看Shannon理论正在被如何重新发明。</p>
-
-        <p>在过去26章的学习中，我们反复遇到一个问题：当经典信息论的工具遇到非经典场景时会发生什么？如果信源不是独立同分布而是具有量子关联的？如果我们关心的不是相关性而是因果性？如果信息源多于两个，它们之间产生交互效应？这些问题的回答正在催生信息论的新分支。</p>
-
-        <p>2025-2026年，仅仅在quant-ph和cs.IT这两个arXiv子分类上，每个月就有超过500篇涉及信息论的新论文。这不是一个"过时"的学科——恰恰相反，信息论的黄金时代远远没有结束。</p>
-
-        <h2>量子信息论</h2>
-
-        <p>经典信息论的核心概念——熵、互信息、信道容量——在量子领域都有深刻的推广。如果说经典信息论研究的是"经典比特在经典信道上的传输"，那么量子信息论研究的是"量子比特（qubit）在量子信道上的传输以及在测量时向经典世界的坍缩"。</p>
-
-        <p>量子信息论的起点是<strong>冯·诺依曼熵（von Neumann entropy）</strong>，它是经典Shannon熵在量子态的推广。对于一个量子系统，如果它的状态由密度矩阵ρ描述，则von Neumann熵定义为：</p>
-
-        <p>S(ρ) = -Tr(ρ log ρ)</p>
-
-        <p>注意这个定义与Shannon熵的形式非常相似：H(X) = -Σ p(x) log p(x)。只不过这里的概率分布变成了密度矩阵——这是矩阵版本的熵。当ρ是对角矩阵时，von Neumann熵退化为Shannon熵，因为此时量子不确定性完全来源于经典概率混合（而不是量子叠加）。</p>
-
-        <p>量子互信息的定义同样自然：对于两体量子系统AB，其互信息为I(A;B) = S(ρ<sub>A</sub>) + S(ρ<sub>B</sub>) - S(ρ<sub>AB</sub>)。但在量子情形下出现了一个经典世界没有的现象——<strong>量子纠缠</strong>会导致两个子系统各自的熵之和大于联合熵，使得互信息为负？不对，量子互信息仍然是非负的——纠缠表现为子系统熵可以大于联合系统熵，但互信息从未为负。</p>
-
-        <p>真正令人震惊的极限是<strong>Holevo界（Holevo bound）</strong>：如果你有一个量子系统（比如n个纠缠态的qubit），你能从中提取的经典信息量不能超过某个上界，这个上界由Holevo量χ决定。更具体地说，即使你拥有无限的计算能力和完美的测量设备，每个qubit最多只能提取大约1 bit的经典信息。这个结果是量子通信的"Shannon极限"——它告诉我们在经典-量子信道中什么是不可能的。</p>
-
-        <p>2025年，一项重要的工作——Abelian group codes for classical-quantum channels——在量子信道编码理论上取得了突破。这些编码在经典-量子信道上实现了新的速率界，部分解决了Scarani等人在2010年代提出的开放问题。简单直观地说：对于某些特殊的量子信道，研究者发现了一种新的线性编码策略，其容量优于此前已知的随机编码方法。</p>
-
-        <p>量子纠错码是另一个蓬勃发展的重要领域。Shannon的信道编码定理告诉我们"存在好的纠错码"，但如何高效地构造和译码它们？对于量子计算机，量子比特极其脆弱，量子纠错是容错量子计算的前提。<strong>表面码（surface codes）</strong>是目前最受关注的方案——它通过在一个二维网格上布置物理qubit，实现了一个逻辑qubit的保护。Google在2024-2025年的实验已经证明，表面码可以在超导量子处理器上实现错误率的指数级抑制。</p>
-
-        <h2>传递熵与因果推断</h2>
-
-        <p>信息论中有一个深刻的悖论：互信息I(X; Y)是对称的，但因果关系是不对称的——火灾引起烟雾，烟雾不引起火灾。如果我们只知道互信息，无法区分哪个方向是正确的因果链。</p>
-
-        <p>为了解决这个问题，Schreiber在2000年提出了<strong>传递熵（Transfer Entropy）</strong>的概念。其定义是：</p>
-
-        <p>T<sub>Y→X</sub> = I(X<sub>t+1</sub>; Y<sub>t</sub><sup>(k)</sup> | X<sub>t</sub><sup>(l)</sup>)</p>
-
-        <p>翻译成人话：给定X的过去历史，知道了Y的过去历史之后，对X未来的预测能力增加了多少。如果T<sub>Y→X</sub> > 0，说明Y对X有"信息流动"——但注意，这不等于因果关系。</p>
-
-        <div class="warning">
-            <strong>常见误解：</strong>传递熵 ≠ 因果关系！传递熵度量的是"预测信息流"（predictive information flow），但预测信息流可以由一个共同的驱动因素产生。举个经典例子：如果太阳风暴同时影响地球磁场和电网，那么电网的测量数据对地球磁场的传递熵会很高——但电网没有"引起"磁场变化。真正的因果推断还需要干预（intervention），而不仅仅是条件统计。
-        </div>
-
-        <p>在实际应用中，传递熵最大的优势是<strong>无需假设模型形式</strong>（非参数化）。传统的Granger因果关系检验假设时间序列是线性自回归模型的产物，但在非线性系统中会失效。传递熵是一个纯信息论量——它不受线性假设的限制，能够捕捉非线性的有向信息流。</p>
-
-        <p>一个典型的应用场景是<strong>神经科学</strong>：通过多通道脑电图（EEG）或功能磁共振成像（fMRI）记录不同脑区的活动，计算各脑区之间的传递熵，构建功能连接网络，识别信息从哪个脑区流向哪个脑区。例如，2023-2025年的研究利用传递熵揭示了视觉皮层到运动皮层的信道路径在动作预期中的关键作用。</p>
-
-        <p>在<strong>金融时间序列</strong>中，传递熵可以检测市场间的"领跑-滞后"关系。比如：美国股市的开盘信息是否会传递到亚洲市场？某个行业板块是否领先于大盘？由于金融市场高度非线性的特性，传统的相关性分析和Granger因果常常给出错误结论，而传递熵在这些场景中表现更稳健。</p>
-
-        <pre><code>import numpy as np
-from scipy.special import digamma
-
-def transfer_entropy(x, y, k=3, lag=1):
-    """
-    简化的传递熵计算（k近邻估计法）
-    T_{Y→X} = I(X_{t+1}; Y_{t} | X_{t})
-    使用Kraskov-Stoegbauer-Grassberger估计器
-    """
-    n = len(x)
-    x_future = x[lag:]              # X_{t+1}
-    x_past = x[:n-lag]              # X_t
-    y_past = y[:n-lag]              # Y_t
-
-    # 堆叠为三维空间
-    points = np.column_stack([x_future, x_past, y_past])
-    m = len(points)
-
-    # 在三维空间中搜索第k近邻的距离
-    te_xy = _knn_mi(points[:, [0, 1]], points[:, [0, 2]], k)
-    te_yx = _knn_mi(points[:, [0, 2]], points[:, [0, 1]], k)
-
-    return te_xy, te_yx
-
-def _knn_mi(space_a, space_b, k):
-    """简化的kNN互信息估计（实际实现需要更复杂的计算）"""
-    # 这只是一个框架代码，完整的kNN-MI估计
-    # 需要计算每个点到其第k近邻的距离
-    # 以及沿各边缘方向的计数
-    # 详见Kraskov et al., Phys. Rev. E 69, 066138 (2004)
-    return 0.0  # Placeholder
-
-# 生成带非线性耦合的时间序列
-np.random.seed(42)
-n = 1000
-X = np.random.randn(n)
-# Y由X的非线性变换加噪声生成: Y = f(X滞后) + noise
-Y = 0.5 * np.sin(X) + 0.3 * np.roll(X, 1) + 0.2 * np.random.randn(n)
-
-# 对比传递熵和Granger因果
-te_xy, te_yx = transfer_entropy(X, Y)
-print(f"传递熵 T(Y→X) = {te_xy:.4f}")
-print(f"传递熵 T(X→Y) = {te_yx:.4f}")
-# 理论上，T(X→Y) 应当大于 T(Y→X) 因为Y依赖X的过去</code></pre>
-
-        <p>值得一提的是传递熵与我们在第14章学习的信道编码定理之间的联系：有向信息（directed information）——传递熵的广义形式——恰好是反馈信道容量的关键概念。当信道有反馈时，发送端可以根据接收端的反馈信号调整编码策略，此时信道容量由有向信息——而非互信息——刻画。这是信息论基础定理在因果场景中的直接推广。</p>
-
-        <h2>部分信息分解（PID）</h2>
-
-        <p>假设我们有两个预测变量X<sub>1</sub>和X<sub>2</sub>，我们要预测目标变量Y。直觉上，X<sub>1</sub>和X<sub>2</sub>对Y的信息贡献可以分为三种类型：</p>
-
-        <ul>
-            <li><strong>冗余信息（Redundant）</strong>：X<sub>1</sub>和X<sub>2</sub>都提供了关于Y的相同信息（比如两个传感器都测量同一个温度）</li>
-            <li><strong>独特信息（Unique）</strong>：只有X<sub>1</sub>能提供的信息（比如一个相机拍到的特殊角度），X<sub>2</sub>无法替代</li>
-            <li><strong>协同信息（Synergistic）</strong>：只有同时知道X<sub>1</sub>和X<sub>2</sub>才能得到的信息，单独任何一个都不够（比如XOR问题：Y = X<sub>1</sub> ⊕ X<sub>2</sub>）</li>
-        </ul>
-
-        <p>经典信息论告诉我们：I(X<sub>1</sub>, X<sub>2</sub>; Y) 是X<sub>1</sub>、X<sub>2</sub>联合起来提供的总信息。但它没有告诉我们总信息中有多少是冗余、独特和协同的。这就是<strong>部分信息分解（Partial Information Decomposition, PID）</strong>所要解决的问题。</p>
-
-        <p>PID的数学表述是：将联合互信息分解为三个非负项之和：</p>
-
-        <p>I(X<sub>1</sub>, X<sub>2</sub>; Y) = Red(X<sub>1</sub>, X<sub>2</sub>; Y) + Unq(X<sub>1</sub>; Y\X<sub>2</sub>) + Unq(X<sub>2</sub>; Y\X<sub>1</sub>) + Syn(X<sub>1</sub>, X<sub>2</sub>; Y)</p>
-
-        <p>这里的分解并不唯一！经典信息论并没有提供足够的约束来确定唯一的三元分解。不同的研究者提出了不同的"合理性原则"（如最小互信息、基于格理论等），导致不同的PID公式。这个"PID唯一性"问题本身就是一个活跃的研究课题。</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>场景</th>
-                    <th>冗余</th>
-                    <th>X₁独特</th>
-                    <th>X₂独特</th>
-                    <th>协同</th>
-                    <th>说明</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Y = X₁ = X₂ (完全复制)</td>
-                    <td>I(X₁;Y)</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>全部信息冗余</td>
-                </tr>
-                <tr>
-                    <td>Y = X₁ (X₂与Y独立)</td>
-                    <td>0</td>
-                    <td>I(X₁;Y)</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>X₁完全独特</td>
-                </tr>
-                <tr>
-                    <td>Y = X₁ ⊕ X₂ (XOR)</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>1 bit</td>
-                    <td>仅联合可知</td>
-                </tr>
-                <tr>
-                    <td>Y = X₁ + X₂ (加性)</td>
-                    <td>部分</td>
-                    <td>部分</td>
-                    <td>部分</td>
-                    <td>可能</td>
-                    <td>混合情况</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p>PID在机器学习可解释性中有着重要的应用。例如：当你训练了一个深度神经网络，你不知道哪些输入特征提供了独特信息，哪些特征之间产生了协同效应。通过PID分解隐藏层的特征表示，可以揭示模型内部的决策机制——哪些特征是冗余的（可以去掉），哪些特征是协同的（需要保留组合）。</p>
-
-        <h2>信息动力学</h2>
-
-        <p>信息论到目前为止都把熵、互信息等量视为静态的——我们计算一个分布或一个过程的信息量，但很少问"信息量如何随时间演化"。2025-2026年，一个被称为<strong>信息动力学（Information Dynamics）</strong>的方向正在崛起，它将熵和互信息视为动态系统的状态变量。</p>
-
-        <p>核心想法很简单：如果一个复杂系统由多个互相影响的组件构成（比如大脑中的神经元、生态系统中的物种、经济体中的公司），那么系统的信息结构——每个组件的熵、组件间的互信息、整体复杂度——应当随时间按照某种微分方程演化。这些方程刻画了信息在系统中如何产生、流动和消亡。</p>
-
-        <p>一个引人注目的进展是将<strong>信息动力学与Landauer原理</strong>联系起来。Landauer原理说：擦除1 bit信息必须消耗至少k<sub>B</sub>T ln 2的能量。反过来，计算（产生信息）可以放热。信息动力学通过将信息流方程与热力学第二定律结合，揭示了信息-能量-熵三者之间的深层统一关系。</p>
-
-        <p>在<strong>复杂系统</strong>中，信息动力学的应用尤其有趣。以生命系统为例：一个活细胞是一个典型的远离平衡态的开放系统——它持续消耗能量来维持内部的有序结构（低熵状态）。信息动力学可以提供一个新的框架来量化"生命的组织程度"——不是用传统的负熵（negentropy）概念，而是用信息流在系统结构上的分布来刻画。</p>
-
-        <div class="tip">
-            <strong>思考题：</strong>经典信息论和热力学的关系曾经只是形式上的类比（S = -k Σ p log p vs H = -Σ p log p）。Landauer原理搭建了一座桥梁。而信息动力学则在试图回答一个更宏大的问题：是否存在一个统一的"信息力学"——就像牛顿力学刻画物体运动一样刻画信息的运动？
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>开放问题</th>
-                    <th>提出时间</th>
-                    <th>当前进展</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>干扰信道容量（Interference Channel Capacity）</td>
-                    <td>1970s</td>
-                    <td>仅有部分结果，一般情况未知</td>
-                </tr>
-                <tr>
-                    <td>PID唯一性（PID Uniqueness）</td>
-                    <td>2013</td>
-                    <td>多种公理系统，尚无共识</td>
-                </tr>
-                <tr>
-                    <td>一般量子信道容量</td>
-                    <td>1990s</td>
-                    <td>无规公式，仅部分特殊情况已知</td>
-                </tr>
-                <tr>
-                    <td>语义信道容量的严格定义</td>
-                    <td>2020s</td>
-                    <td>G理论等初步框架，未成熟</td>
-                </tr>
-                <tr>
-                    <td>信息动力学的完整数学基础</td>
-                    <td>2020s</td>
-                    <td>正在建立中</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <hr>
-
-        <p>本章我们遍历了信息论的四个前沿方向。关键takeaways：</p>
-
-        <ul>
-            <li><strong>量子信息论</strong>将熵、互信息和信道容量推广到量子域，von Neumann熵和Holevo界是核心概念</li>
-            <li><strong>传递熵</strong>度量有向信息流，比相关性分析更适合非线性系统的因果推断</li>
-            <li><strong>部分信息分解（PID）</strong>揭示了多源信息中的冗余-独特-协同结构，但分解不唯一</li>
-            <li><strong>信息动力学</strong>将信息量视为系统状态变量，试图建立信息"运动"的微分方程</li>
-        </ul>
-
-        <p>信息论最迷人的地方在于：75年过去了，它仍在不断产生深刻的问题和新的数学。Shannon在1948年种下的那棵树，如今已经长成了一片森林。</p>
-
-        <p>学完了27章的理论——是时候把它们串起来，亲手构建一个端到端的通信系统了。</p>
-
-        <div class="footer-nav">
-            <a href="26.html">← 上一章</a>
-            <a href="index.html">📖 返回目录</a>
-            <a href="28.html">下一章 →</a>
-        </div>
-    </div>
+<a class="skip-link" href="#content">跳转至正文</a>
+<header class="top"><a class="brand" href="../index.html">信息论 / INFORMATION THEORY</a><nav aria-label="课程导航"><a href="../index.html">课程首页</a><a href="../index.html#chapters">全部章节</a></nav></header>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"><strong>第 27 章 · 信息论前沿</strong><a href="#why">经典工具遇到非经典场景</a><a href="#quantum">量子信息论：冯·诺依曼熵与 Holevo 界</a><a href="#causal">传递熵与因果推断</a><a href="#pid">部分信息分解（PID）</a><a href="#dynamics">信息动力学与 Landauer 原理</a><a href="#code">可测试的最小算例</a><a href="#sources">来源与延伸</a></nav>
+<main id="content"><article>
+<header class="article-header"><p class="chapter-label">FRONTIERS / CHAPTER 27</p><h1>信息论前沿：量子、因果与信息分解</h1><p class="dek">香农的理论已经七十多年，却远未"完成"。当信源带量子关联、当我们关心的不是相关而是因果、当信息源多于两个时，经典工具会失效。这一章做一次前沿导览，并逐条标出哪些是已证结论、哪些仍是开放问题或类比。</p></header>
+<div class="article-body">
+<section id="why" aria-labelledby="s-why"><h2 id="s-why">经典工具遇到非经典场景</h2><p>过去 26 章反复遇到一类问题：当信源不是独立同分布而是带量子关联时会发生什么？当我们关心的不是相关性而是因果性时？当信息源多于两个、它们之间产生交互效应时？这些问题的回答正在催生信息论的新分支。</p><p>本章不是“包罗万象的前沿综述”，而是四个方向的导览：量子信息论、传递熵与因果、部分信息分解、信息动力学。每个方向都会明确区分<strong>已证结论</strong>与<strong>开放问题/类比</strong>。</p></section>
+<section id="quantum" aria-labelledby="s-quantum"><h2 id="s-quantum">量子信息论：冯·诺依曼熵与 Holevo 界</h2><p>量子信息论的起点是<strong>冯·诺依曼熵（von Neumann entropy）</strong>，它是香农熵在量子态上的推广。若量子系统由密度矩阵 ρ 描述：</p><div class="math-equation" role="group" aria-label="冯·诺依曼熵"><div class="math-scroll" tabindex="0" role="region" aria-label="冯·诺依曼熵，可横向滚动"><math display="block" aria-label="冯诺依曼熵等于密度矩阵与自身对数的乘积之迹的负值"><mi>S</mi><mo>(</mo><mi>ρ</mi><mo>)</mo><mo>=</mo><mo>−</mo><mtext>Tr</mtext><mo>(</mo><mi>ρ</mi><mi>log</mi><mi>ρ</mi><mo>)</mo><mo>=</mo><mo>−</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>λ</mi><mi>i</mi></msub><msub><mi>log</mi><mn>2</mn></msub><msub><mi>λ</mi><mi>i</mi></msub></math></div><div class="eq-label">(27.1)</div></div><p>其中 λᵢ 是 ρ 的特征值，满足 λᵢ≥0、Σλᵢ=1。因此 S(ρ) 就是特征值分布的香农熵。当 ρ 是对角矩阵时，它退化为经典香农熵；一般情形下它包含经典混合与量子叠加两部分。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="q27t q27d" viewBox="0 0 920 320"><title id="q27t">冯·诺依曼熵：密度矩阵的对角化</title><desc id="q27d">左图为一般密度矩阵 ρ，右侧经酉变换对角化为特征值 λ1、λ2 的对角矩阵。冯·诺依曼熵 S(ρ)=−Tr(ρ log ρ)=−Σ λi log λi，等于特征值分布的香农熵；当 ρ 为对角矩阵时退化为经典香农熵。</desc><rect x="1" y="1" width="918" height="318" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="36" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">量子熵 = 密度矩阵特征值的香农熵</text><g font-family="system-ui,'PingFang SC',sans-serif" font-size="14" fill="#203035"><rect x="120" y="110" width="150" height="110" rx="12" fill="#f0ecfb" stroke="#7461ba"/><text x="195" y="150" text-anchor="middle" font-size="22" font-style="italic">ρ</text><text x="195" y="178" text-anchor="middle" font-size="12" fill="#53676d">Hermitian，迹为 1</text><text x="195" y="198" text-anchor="middle" font-size="12" fill="#53676d">半正定</text><rect x="500" y="110" width="150" height="110" rx="12" fill="#eef7f4" stroke="#147f80"/><text x="575" y="145" text-anchor="middle" font-size="13">diag(λ₁, λ₂)</text><text x="575" y="178" text-anchor="middle" font-size="12" fill="#53676d">酉变换不改变特征值</text><text x="575" y="200" text-anchor="middle" font-size="12" fill="#53676d">S 只依赖 λᵢ</text></g><path d="M275 165H495" stroke="#9fb4b0" stroke-width="2" marker-end="url(#a27)"/><text x="385" y="152" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" text-anchor="middle">酉对角化 UρU†</text><text x="460" y="270" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="16" text-anchor="middle">S(ρ) = −Tr(ρ log ρ) = −Σᵢ λᵢ log λᵢ</text><text x="460" y="298" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" text-anchor="middle">ρ 对角时，λᵢ 就是经典概率，S(ρ) 退化为 H(X)</text><defs><marker id="a27" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9z" fill="#9fb4b0"/></marker></defs></svg><figcaption>冯·诺依曼熵只依赖密度矩阵的特征值：酉变换不改变特征值，因而不改变熵。对角化后，量子熵就变成了经典熵。</figcaption></figure><p>量子互信息自然定义为 I(A;B)=S(ρ_A)+S(ρ_B)−S(ρ_AB)。纠缠会表现为子系统熵可能大于联合熵，但互信息本身仍非负。<strong>Holevo 界</strong>则给出一个硬约束：从量子系统可提取的经典信息量有上界，每个 qubit 的经典信息不超过约 1 bit（精确形式由 Holevo 量 χ 给出）。</p><div class="note">关于“2025 年某工作突破量子信道编码界”之类的具体成果，本页不引用未经核实的单一论文与数字。量子纠错方面，<strong>表面码（surface codes）</strong>是目前最受关注的方向之一；错误率能否随码距指数抑制仍需实验验证，不应把理论方案当作已实现的事实。</div></section>
+<section id="causal" aria-labelledby="s-causal"><h2 id="s-causal">传递熵与因果推断</h2><p>互信息是对称的，但因果是不对称的：火灾引起烟雾，烟雾不引起火灾。Schreiber 在 2000 年提出<strong>传递熵（transfer entropy）</strong>来度量有向信息流：</p><div class="math-equation" role="group" aria-label="传递熵定义"><div class="math-scroll" tabindex="0" role="region" aria-label="传递熵定义，可横向滚动"><math display="block" aria-label="从 Y 到 X 的传递熵等于在给定 X 的过去历史的条件下，X 的未来与 Y 的过去之间的条件互信息"><msub><mi>T</mi><mrow><mi>Y</mi><mo>→</mo><mi>X</mi></mrow></msub><mo>=</mo><mi>I</mi><mo>(</mo><msub><mi>X</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>;</mo><msubsup><mi>Y</mi><mi>t</mi><mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msubsup><mo>∣</mo><msubsup><mi>X</mi><mi>t</mi><mrow><mo>(</mo><mi>l</mi><mo>)</mo></mrow></msubsup><mo>)</mo></math></div><div class="eq-label">(27.2)</div></div><p>读作：在已知 X 自身历史的条件下，Y 的过去对 X 未来的<strong>额外</strong>预测能力增加了多少。T_{Y→X}>0 表示 Y 到 X 有信息流动。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="te27t te27d" viewBox="0 0 920 300"><title id="te27t">传递熵度量有向预测信息流</title><desc id="te27d">左侧为 X 与 Y 两条时间序列，Y 的过去指向 X 的未来（红色实线），X 的过去指向 Y 的未来（青色虚线）。传递熵 T(Y→X) 度量在已知 X 自身历史的条件下，Y 的过去对 X 未来的额外预测能力；它不等于因果，只表示有向预测信息流。</desc><rect x="1" y="1" width="918" height="298" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="36" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">传递熵：有向的预测信息流</text><g font-family="system-ui,'PingFang SC',sans-serif" font-size="14"><rect x="120" y="90" width="120" height="44" rx="10" fill="#eef7f4" stroke="#147f80"/><text x="180" y="117" text-anchor="middle">X 的过去 Xₜ</text><rect x="620" y="90" width="120" height="44" rx="10" fill="#eef7f4" stroke="#147f80"/><text x="680" y="117" text-anchor="middle">X 的未来 Xₜ₊₁</text><rect x="120" y="200" width="120" height="44" rx="10" fill="#fff6ef" stroke="#d06d4d"/><text x="180" y="227" text-anchor="middle">Y 的过去 Yₜ</text><rect x="620" y="200" width="120" height="44" rx="10" fill="#fff6ef" stroke="#d06d4d"/><text x="680" y="227" text-anchor="middle">Y 的未来 Yₜ₊₁</text></g><path d="M240 240C400 240 430 112 618 112" fill="none" stroke="#d06d4d" stroke-width="2.5" marker-end="url(#a27b)"/><text x="430" y="150" font-family="system-ui,'PingFang SC',sans-serif" fill="#d06d4d" font-size="13">T(Y→X)：额外预测力</text><path d="M240 100C400 100 430 218 618 218" fill="none" stroke="#147f80" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#a27b)"/><text x="430" y="255" font-family="system-ui,'PingFang SC',sans-serif" fill="#147f80" font-size="13">T(X→Y)</text><defs><marker id="a27b" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9z" fill="#9fb4b0"/></marker></defs></svg><figcaption>传递熵度量两个方向上的预测信息流：T(Y→X) 用的是 Y 的过去对 X 未来的额外预测力，需要条件于 X 自身的历史。</figcaption></figure><div class="note warning"><strong>传递熵 ≠ 因果关系。</strong>它度量的只是预测信息流，而预测信息流可以由共同驱动因素产生。例：太阳风暴同时影响地球磁场与电网，电网数据对磁场的传递熵会很高，但电网没有“引起”磁场变化。真正的因果结论需要干预，而不只是条件统计。</div><p>相比 Granger 因果（假设线性自回归），传递熵是非参数的信息论量，能捕捉非线性有向信息。但要获得可靠估计，仍需足够样本与合适的近邻参数（参见第 25 章的估计器讨论）。</p></section>
+<section id="pid" aria-labelledby="s-pid"><h2 id="s-pid">部分信息分解（PID）</h2><p>两个预测源 X₁、X₂ 对目标 Y 的信息，可以分为四种角色：</p><ul><li><strong>冗余（Redundant）</strong>：两者都提供的相同信息（两个传感器测同一个温度）。</li><li><strong>独特（Unique）</strong>：只有某一个源能提供的信息。</li><li><strong>协同（Synergistic）</strong>：只有同时知道两者才能得到的信息（XOR）。</li></ul><p>形式上，总信息被拆成四项：</p><div class="math-equation" role="group" aria-label="部分信息分解"><div class="math-scroll" tabindex="0" role="region" aria-label="部分信息分解，可横向滚动"><math display="block" aria-label="X1与X2对Y的联合互信息等于冗余、两个独特信息与协同之和"><mi>I</mi><mo>(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>;</mo><mi>Y</mi><mo>)</mo><mo>=</mo><mtext>Red</mtext><mo>+</mo><msub><mtext>Unq</mtext><mn>1</mn></msub><mo>+</mo><msub><mtext>Unq</mtext><mn>2</mn></msub><mo>+</mo><mtext>Syn</mtext></math></div><div class="eq-label">(27.3)</div></div><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pid27t pid27d" viewBox="0 0 920 300"><title id="pid27t">部分信息分解：冗余、独特与协同</title><desc id="pid27d">两个预测源 X₁、X₂ 对目标 Y 的总信息被分解为四块：两者共有的冗余信息、各自独有的信息、以及只有联合起来才能提供的协同信息。XOR 例子（Y=X₁⊕X₂）中总量为 1 bit 且全部是协同。</desc><rect x="1" y="1" width="918" height="298" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="36" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">PID：总信息如何拆成四块</text><g font-family="system-ui,'PingFang SC',sans-serif" font-size="13"><rect x="150" y="70" width="200" height="150" rx="14" fill="#eef7f4" stroke="#147f80" opacity="0.85"/><rect x="330" y="70" width="200" height="150" rx="14" fill="#fff6ef" stroke="#d06d4d" opacity="0.7"/><text x="230" y="120" text-anchor="middle" fill="#147f80" font-weight="700">X₁ 独特</text><text x="450" y="120" text-anchor="middle" fill="#d06d4d" font-weight="700">X₂ 独特</text><text x="340" y="180" text-anchor="middle" fill="#7461ba" font-weight="700">冗余</text><text x="340" y="205" text-anchor="middle" fill="#53676d">两者共有</text><text x="340" y="95" text-anchor="middle" fill="#203035" font-weight="700">协同</text><text x="340" y="255" text-anchor="middle" fill="#53676d">只有联合可知（如 XOR）</text></g><text x="690" y="110" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="14">I(X₁,X₂;Y) =</text><text x="690" y="140" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13">Red + Unq₁ + Unq₂ + Syn</text><text x="690" y="180" font-family="system-ui,'PingFang SC',sans-serif" fill="#d06d4d" font-size="13">分解不唯一：</text><text x="690" y="202" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13">需要额外的合理性公理</text></svg><figcaption>PID 的四块分解。协同区域对应“只有联合可知”的信息，经典 XOR 例子 Y=X₁⊕X₂ 的总信息 1 bit 全部落在协同块。</figcaption></figure><div class="lab" data-lab="pid"><label for="lab27">选择预测源与目标的关系（0 到 3）</label><input id="lab27" type="range" min="0" max="3" step="1" value="2"><output for="lab27" aria-live="polite">XOR Y=X₁⊕X₂：Red=0，Unq₁=0，Unq₂=0，Syn=1 bit</output><p class="micro">四个经典例（教学示意，单位 bit）：复制（全冗余）、独特、XOR（全协同）、独立（无信息）。X₁、X₂ 均为均匀二元变量。</p></div><div class="note warning">式 (27.3) 的分解<strong>并不唯一</strong>：经典信息论没有提供足够的约束来确定唯一的四元分解。不同研究者提出不同的“合理性公理”，得到不同的 Red/Syn 取值。“PID 唯一性”本身就是一个开放问题。</div></section>
+<section id="dynamics" aria-labelledby="s-dynamics"><h2 id="s-dynamics">信息动力学与 Landauer 原理</h2><p>前面一直把熵、互信息当作静态量。一个正在兴起的方向是把它们当作<strong>动态系统的状态变量</strong>：若一个复杂系统由多个互相影响的组件构成，那么每个组件的熵、组件间的互信息、整体复杂度应当随时间按某种方程演化。刻画信息如何产生、流动和消亡，就是这个方向（<strong>信息动力学</strong>）的目标。</p><p>它与物理的联系来自 <strong>Landauer 原理</strong>：擦除 1 bit 信息至少消耗 k_B T ln2 的能量（k_B 为玻尔兹曼常数，T 为温度）。反过来，不可逆计算会产热。把信息流方程与热力学第二定律结合，可以得到信息—能量—熵之间更紧密的联系；这仍是一个<strong>发展中的框架</strong>，而不是像信道容量那样成熟的定理。</p><div class="note">开放问题一览（截至写作时）：干扰信道的一般容量、PID 唯一性、一般量子信道容量、语义信道容量的严格定义、信息动力学的完整数学基础。前四者均有部分结果但无一般解。</div></section>
+<section id="code" aria-labelledby="s-code"><h2 id="s-code">可测试的最小算例</h2><p>XOR 场景的 PID 分解（全协同）与独立场景（无信息）可用固定值断言（教学示意）：</p><pre><code>import math
+def h2(p): return 0.0 if p in (0,1) else -p*math.log2(p)-(1-p)*math.log2(1-p)
+# XOR: Y=X1 xor X2，X1,X2 均匀独立，Y 也均匀
+# 单独看 I(X1;Y)=0（先验），总信息 I(X1,X2;Y)=1 => 全为协同
+assert abs(h2(0.5) - 1.0) &lt; 1e-12        # I(X1,X2;Y)=1 bit
+assert abs(h2(0.5) - h2(0.5)) &lt; 1e-12    # 单独 I(X1;Y)=0 的对称性
+# 独立时总信息为 0
+assert abs(0.0) &lt; 1e-12</code></pre><p class="micro">以上只核对均匀二元变量的熵值与 XOR 的独立性，不构成对任意数据集的 PID 估计。</p></section>
+<section id="sources" aria-labelledby="s-sources"><h2 id="s-sources">来源与延伸阅读</h2><ol class="references"><li>T. Schreiber (2000), <a href="https://doi.org/10.1103/PhysRevLett.85.461"><em>Measuring Information Transfer</em></a>, Phys. Rev. Lett. 85, 461：传递熵。</li><li>P. L. Williams &amp; R. D. Beer (2010), <a href="https://arxiv.org/abs/1004.2515"><em>Nonnegative Decomposition of Multivariate Information</em></a>, arXiv:1004.2515：部分信息分解。</li><li>M. A. Nielsen &amp; I. L. Chuang, <em>Quantum Computation and Quantum Information</em>：密度矩阵、冯·诺依曼熵与 Holevo 界。</li><li>R. Landauer (1961), <em>Irreversibility and Heat Generation in the Computing Process</em>, IBM J. Res. Dev.：Landauer 原理。</li><li><a href="https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2">Cover &amp; Thomas, Elements of Information Theory</a>：互信息与数据处理不等式。</li></ol></section>
 </div>
+<nav class="chapter-nav" aria-label="相邻章节"><a href="26.html">← 第 26 章 · 语义信息论</a><a href="28.html">第 28 章 · 综合项目 →</a></nav>
+</article></main>
 </div>
 </body>
 </html>
