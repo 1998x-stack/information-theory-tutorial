@@ -1,312 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>第24章 信息瓶颈理论</title>
-    <link rel="stylesheet" href="theme.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="信息瓶颈原则：在压缩输入 I(X;T) 与保留输出相关信息 I(T;Y) 之间权衡，信息平面上的拟合与压缩两阶段，变分信息瓶颈 VIB 与率失真理论的关系。">
+<title>第 24 章 · 信息瓶颈理论 | 信息论</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+<script defer src="../assets/js/site.js"></script>
 </head>
 <body>
-<div class="double-border">
-<div class="container">
-    <div class="sidebar">
-        <h3>📡 课程目录</h3>
-        <ul class="chapter-list">
-            <li><a href="01.html">第1章 什么是信息</a></li>
-            <li><a href="02.html">第2章 概率论回顾</a></li>
-            <li><a href="03.html">第3章 自信息与熵</a></li>
-            <li><a href="04.html">第4章 互信息</a></li>
-            <li><a href="05.html">第5章 KL散度与交叉熵</a></li>
-            <li><a href="06.html">第6章 熵的性质深入</a></li>
-            <li><a href="07.html">第7章 渐进均分性AEP</a></li>
-            <li><a href="08.html">第8章 信源编码定理</a></li>
-            <li><a href="09.html">第9章 Huffman编码</a></li>
-            <li><a href="10.html">第10章 算术编码</a></li>
-            <li><a href="11.html">第11章 字典编码</a></li>
-            <li><a href="12.html">第12章 离散信道</a></li>
-            <li><a href="13.html">第13章 信道容量</a></li>
-            <li><a href="14.html">第14章 信道编码定理</a></li>
-            <li><a href="15.html">第15章 线性分组码</a></li>
-            <li><a href="16.html">第16章 循环码与CRC</a></li>
-            <li><a href="17.html">第17章 卷积码与Viterbi译码</a></li>
-            <li><a href="18.html">第18章 信息论与安全</a></li>
-            <li><a href="19.html">第19章 率失真理论</a></li>
-            <li><a href="20.html">第20章 连续信源与微分熵</a></li>
-            <li><a href="21.html">第21章 网络信息论</a></li>
-            <li><a href="22.html">第22章 信息论与统计推断</a></li>
-            <li><a href="23.html">第23章 交叉熵与深度学习</a></li>
-            <li><a href="24.html" class="active">第24章 信息瓶颈理论</a></li>
-            <li><a href="25.html">第25章 信息论工具实战</a></li>
-            <li><a href="26.html">第26章 语义信息论</a></li>
-            <li><a href="27.html">第27章 信息论前沿</a></li>
-            <li><a href="28.html">第28章 综合项目</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-
-        <p>大家好，我是你们的讲师。</p>
-
-        <p>神经网络到底在做什么？这个问题听起来可能有点奇怪——我们一直在用神经网络做分类、生成、预测，但这些"应用层面"的回答并没有触及核心。一个深层神经网络有几十层、几百万个参数，它在训练过程中到底在学什么？每一层内部发生了什么变化？</p>
-
-        <p>1999 年，以色列物理学家 <strong>Naftali Tishby</strong> 提出了一个激进的理论：神经网络学习的过程，本质上是一个<strong>信息瓶颈</strong>（Information Bottleneck）过程——网络在努力压缩输入 X 的同时，尽量保留关于输出 Y 的信息。2017 年，Tishby 与合作者发表了一篇引起巨大争议的论文，声称他们用信息平面分析"终于理解了深度学习"。这篇论文引发了 AI 界的激烈争论——有人称之为"深刻洞见"，有人称之为"过度解读"。</p>
-
-        <p>不管理论是否有争议，信息瓶颈提供了一个非常独特的视角来看待神经网络。这一章我们就来深入了解它。</p>
-
-        <h2>信息瓶颈原则</h2>
-
-        <p>信息瓶颈（Information Bottleneck, IB）的基本框架非常简洁。考虑三个随机变量：</p>
-
-        <ul>
-            <li><strong>X</strong>：输入（如图像、文本）</li>
-            <li><strong>Y</strong>：输出标签（如类别）</li>
-            <li><strong>T</strong>：X 的某种表征（如神经网络中间层的激活值）</li>
-        </ul>
-
-        <p>关键假设是：T 应该是 X 的一个"压缩"版本，并且应该尽可能携带关于 Y 的信息。形如 Markov 链 X → T → Y，即 T 只通过 X 间接获得关于 Y 的信息。</p>
-
-        <p>IB 原则的形式化表述是：寻找一个 T，在满足 I(T;Y) ≥ I₀ 的条件下，最小化 I(X;T)。换句话说：</p>
-
-        <pre><code>min I(X;T)   subject to   I(T;Y) ≥ I₀</code></pre>
-
-        <p>用 Lagrangian 写成无约束形式：</p>
-
-        <pre><code>min I(X;T) - β · I(T;Y)</code></pre>
-
-        <p>其中 β 控制压缩与预测之间的权衡：</p>
-
-        <ul>
-            <li><strong>β → 0</strong>：只关心压缩，完全丢弃信息</li>
-            <li><strong>β → ∞</strong>：只关心预测，允许保留最多信息</li>
-            <li><strong>适中的 β</strong>：在两者之间寻找最优平衡</li>
-        </ul>
-
-        <p>你可以把 IB 想象成一个"有损压缩器"：你有一个消息 X，想要通过一个容量有限的信道 T 发送过去，同时接收端需要从中提取出 Y。信道容量是有限的——T 只能携带有限的信息——所以你必须决定保留关于 X 的哪些信息。IB 告诉你：保留那些对预测 Y 有用的信息，丢弃其余的。</p>
-
-        <div class="highlight">
-            <strong>核心直觉：</strong>Tishby 经常用一个"复印机的故事"来解释 IB。假设你需要复印一份文件，但复印机的纸张只有原稿的一半大小。你必须决定哪些内容应该缩小保留，哪些可以丢弃。好的策略是：保留标题和关键词，丢弃页眉页脚和装饰性图案。IB 给出了这个选择的数学框架——保留 I(T;Y) 最大的那些信息。
-        </div>
-
-        <p>注意 IB 和率失真理论之间的联系（第 19 章）。率失真理论是在给定失真度量下找到最优的有损压缩。IB 则更进一步——它的"失真"不是由人为定义的函数决定，而是由"关于 Y 的信息损失"来定义的。这是一个自适应的、任务驱动的压缩。</p>
-
-        <h2>深度学习中的信息平面</h2>
-
-        <p>2017 年，Tishby 和 Zaslavsky 发表了一篇引发广泛讨论的论文：<em>Opening the Black Box of Deep Neural Networks via Information</em>。他们的核心实验是：训练一个深度神经网络，然后对每一层的激活值计算两个量：</p>
-
-        <ul>
-            <li><strong>I(X;T)</strong>：该层保留了输入 X 的多少信息</li>
-            <li><strong>I(T;Y)</strong>：该层包含了输出 Y 的多少信息</li>
-        </ul>
-
-        <p>然后以 I(X;T) 为 x 轴、I(T;Y) 为 y 轴，把每一层画在一个散点图上——这就是<strong>信息平面</strong>（Information Plane）。</p>
-
-        <p>他们的发现令人惊讶：训练过程在信息平面上的轨迹分为两个阶段：</p>
-
-        <ol>
-            <li><strong>拟合阶段（Fitting Phase）</strong>：训练初期，所有层的 I(X;T) 和 I(T;Y) 都快速上升。网络在"记住"输入的同时也在"学习"输出。这就是正常的前向传播 + 反向传播过程，I(T;Y) 的增加对应着训练准确率上升。</li>
-            <li><strong>压缩阶段（Compression Phase）</strong>：训练后期，有趣的事情发生了——I(X;T) 开始下降，而 I(T;Y) 保持高位或继续缓慢上升。这意味着网络在"忘记"输入中的无关细节，只保留对预测有用的信息。压缩阶段对应着泛化能力的提升。</li>
-        </ol>
-
-        <p>这个发现之所以引人注目，是因为它给出了一个关于"为什么深度学习能泛化"的信息论解释。传统观点认为，神经网络可能只是在"记忆"训练数据，但 IB 视角表明：网络实际上在丢弃信息——它在进行一种"任务驱动的有损压缩"。</p>
-
-        <p>用 Python 来模拟一下信息平面的可视化概念：</p>
-
-        <pre><code>import numpy as np
-import matplotlib.pyplot as plt
-
-# 模拟一个8层网络在信息平面上的轨迹
-np.random.seed(42)
-n_layers = 8
-n_epochs = 200
-
-# 初始化：所有层从原点附近开始
-ix = np.zeros((n_layers, n_epochs))   # I(X;T)
-iy = np.zeros((n_layers, n_epochs))   # I(T;Y)
-
-for epoch in range(n_epochs):
-    for layer in range(n_layers):
-        # 拟合阶段（前50个epoch）：两个信息都上升
-        # 深层（layer大）的信息上升较慢
-        speed = 1.0 - 0.08 * layer
-        if epoch < 50:
-            ix[layer, epoch] = min(6.0, 0.02 * epoch * speed * 6 + np.random.normal(0, 0.02))
-            iy[layer, epoch] = min(1.0, 0.02 * epoch * speed + np.random.normal(0, 0.01))
-        else:
-            # 压缩阶段：I(X;T) 下降（有用信息压缩），I(T;Y) 继续上升
-            compression = 0.005 * (epoch - 50) * (0.5 + 0.1 * layer)  # 深层压缩更多
-            ix[layer, epoch] = max(1.0, ix[layer, 50] - compression + np.random.normal(0, 0.01))
-            iy[layer, epoch] = min(1.0, iy[layer, 50] + 0.002 * (epoch - 50) + np.random.normal(0, 0.005))
-
-print("拟合阶段结束时 (epoch 50):")
-for layer in range(n_layers):
-    print(f"  层{layer+1}: I(X;T)={ix[layer, 49]:.2f}, I(T;Y)={iy[layer, 49]:.2f}")
-
-print("\n训练结束时 (epoch 199):")
-for layer in range(n_layers):
-    print(f"  层{layer+1}: I(X;T)={ix[layer, 199]:.2f}, I(T;Y)={iy[layer, 199]:.2f}")
-
-# 你会看到深层（层7-8）的 I(X;T) 明显下降，
-# 而浅层（层1-2）的 I(X;T) 基本不变——深层更能"丢弃"输入细节</code></pre>
-
-        <div class="tip">
-            <strong>直观理解：</strong>想象你在识别一张照片中的"猫"。原始像素（输入 X）包含了大量信息：背景颜色、光照条件、拍摄角度、猫的品种。但所有这些信息中，只有一小部分对"有没有猫"（输出 Y）是必要的。网络压缩阶段的工作就是：学会忽略背景、光照、角度等信息，只保留"猫的轮廓和纹理特征"。这就是从 I(X;T) 到 I(T;Y) 的信息筛选。
-        </div>
-
-        <h2>争议与讨论</h2>
-
-        <p>信息瓶颈理论在深度学习中的应用一经提出就引发了激烈的争论。不是因为它不重要——恰恰是因为它触及了深度学习中"泛化"这个核心问题。</p>
-
-        <p>2018 年，Saxe 等人在一篇影响深远的论文中提出了强烈的质疑：他们指出，Tishby 实验中观察到的"压缩阶段"实际上是<strong>双面饱和激活函数（tanh）的一个特质</strong>，而不是神经网络的普遍现象。具体来说：</p>
-
-        <ul>
-            <li>当使用 <strong>tanh</strong> 激活函数时，训练后期神经元的输出会逐渐饱和到 tanh 的平坦区域，导致输出值的离散化——这人为地降低了 I(X;T) 的估计值。</li>
-            <li>当使用 <strong>ReLU</strong> 激活函数时，Saxe 等人没有观察到明显的压缩阶段。I(X;T) 在训练过程中保持高位或继续上升。</li>
-        </ul>
-
-        <p>这意味着什么呢？Tishby 看到的"压缩"可能不是神经网络学习的本质，而只是 tanh 激活函数的一个数学伪影。</p>
-
-        <p>此外，IB 框架中 I(X;T) 的计算本身就是一个挑战：在高维空间中准确估计互信息几乎是不可能的（这正是下一章的主题）。Tishby 的实验中使用了 binning 方法来估计互信息，而在高维连续空间中，binning 的偏差可能会歪曲结果。</p>
-
-        <div class="warning">
-            <strong>争议核心：</strong>信息瓶颈对深度学习的解释存在争议——尤其是在 ReLU 网络中是否真的存在压缩阶段。但不管理论是否正确，VIB 作为一个正则化工具在实践中是有效的。记住实用主义原则：一个理论可以有解释价值，即使它不完全准确。就像牛顿力学——它"错"了（相对论更精确），但造桥时没人用相对论。
-        </div>
-
-        <p>这个争论到今天仍未完全解决。有几个值得关注的最新进展：</p>
-
-        <ul>
-            <li>一些研究表明，压缩阶段可能存在于 ReLU 网络中，但需要更多的训练轮数才能观察到</li>
-            <li>有学者指出，压缩的关键不是激活函数的类型，而是训练时间——只要训练足够久，任何网络都会进入压缩阶段</li>
-            <li>更近期的研究（2022-2024）开始用更精确的 MI 估计方法重新审视这个问题</li>
-        </ul>
-
-        <p>这个争议本身就是一个很好的科学过程案例：一个大胆的假说被提出，后续研究通过更精细的实验来验证和反驳，在这个过程中我们对深度学习的理解不断加深。即使 IB 不是最终的"深度学习理论"，它也已经推动了我们对神经网络内部运作的深入思考。</p>
-
-        <h2>IB的实用变体</h2>
-
-        <p>不谈理论争议，IB 的一个实用化变体——<strong>变分信息瓶颈（Variational Information Bottleneck, VIB）</strong>——已经在多个任务中证明了自己的价值。</p>
-
-        <p>VIB 的核心思路是用变分推断来近似 IB 目标中难以处理的信息量。回忆 IB 目标：min I(X;T) - β·I(T;Y)。VIB 引入了两个变分近似：</p>
-
-        <ul>
-            <li>用变分分布 q(t|x) 近似 p(t|x)——这就是编码器</li>
-            <li>用变分分布 r(y|t) 近似 p(y|t)——这就是解码器</li>
-        </ul>
-
-        <p>最终得到一个可优化的下界（ELBO 类似物）：</p>
-
-        <pre><code>L_VIB = E[log r(y|t)] - β · D_KL(q(t|x) || p(t))</code></pre>
-
-        <p>这看起来是不是很眼熟？没错——和第 23 章 VAE 的损失函数几乎一模一样！唯一的区别在于 β 的权重是可调的。实际上，<strong>VAE 可以看作 VIB 的一个特例</strong>，其中编码器和解码器都是生成式的，而 VIB 的编码器可以是任务驱动的（分类、回归等）。</p>
-
-        <p>一个简单的 VIB 实现：</p>
-
-        <pre><code>import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-class VIBClassifier(nn.Module):
-    """变分信息瓶颈分类器"""
-
-    def __init__(self, input_dim=784, latent_dim=256, num_classes=10, beta=1e-3):
-        super().__init__()
-        self.beta = beta
-        # 编码器：输出均值和方差
-        self.encoder_mu = nn.Linear(input_dim, latent_dim)
-        self.encoder_logvar = nn.Linear(input_dim, latent_dim)
-        # 解码器（分类器）
-        self.classifier = nn.Linear(latent_dim, num_classes)
-
-    def encode(self, x):
-        mu = self.encoder_mu(x)
-        logvar = self.encoder_logvar(x)
-        return mu, logvar
-
-    def reparameterize(self, mu, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-        return mu + eps * std  # z = μ + σ · ε
-
-    def forward(self, x):
-        mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
-        logits = self.classifier(z)
-
-        # KL散度：q(z|x) 与 N(0,1) 之间
-        kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
-        kl_loss = kl_loss.mean()
-
-        # 交叉熵分类损失
-        ce_loss = F.cross_entropy(logits, y)
-
-        # 总损失 = CE + β · KL
-        total_loss = ce_loss + self.beta * kl_loss
-        return total_loss, ce_loss, kl_loss
-
-# 训练时会发现：
-# - beta=0 时，VIB退化为普通分类器，没有压缩
-# - beta 适中时，模型鲁棒性提升，对噪声和对抗样本更鲁棒
-# - beta 很大时，模型欠拟合——压缩太多了</code></pre>
-
-        <p>VIB 已经在多个场景中被验证有效：</p>
-
-        <ul>
-            <li><strong>对抗鲁棒性</strong>：VIB 训练出的模型对对抗攻击更加鲁棒，因为压缩去除了对微小扰动敏感的信息</li>
-            <li><strong>公平性</strong>：通过约束 I(X;T)，可以去除 T 中与敏感属性（如性别、种族）相关的信息</li>
-            <li><strong>特征选择</strong>：IB 框架天然支持选择"对任务最有信息量"的特征</li>
-            <li><strong>迁移学习</strong>：压缩后的表征通常更通用，更容易迁移到其他任务</li>
-        </ul>
-
-        <p>来看一下各个 IB 变体的对比：</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>变体</th>
-                    <th>全称</th>
-                    <th>核心近似方法</th>
-                    <th>主要应用</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Classic IB</td>
-                    <td>Information Bottleneck</td>
-                    <td>Blahut-Arimoto 算法迭代求解</td>
-                    <td>小规模离散数据</td>
-                </tr>
-                <tr>
-                    <td>VIB</td>
-                    <td>Variational IB</td>
-                    <td>变分下界 + 重参数化</td>
-                    <td>深度学习、大尺度数据</td>
-                </tr>
-                <tr>
-                    <td>NIB</td>
-                    <td>Nonlinear IB</td>
-                    <td>非线性编码器 + MINE 估计</td>
-                    <td>复杂高维表征学习</td>
-                </tr>
-                <tr>
-                    <td>CEB</td>
-                    <td>Conditional Entropy Bottleneck</td>
-                    <td>用条件熵替代互信息，避免 I(X;T) 难估计的问题</td>
-                    <td>可控生成、表示学习</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <hr>
-
-        <p>这一章我们讨论了信息瓶颈理论：从一个优雅的数学原则出发，看到了它在深度学习解释中的"高光时刻"和争议，也了解了 VIB 这个实用工具。IB 理论的价值或许不在于它是否完美解释了神经网络——而在于它提供了一个基于信息论的视角来思考"表示学习"的本质：一个好的表示应当是<strong>对输出信息量最大的同时，对输入最简洁的</strong>。</p>
-
-        <p>理论很美好，但怎么在代码中实际计算熵、互信息、KL 散度？下一章我们来动手——连续变量的互信息怎么算？高维互信息能估计吗？这些都是实践中随时会遇到的"陷阱"。</p>
-
-        <div class="footer-nav">
-            <a href="23.html">← 上一章</a>
-            <a href="index.html">📖 返回目录</a>
-            <a href="25.html">下一章 →</a>
-        </div>
-    </div>
+<a class="skip-link" href="#content">跳转至正文</a>
+<header class="top"><a class="brand" href="../index.html">信息论 / INFORMATION THEORY</a><nav aria-label="课程导航"><a href="../index.html">课程首页</a><a href="../index.html#chapters">全部章节</a></nav></header>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"><strong>第 24 章 · 信息瓶颈理论</strong><a href="#why">为什么需要一个"压缩"原则？</a><a href="#principle">信息瓶颈原则</a><a href="#plane">深度学习中的信息平面</a><a href="#controversy">争议：tanh 伪影还是普遍现象？</a><a href="#vib">变分信息瓶颈与率失真</a><a href="#code">可测试的最小算例</a><a href="#sources">来源与延伸</a></nav>
+<main id="content"><article>
+<header class="article-header"><p class="chapter-label">REPRESENTATION LEARNING / CHAPTER 24</p><h1>信息瓶颈：好的表示既压缩又预测</h1><p class="dek">一个深层网络有很多层参数，它到底在"学"什么？信息瓶颈（IB）给出一个可量化的回答：在尽量少保留输入 X 的信息 I(X;T) 的同时，尽量多保留关于输出 Y 的信息 I(T;Y)。这一章讲清这个原则、它在信息平面上的两阶段现象，以及由此引出的争议与实用变体 VIB。</p></header>
+<div class="article-body">
+<section id="why" aria-labelledby="s-why"><h2 id="s-why">为什么需要一个"压缩"原则？</h2><p>用 MSE 训练的模型可能把训练集的每个细节都记下来，训练损失很低，换成测试集却一塌糊涂。直觉上说，好的表示应当<strong>丢掉与任务无关的细节</strong>，只留下能预测目标的部分。信息瓶颈（Information Bottleneck, IB）把这个直觉写成了可以计算的优化问题：表示 T 是输入 X 的一个"有损压缩"，压缩的程度由互信息 I(X;T) 度量，而任务相关性由 I(T;Y) 度量。</p><p>需要先说清假设：T 只通过 X 影响 Y，即马尔可夫链 X→T→Y。这样 I(T;Y) 不会超过 I(X;Y)，任何表示都不可能凭空获得关于 Y 的信息——数据处理不等式（第 4 章）保证了这一点。</p></section>
+<section id="principle" aria-labelledby="s-principle"><h2 id="s-principle">信息瓶颈原则</h2><p>考虑三个随机变量：输入 X、表示 T、目标 Y。IB 原则要求在保底的相关性约束下把压缩做到极致：</p><div class="math-equation" role="group" aria-label="信息瓶颈的约束优化形式"><div class="math-scroll" tabindex="0" role="region" aria-label="信息瓶颈的约束优化形式，可横向滚动"><math display="block" aria-label="信息瓶颈的约束优化形式：在 I(T;Y) 不小于 I0 的约束下最小化 I(X;T)"><munder><mo>min</mo><mrow></mrow></munder><mi>I</mi><mo>(</mo><mi>X</mi><mo>;</mo><mi>T</mi><mo>)</mo><mspace width="1em"/><mtext>s.t.</mtext><mspace width="1em"/><mi>I</mi><mo>(</mo><mi>T</mi><mo>;</mo><mi>Y</mi><mo>)</mo><mo>≥</mo><msub><mi>I</mi><mn>0</mn></msub></math></div><div class="eq-label">(24.1)</div></div><p>用拉格朗日乘子把它写成无约束形式，就是 IB 的目标函数：</p><div class="math-equation" role="group" aria-label="信息瓶颈的拉格朗日形式"><div class="math-scroll" tabindex="0" role="region" aria-label="信息瓶颈的拉格朗日形式，可横向滚动"><math display="block" aria-label="信息瓶颈的拉格朗日形式：最小化 I(X;T) 减 β 倍的 I(T;Y)"><msub><mi>L</mi><mtext>IB</mtext></msub><mo>=</mo><mi>I</mi><mo>(</mo><mi>X</mi><mo>;</mo><mi>T</mi><mo>)</mo><mo>−</mo><mi>β</mi><mspace width="0.15em"/><mi>I</mi><mo>(</mo><mi>T</mi><mo>;</mo><mi>Y</mi><mo>)</mo></math></div><div class="eq-label">(24.2)</div></div><p>β 控制权衡：β→0 时只关心压缩，表示趋于常数；β→∞ 时只关心预测，表示尽量保留 X 的全部信息。适中的 β 才在两者之间取到折中。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ib24t ib24d" viewBox="0 0 920 380"><title id="ib24t">信息瓶颈：压缩与预测的权衡曲线</title><desc id="ib24d">横轴为压缩率 I(X;T)，纵轴为保留的相关性 I(T;Y)。曲线自原点向右上凸起并逐渐变缓。β 大时工作点靠近原点，压缩强、保留少；β 小时工作点靠右上，保留多、压缩弱。</desc><rect x="1" y="1" width="918" height="378" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="38" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">信息曲线：I(X;T) 与 I(T;Y) 的权衡</text><path d="M150 70V320H840" stroke="#9fb4b0" stroke-width="1.5"/><polyline points="150,320 213,275 275,238 338,207 401,182 464,162 526,145 589,132 652,121 715,111 777,104 840,98" fill="none" stroke="#147f80" stroke-width="3"/><circle cx="213" cy="275" r="6" fill="#d06d4d"/><text x="222" y="298" font-family="system-ui,'PingFang SC',sans-serif" fill="#d06d4d" font-size="14">β 大：强压缩</text><circle cx="777" cy="104" r="6" fill="#7461ba"/><text x="640" y="92" font-family="system-ui,'PingFang SC',sans-serif" fill="#7461ba" font-size="14">β 小：高保真</text><text x="150" y="352" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="14" text-anchor="middle">0</text><text x="840" y="352" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="14" text-anchor="middle">I(X;T) 率</text><text x="120" y="200" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="14" transform="rotate(-90 120 200)" text-anchor="middle">I(T;Y) 相关性</text><text x="470" y="70" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" text-anchor="middle">曲线以上区域不可达；以下为次优表征</text></svg><figcaption>信息曲线。任一表示对应平面上的一个点 (I(X;T), I(T;Y))；曲线之上不可达，曲线之下是次优表示。沿曲线向左下移动意味着更强的压缩、更少的相关性，由 β 增大实现。</figcaption></figure><div class="note">IB 与率失真理论（第 19 章）是近亲：两者都在给定信息预算下最小化"损失"。区别在于，率失真的失真度量 D 是人为给定的函数，而 IB 的失真由<strong>关于 Y 的信息损失</strong>自动定义——这是一个任务驱动的自适应压缩。当 Y 与 X 的联合分布退化时，IB 就回到率失真。</div></section>
+
+<section id="plane" aria-labelledby="s-plane"><h2 id="s-plane">深度学习中的信息平面</h2><p>2017 年 Tishby 与 Zaslavsky 用"信息平面"分析网络：对每一层激活值 T 计算 I(X;T) 与 I(T;Y)，把每层画在平面上，横轴是压缩率、纵轴是相关性。他们报告的轨迹分为两个阶段：</p><ol><li><strong>拟合阶段</strong>：训练初期，各层的 I(X;T) 与 I(T;Y) 同时快速上升，对应训练准确率提升。</li><li><strong>压缩阶段</strong>：训练后期，I(X;T) 开始下降而 I(T;Y) 保持或微升，网络丢弃输入中的无关细节。</li></ol><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ip24t ip24d" viewBox="0 0 920 380"><title id="ip24t">信息平面上的两阶段轨迹</title><desc id="ip24d">横轴 I(X;T)，纵轴 I(T;Y)。拟合阶段轨迹向右上快速移动，两层都上升；压缩阶段轨迹向左移动，I(X;T) 下降而 I(T;Y) 保持或略升。浅层压缩少，深层压缩多。</desc><rect x="1" y="1" width="918" height="378" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="38" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">信息平面：拟合阶段与压缩阶段</text><path d="M150 70V320H840" stroke="#9fb4b0" stroke-width="1.5"/><path d="M180 300C300 250 420 170 620 120" fill="none" stroke="#147f80" stroke-width="3" stroke-dasharray="7 5"/><path d="M620 120C520 110 400 130 300 165" fill="none" stroke="#d06d4d" stroke-width="3"/><circle cx="180" cy="300" r="6" fill="#147f80"/><text x="190" y="322" font-family="system-ui,'PingFang SC',sans-serif" fill="#147f80" font-size="14">起点</text><circle cx="620" cy="120" r="6" fill="#147f80"/><text x="560" y="108" font-family="system-ui,'PingFang SC',sans-serif" fill="#147f80" font-size="14">拟合结束</text><circle cx="300" cy="165" r="6" fill="#d06d4d"/><text x="250" y="190" font-family="system-ui,'PingFang SC',sans-serif" fill="#d06d4d" font-size="14">压缩后</text><text x="360" y="150" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13">拟合：两者同增</text><text x="330" y="250" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13">压缩：I(X;T) 降</text><text x="840" y="352" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="14" text-anchor="middle">I(X;T)</text><text x="120" y="200" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="14" transform="rotate(-90 120 200)" text-anchor="middle">I(T;Y)</text></svg><figcaption>信息平面上的典型两阶段轨迹：实线为压缩阶段（I(X;T) 下降），虚线为拟合阶段（两者同增）。轨迹形状依赖于互信息估计方法与激活函数，下图讨论其争议。</figcaption></figure><p>这个解释之所以吸引人，是因为它给"为什么能泛化"提供了一个信息论叙事：网络并非在记忆训练数据，而是在做任务驱动的有损压缩。但互信息在连续高维空间中的估计极难，这一实验的可重复性存在争议——这正是下一节的焦点。</p></section>
+<section id="controversy" aria-labelledby="s-controversy"><h2 id="s-controversy">争议：tanh 伪影还是普遍现象？</h2><p>2018 年 Saxe 等人对上述实验提出强烈质疑，他们指出观测到的"压缩阶段"可能与激活函数类型密切相关：</p><ul><li>当使用 <strong>tanh</strong> 激活时，训练后期神经元输出饱和到平坦区，激活值被离散化，这会人为地降低互信息的估计值，看上去像"压缩"。</li><li>换成 <strong>ReLU</strong> 激活时，他们没有观察到明显的压缩阶段，I(X;T) 保持高位或继续上升。</li></ul><p>另一个根源是互信息估计本身：Tishby 的实验用分箱（binning）估计连续互信息，而高维分箱的偏差会歪曲结果。把"观测到的轨迹"当成"网络固有规律"是危险的。这不是说 IB 无价值：作为<strong>损失函数的设计工具</strong>，变分信息瓶颈在实践中确实有效；作为一个关于泛化的<strong>解释性假说</strong>，它仍未被完全证实。区分这两种角色，是本页最重要的认识。</p><div class="note warning">压缩阶段是否在 ReLU 网络中存在、是否只是训练轮数不够的问题，至今仍有争论。在报告中给出信息平面时，应写明互信息估计方法与激活函数，不要把估计伪影当作结论。</div></section>
+<section id="vib" aria-labelledby="s-vib"><h2 id="s-vib">变分信息瓶颈与率失真</h2><p>IB 目标里的 I(X;T) 与 I(T;Y) 在连续高维情形下都难算。变分信息瓶颈（Variational Information Bottleneck, VIB）用两个变分分布近似：编码器 q(t|x) 近似 p(t|x)，解码器 r(y|t) 近似 p(y|t)，得到一个可优化的下界：</p><div class="math-equation" role="group" aria-label="变分信息瓶颈的损失函数"><div class="math-scroll" tabindex="0" role="region" aria-label="变分信息瓶颈的损失函数，可横向滚动"><math display="block" aria-label="变分信息瓶颈损失：期望对数似然减去 β 倍的 q(t|x) 与先验的 KL 散度"><msub><mi>L</mi><mtext>VIB</mtext></msub><mo>=</mo><msub><mi>E</mi><mrow><mi>q</mi><mo>(</mo><mi>t</mi><mo>∣</mo><mi>x</mi><mo>)</mo></mrow></msub><mo>[</mo><mi>log</mi><mi>r</mi><mo>(</mo><mi>y</mi><mo>∣</mo><mi>t</mi><mo>)</mo><mo>]</mo><mo>−</mo><mi>β</mi><mspace width="0.15em"/><msub><mi>D</mi><mtext>KL</mtext></msub><mo>(</mo><mi>q</mi><mo>(</mo><mi>t</mi><mo>∣</mo><mi>x</mi><mo>)</mo><mo>∥</mo><mi>p</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>)</mo></math></div><div class="eq-label">(24.3)</div></div><p>把它和第 23 章 VAE 的损失并排看：第一项是重构/预测的对数似然，第二项是 KL 正则。唯一区别是可以调节 β。实际上 <strong>VAE 可看作 VIB 的一个特例</strong>——两边都是生成式时就是 VAE；VIB 的编码器则可以是任意的任务编码器。KL 项就是"率"，预测误差就是"失真"，整个式子重新回到了第 19 章的率失真权衡。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="vib24t vib24d" viewBox="0 0 920 300"><title id="vib24t">变分信息瓶颈（VIB）的结构</title><desc id="vib24d">输入 X 经编码器 q(t|x) 得到隐表示 T，再经解码器 r(y|t) 预测 Y。虚线回路表示对 q(t|x) 与先验 p(t) 之间的 KL 惩罚，用于控制 I(X;T)。</desc><rect x="1" y="1" width="918" height="298" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="38" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">变分信息瓶颈：编码—瓶颈—解码</text><g font-family="system-ui,'PingFang SC',sans-serif" font-size="15"><rect x="90" y="120" width="150" height="70" rx="12" fill="#eef7f4" stroke="#147f80"/><text x="165" y="150" text-anchor="middle" fill="#203035" font-weight="700">输入 X</text><text x="165" y="172" text-anchor="middle" fill="#53676d" font-size="13">原始观测</text><rect x="335" y="105" width="180" height="100" rx="12" fill="#fff" stroke="#7461ba"/><text x="425" y="140" text-anchor="middle" fill="#203035" font-weight="700">编码器 q(t|x)</text><text x="425" y="164" text-anchor="middle" fill="#53676d" font-size="13">随机隐表示 T</text><text x="425" y="186" text-anchor="middle" fill="#53676d" font-size="13">（瓶颈）</text><rect x="610" y="120" width="150" height="70" rx="12" fill="#eef7f4" stroke="#147f80"/><text x="685" y="150" text-anchor="middle" fill="#203035" font-weight="700">解码器 r(y|t)</text><text x="685" y="172" text-anchor="middle" fill="#53676d" font-size="13">预测 Y</text></g><path d="M240 155H330" stroke="#9fb4b0" stroke-width="2" marker-end="url(#a24)"/><path d="M515 155H605" stroke="#9fb4b0" stroke-width="2" marker-end="url(#a24)"/><path d="M425 210C425 255 165 255 165 195" fill="none" stroke="#d06d4d" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#a24)"/><text x="300" y="248" font-family="system-ui,'PingFang SC',sans-serif" fill="#d06d4d" font-size="14">β·D(q(t|x)‖p(t)) 约束信息量</text><defs><marker id="a24" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9z" fill="#9fb4b0"/></marker></defs></svg><figcaption>VIB 的结构：瓶颈 T 由随机编码器给出，KL 惩罚（虚线）约束 q(t|x) 与先验的距离，即压缩强度。它与 VAE 的区别在于编码器是否任务导向。</figcaption></figure></section>
+<section id="code" aria-labelledby="s-code"><h2 id="s-code">可测试的最小算例</h2><p>为了把"压缩与预测"变成可断言的东西，考虑一个四符号信源（教学示意，不是通用证明）：X 取 {0,1,2,3} 等概率，Y 是 X 的奇偶位 X mod 2，B 是高位。由于 Y 是 X 的函数，I(X;Y)=H(Y)=1 bit，而冗余信息 B 也可以被保留或丢弃。下列四个确定型表示给出不同的工作点：</p><ul><li>常数 T：I(X;T)=0，I(T;Y)=0</li><li>仅保留 Y：I(X;T)=1，I(T;Y)=1（率最低且相关性饱和，帕累托最优点）</li><li>保留 B：I(X;T)=1，I(T;Y)=0（花了同样的率却丢掉了相关性）</li><li>保留全部 X：I(X;T)=2，I(T;Y)=1（多出的 1 bit 对预测毫无帮助）</li></ul><div class="lab" data-lab="ib-tradeoff"><label for="lab24">选择权衡系数 β（0.0 到 4.0）</label><input id="lab24" type="range" min="0" max="40" step="1" value="15"><output for="lab24" aria-live="polite">β=1.5 时最优表示：仅保留 Y；I(X;T)=1.00，I(T;Y)=1.00，目标 =−0.50</output><p class="micro">在四个候选表示中取使 I(X;T)−β·I(T;Y) 最小者。β 小于 1 时压缩占主导（选常数）；β 大于 1 时相关性占主导（选仅保留 Y）。"保留全部 X"在任何 β 下都不是最优，因为它浪费了率。</p></div><p>这个例子里的候选表示都是确定型映射，因此其信息曲线是离散的点；真正的 IB 最优曲线允许 T 随机依赖 X，需用 Blahut-Arimoto 型迭代求解。本仓库样例代码用固定点断言离散熵与互信息的初等计算，可作为校对的参照：</p><pre><code>import math
+def h(ps): return -sum(p*math.log2(p) for p in ps if p &gt; 0)
+pX, pY = [0.25]*4, [0.5, 0.5]          # X 均匀；Y = X mod 2
+joint = [[0.25,0.0],[0.0,0.25],         # p(x,y)
+         [0.25,0.0],[0.0,0.25]]
+I = sum(joint[x][y]*math.log2(joint[x][y]/(pX[x]*pY[y]))
+        for x in range(4) for y in range(2) if joint[x][y] &gt; 0)
+assert abs(h(pX) - 2.0) &lt; 1e-9
+assert abs(h(pY) - 1.0) &lt; 1e-9
+assert abs(I - 1.0) &lt; 1e-9              # I(X;Y) = H(Y) = 1</code></pre><p class="micro">全为初等运算，不依赖任何第三方库；以上为教学示意计算，用来校对熵与互信息的定义，不构成对任意数据集的估计承诺。</p></section>
+<section id="sources" aria-labelledby="s-sources"><h2 id="s-sources">来源与延伸阅读</h2><ol class="references"><li>N. Tishby, F. Pereira, W. Bialek (1999), <em>The Information Bottleneck Method</em>：IB 原则与拉格朗日形式。</li><li>N. Tishby &amp; N. Zaslavsky (2015), <a href="https://arxiv.org/abs/1503.02406"><em>Deep Learning and the Information Bottleneck Principle</em></a>, arXiv:1503.02406。</li><li>A. Saxe et al. (2018), <a href="https://arxiv.org/abs/1703.00810"><em>On the Information Bottleneck Theory of Deep Learning</em></a>, ICLR：对压缩阶段与 tanh 伪影的质疑。</li><li>A. Alemi et al. (2017), <a href="https://arxiv.org/abs/1612.00410"><em>Deep Variational Information Bottleneck</em></a>, ICLR：VIB 与重参数化。</li><li><a href="https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2">Cover &amp; Thomas, Elements of Information Theory</a>：数据处理不等式与互信息。</li></ol></section>
 </div>
+<nav class="chapter-nav" aria-label="相邻章节"><a href="23.html">← 第 23 章 · 交叉熵与深度学习</a><a href="25.html">第 25 章 · 信息论工具实战 →</a></nav>
+</article></main>
 </div>
 </body>
 </html>

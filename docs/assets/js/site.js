@@ -143,6 +143,13 @@
         const z=Math.round(v)/10,p=1/(1+Math.exp(-z)),nll=-Math.log(p);
         return "z="+z.toFixed(1)+"，p="+p.toFixed(3)+"，NLL="+nll.toFixed(3)+"，∂L/∂z_correct=p−y="+(p-1).toFixed(3);
       }
+      case "ib-tradeoff": {
+        const beta=Math.round(v)/10;
+        const cands=[[0,0,"常数（完全丢弃）"],[1,1,"仅保留 Y"],[1,0,"仅保留高位 B"],[2,1,"保留全部 X"]];
+        let pick=cands[0], best=cands[0][0]-beta*cands[0][1];
+        for(const c of cands){const L=c[0]-beta*c[1]; if(L<best-1e-9){best=L;pick=c;}}
+        return "β="+beta.toFixed(1)+" 时最优表示："+pick[2]+"；I(X;T)="+pick[0].toFixed(2)+"，I(T;Y)="+pick[1].toFixed(2)+"，目标 ="+best.toFixed(2);
+      }
       default: return null;
     }
   }
