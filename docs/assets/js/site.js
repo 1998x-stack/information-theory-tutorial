@@ -150,6 +150,11 @@
         for(const c of cands){const L=c[0]-beta*c[1]; if(L<best-1e-9){best=L;pick=c;}}
         return "β="+beta.toFixed(1)+" 时最优表示："+pick[2]+"；I(X;T)="+pick[0].toFixed(2)+"，I(T;Y)="+pick[1].toFixed(2)+"，目标 ="+best.toFixed(2);
       }
+      case "entropy-bias": {
+        const N=Math.max(1,Math.round(v));
+        const bias=7/(2*N*Math.LN2);
+        return "N="+N+"：m=8 时经验熵平均低估约 "+bias.toFixed(3)+" bit（渐近近似），而真实熵为 3.000 bit";
+      }
       default: return null;
     }
   }
