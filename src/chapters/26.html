@@ -1,276 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>第26章 语义信息论</title>
-    <link rel="stylesheet" href="theme.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="语义信息论：从传递符号到传递含义，语义熵 H_s(M|K) 与语义信道容量如何依赖共享知识库，6G 语义通信的框架，以及困惑度、prompt 工程与思维链的语义信息论解读。">
+<title>第 26 章 · 语义信息论 | 信息论</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+<script defer src="../assets/js/site.js"></script>
 </head>
 <body>
-<div class="double-border">
-<div class="container">
-    <div class="sidebar">
-        <h3>📡 课程目录</h3>
-        <ul class="chapter-list">
-            <li><a href="01.html">第1章 什么是信息</a></li>
-            <li><a href="02.html">第2章 概率论回顾</a></li>
-            <li><a href="03.html">第3章 自信息与熵</a></li>
-            <li><a href="04.html">第4章 互信息</a></li>
-            <li><a href="05.html">第5章 KL散度与交叉熵</a></li>
-            <li><a href="06.html">第6章 熵的性质深入</a></li>
-            <li><a href="07.html">第7章 渐进均分性AEP</a></li>
-            <li><a href="08.html">第8章 信源编码定理</a></li>
-            <li><a href="09.html">第9章 Huffman编码</a></li>
-            <li><a href="10.html">第10章 算术编码</a></li>
-            <li><a href="11.html">第11章 字典编码</a></li>
-            <li><a href="12.html">第12章 离散信道</a></li>
-            <li><a href="13.html">第13章 信道容量</a></li>
-            <li><a href="14.html">第14章 信道编码定理</a></li>
-            <li><a href="15.html">第15章 线性分组码</a></li>
-            <li><a href="16.html">第16章 循环码与CRC</a></li>
-            <li><a href="17.html">第17章 卷积码与Viterbi译码</a></li>
-            <li><a href="18.html">第18章 信息论与安全</a></li>
-            <li><a href="19.html">第19章 率失真理论</a></li>
-            <li><a href="20.html">第20章 连续信源与微分熵</a></li>
-            <li><a href="21.html">第21章 网络信息论</a></li>
-            <li><a href="22.html">第22章 信息论与统计推断</a></li>
-            <li><a href="23.html">第23章 交叉熵与深度学习</a></li>
-            <li><a href="24.html">第24章 信息瓶颈理论</a></li>
-            <li><a href="25.html">第25章 信息论工具实战</a></li>
-            <li><a href="26.html" class="active">第26章 语义信息论</a></li>
-            <li><a href="27.html">第27章 信息论前沿</a></li>
-            <li><a href="28.html">第28章 综合项目</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
-
-        <p>Shannon在他的1948年论文中明确写道："信息的语义方面与工程问题无关。"这句话划定了经典信息论的边界——我们只关心符号的传输，不关心符号的"含义"。但到了2025年，6G通信、大语言模型和生成式AI正在迫使信息论跨越这个边界——语义信息论应运而生。</p>
-
-        <p>回顾我们学过的所有章节，从熵到信道容量，从Huffman编码到LDPC码，我们始终遵循着Shannon的教诲：通信的任务是在接收端精确复现发送端的符号序列。至于接收端是否"理解"了这些符号——那不是信息论该管的事。</p>
-
-        <p>这个假设在20世纪是完全合理的。电报系统不需要理解电报内容，电话网络不需要理解对话。但在AI时代，情况变了。如果接收端是一个大语言模型，如果通信的两端都是智能体——它们之间传递的不再是"符号"，而是"意图"和"意义"。传输pixel值已经过时了，传输"一张微笑女性的照片"才是更高效的通信方式。而这，需要一套全新的理论。</p>
-
-        <h2>从语法到语义的范式转变</h2>
-
-        <p>经典信息论是<strong>语法级（syntax-level）</strong>的通信：发送端发出一串符号，接收端收到一串可能被噪声污染的符号，译码器尽可能恢复原始符号序列。至于这些符号代表了什么含义，理论完全不做假设。这就是为什么Shannon可以在完全不涉及语义的情况下建立通信的数学极限——因为传输和意义是正交的。</p>
-
-        <p>语义通信则完全不同。语义通信的目标是<strong>传递含义（meaning）</strong>，而不是传递符号。发送端和接收端各自有一个"知识库"（可以是共享的先验知识、预训练模型、或语言理解能力），通信的任务是利用这些共享知识，用尽可能少的符号让接收端理解发送端想要表达的含义。</p>
-
-        <p>举个例子：假设你要发送一张人脸图片。</p>
-
-        <ul>
-            <li><strong>经典方法</strong>：传输每个像素的RGB值。一张512×512的彩色图片，如果每个通道8bit，需要传输512×512×3×8 = 6,291,456 bits。这是语法级的通信。</li>
-            <li><strong>语义方法</strong>：用一个预训练好的生成模型，发送端只需传输"smiling woman with glasses"这样的语义描述（不到100个字符），接收端的生成模型就能根据这个描述和共享的知识库重建出高度相似的人脸图片。这是语义级的通信。</li>
-        </ul>
-
-        <p>当然，语义通信不是没有代价的。发送端需要"理解"图片的内容（这需要视觉模型），接收端需要"生成"图片（这需要生成模型）。但如果这些模型已经在两端部署好了——比如基站和手机都配备了AI芯片——那么传输代价就从几百万bits降到了几百bits。</p>
-
-        <div class="highlight">
-            <strong>语义信息论的核心洞见：</strong>如果接收方只需要"理解"而不需要"完美重建"，那么我们可以用远比Shannon极限更少的比特来完成通信——这是6G时代的关键突破。
-        </div>
-
-        <p>这个转变带来的理论问题是深刻的：我们如何定义"含义"的熵？如何定义语义意义上的信道容量？如何设计最优的语义编码方案？经典信息论的工具箱——熵、互信息、信道容量——在语义级都需要重新审视。</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>维度</th>
-                    <th>经典信息论</th>
-                    <th>语义信息论</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>传输什么</td>
-                    <td>符号序列（bits）</td>
-                    <td>含义/语义描述</td>
-                </tr>
-                <tr>
-                    <td>度量指标</td>
-                    <td>比特率、误码率</td>
-                    <td>语义保真度、意图还原度</td>
-                </tr>
-                <tr>
-                    <td>信源模型</td>
-                    <td>符号的概率分布</td>
-                    <td>含义空间 + 知识库</td>
-                </tr>
-                <tr>
-                    <td>信道模型</td>
-                    <td>条件概率转移矩阵</td>
-                    <td>语义噪声 + 理解偏差</td>
-                </tr>
-                <tr>
-                    <td>接收端目标</td>
-                    <td>符号级精确恢复</td>
-                    <td>含义级正确理解</td>
-                </tr>
-                <tr>
-                    <td>核心极限</td>
-                    <td>熵 → 信道容量</td>
-                    <td>语义熵 → 语义信道容量</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <p>本质区别可以用一句话总结：经典信息论关心"信号是否被正确接收"，语义信息论关心"含义是否被正确理解"。</p>
-
-        <h2>语义熵与语义信道容量</h2>
-
-        <p>2025年，Lu等人在经典信息论框架的基础上提出了G理论（G-Theory），试图统一语法级和语义级的信息度量。这个工作的核心思路是引入<strong>真值函数（truth function）</strong>和<strong>语义约束（semantic constraints）</strong>来扩展Shannon熵的定义。</p>
-
-        <p>在经典信息论中，概率分布p(x)完全决定了熵H(X) = -Σ p(x) log p(x)。这里，x可以是一个符号、一个字母、或者一个像素值——我们只关心它的概率，不关心它"意味着什么"。</p>
-
-        <p>在语义信息论中，我们需要额外的结构。考虑一个信源产生的语义消息m，它的"含义"可以用一个语义向量s(m)来表示（比如一个NLP模型的embedding）。发送端和接收端共享一个知识库K。语义熵的定义不仅取决于消息的概率分布，还取决于知识库的完善程度：</p>
-
-        <ul>
-            <li><strong>语义熵 H_s(M | K)</strong>：给定接收端的知识库K，信源消息M的剩余不确定性。如果K非常完善（比如接收端已经知道所有背景知识），H_s就会很低——短消息就能传达丰富含义。如果K很贫乏，H_s就很高——需要用更多符号才能表达清楚。</li>
-            <li><strong>语义互信息 I_s(M; R | K)</strong>：给定知识库K，发送端的消息M和接收端对消息的理解R之间的共享含义。它衡量的是"含义被正确传达了多少"，而不是"符号被正确接收了多少"。</li>
-        </ul>
-
-        <p>语义信道容量的定义则更加微妙。在经典信息论中，信道容量是输入分布上互信息的最大值。在语义信息论中，<strong>语义信道容量 C_s</strong>是在"含义空间"上定义的：给定发送端的知识库和接收端的生成能力，每传输一个符号平均能传达的最大含义量。</p>
-
-        <pre><code># 语义熵的简化计算示例
-
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
-def semantic_entropy(messages, knowledge_base, epsilon=1e-10):
-    """
-    简化的语义熵计算：消息在知识库条件下的不确定性
-    越新颖的消息 -> 语义熵越高
-    越能被知识库预测的消息 -> 语义熵越低
-    """
-    # 将知识库作为参考语料
-    all_texts = knowledge_base + messages
-    vectorizer = TfidfVectorizer(max_features=100)
-    tfidf_matrix = vectorizer.fit_transform(all_texts)
-
-    kb_vectors = tfidf_matrix[:len(knowledge_base)]
-    msg_vectors = tfidf_matrix[len(knowledge_base):]
-
-    semantic_entropies = []
-    for i, msg_vec in enumerate(msg_vectors):
-        # 计算消息与知识库的最大相似度
-        similarities = cosine_similarity(msg_vec, kb_vectors).flatten()
-        max_sim = np.max(similarities)
-        # 语义熵：在知识库已知条件下的"新奇度"
-        # 完全已知 -> 熵接近0；完全未知 -> 熵较高
-        se = -np.log2(max_sim + epsilon)
-        semantic_entropies.append(se)
-
-    return np.mean(semantic_entropies)
-
-# 示例：一封越洋家书
-knowledge = [
-    "小明正在美国读博士",
-    "他学的是计算机科学",
-    "他的研究方向是机器学习",
-]
-message = ["我最近在做一个关于语义通信的项目"]
-
-se = semantic_entropy(message, knowledge)
-print(f"语义熵: {se:.2f} bits")
-# 假设输出: 语义熵: 1.23 bits
-# （如果知识库已包含背景信息，语义熵就会较低）</code></pre>
-
-        <p>这个例子虽然简化了，但抓住了语义熵的核心直觉：<strong>你已有的知识越多，新消息对你来说就越"确定"</strong>。这解释了为什么老友之间聊天只需要只言片语就能传达大量信息，而向科普读者解释同一个概念却需要大段篇幅。</p>
-
-        <h2>语义通信框架与6G</h2>
-
-        <p>语义信息论不是纯学术游戏——它有着非常实际的工程目标。6G通信标准（预计2030年左右商用）已经将语义通信列为关键技术方向之一。2025-2026年，北京邮电大学等机构发表了一系列工作，试图重新定义熵、互信息和信道容量在"含义导向传输"中的形式。</p>
-
-        <p>一个典型的语义通信系统架构如下：</p>
-
-        <pre><code>信源 → [语义编码器] → [信道编码器] → 信道 → [信道译码器] → [语义译码器] → 信宿
-                ↑                                          ↑
-           知识库共享                                   知识库共享</code></pre>
-
-        <p>关键区别在于：语义编码器不再输出原始符号的压缩表示，而是输出"语义表示"——通常是一个低维的embedding向量。这个向量蕴含了信源消息的核心含义，同时对信道噪声有很强的鲁棒性（因为embedding空间的拓扑结构可以容忍小的扰动而不改变语义）。</p>
-
-        <p>语义译码器则是生成式的——它根据接收到的语义表示和共享知识库，<strong>生成</strong>信源消息的一个近似。这个过程天然是有损的，但有损失去的是"不重要的细节"（比如背景纹理的精确颜色），保留的是"核心含义"（比如人脸身份、表情和姿态）。</p>
-
-        <p>2025年的一个实际案例是图像语义压缩：发送端用视觉Transformer提取图片的语义token（平均每张图片约200个token，每个token约16bits，总共3200 bits），接收端用扩散模型重建图片。相比之下，JPEG压缩同等质量的图片约需要50000 bits。语义压缩在比特率上实现了超过一个数量级的降低，而主观视觉质量（用户打分）甚至更好。</p>
-
-        <div class="tip">
-            <strong>深度思考：</strong>语义通信框架其实暗合了信息瓶颈原理（第24章）——发送端丢弃与任务无关的信息，保留与语义最相关的信息。两者的区别在于：IB理论中的"任务"通常是给定的标签，而语义通信中的"任务"是"让接收端理解含义"。当接收端是通用AI模型时，这个"任务空间"本身就是一个开放问题。
-        </div>
-
-        <h2>大模型与语义信息</h2>
-
-        <p>大语言模型（LLMs）与语义信息论之间有着深刻的联系——这种联系比很多人意识到的要紧密得多。</p>
-
-        <p>首先，LLM本质上可以看作一个<strong>语义压缩器</strong>。一个训练良好的语言模型，能够将海量文本中的信息压缩为模型参数。当你给它一个prompt时，它不是在逐字查询，而是在条件概率空间中导航——这正是语义编码的过程。从信息论角度看，LLM的生成过程就是"在共享知识库（预训练参数）的基础上，用最少的额外token表达含义"。</p>
-
-        <p><strong>Prompt工程</strong>从语义信息论的角度看，其实就是<strong>语义编码器的设计</strong>。一个好的prompt能够在少量token内精确传达意图（低语义熵），而一个模糊的prompt需要多次交互才能澄清（高语义熵）。这就像通信系统中的信源编码——只是编码的空间从"二进制符号"变成了"自然语言token"。</p>
-
-        <p><strong>Chain-of-Thought（思维链）</strong>则可以理解为<strong>语义译码器中的渐进推理过程</strong>。经典译码器中，我们一次性从接收信号恢复发送符号；而CoT将这个过程分解为多个推理步骤，每一步都建立在之前步骤建立的"局部语义"之上。这与Turbo译码中的迭代思想有着惊人的相似性——只是迭代的对象从"校验信息"变成了"推理线索"。</p>
-
-        <p><strong>In-context learning（上下文学习）</strong>的信息论解释更加迷人。为什么LLM只需要几个示例就能学会一个新任务？从语义信息论的角度看，示例的作用是调整接收端的"语义先验"——通过在上下文中提供少量标注样本，等效于临时扩展了接收端的共享知识库K，使得后续的语义解码更加精确。</p>
-
-        <div class="highlight">
-            <strong>关键联系：</strong>NLP中衡量模型质量的perplexity（困惑度）本质上就是交叉熵的指数形式。perplexity越低，说明模型对下一个token的预测越确定——这既是语法级的性能指标，也是语义级的压缩效率指标。困惑度2.0意味着模型平均只需要2 bits来编码下一个token——接近真实信息的压缩极限。
-        </div>
-
-        <pre><code>import torch
-import torch.nn.functional as F
-
-def compute_perplexity(logits, targets):
-    """
-    困惑度与平均交叉熵的关系：
-    perplexity = exp(L)  (自然对数) 或 2^L  (以2为底)
-    其中 L 是平均交叉熵损失
-    """
-    ce_loss = F.cross_entropy(logits, targets, reduction='mean')
-    perplexity = torch.exp(ce_loss)
-    # 等价于：每token所需bits = log2(perplexity) = ce_loss / ln(2)
-    bits_per_token = ce_loss / torch.log(torch.tensor(2.0))
-    return perplexity.item(), bits_per_token.item()
-
-# 假设有3个模型的logits和targets
-# 模型A：困惑度 2.0 → 每token 1.0 bit
-# 模型B：困惑度 10.0 → 每token 3.32 bits
-# 模型C：困惑度 100.0 → 每token 6.64 bits
-
-dummy_logits_a = torch.randn(1, 1000)  # 1000个词表
-dummy_logits_b = torch.randn(1, 1000)  # 更差的预测
-dummy_targets = torch.randint(0, 1000, (1,))
-
-# 模拟模型A的完美预测
-dummy_logits_a[0, dummy_targets[0]] = 20.0
-# 模型B的差预测
-dummy_logits_b[0, dummy_targets[0]] = 5.0
-
-ppl_a, bpt_a = compute_perplexity(dummy_logits_a, dummy_targets)
-ppl_b, bpt_b = compute_perplexity(dummy_logits_b, dummy_targets)
-
-print(f"模型A: perplexity={ppl_a:.2f}, bits/token={bpt_a:.2f}")
-print(f"模型B: perplexity={ppl_b:.2f}, bits/token={bpt_b:.2f}")
-# 假设输出体现：更好的语言模型 = 更低的perplexity = 更高效的语义编码</code></pre>
-
-        <p>这里有一个值得玩味的事实：Shannon本人预测的英语字母熵大约是1.3 bits/letter（从语法级统计得出）。而GPT-4在英语文本上的perplexity约为5-10，对应约2.3-3.3 bits/letter。GPT-4的"压缩率"反而比Shannon的统计模型差？不是的——Shannon的统计模型针对的是字符级的语法概率，而LLM的perplexity是在token级（每个token平均约4个字符）衡量的，并且token分布包含了更多的语义信息。换算到同等语义粒度，LLM的实际压缩效率远超Shannon模型——这正是因为LLM"理解了语义"，而不仅仅是"记住了统计规律"。</p>
-
-        <hr>
-
-        <p>本章回顾了语义信息论的动机、核心概念和最新进展。关键takeaways：</p>
-
-        <ul>
-            <li>经典信息论处理<strong>语法级</strong>通信（符号传输），语义信息论处理<strong>语义级</strong>通信（含义传输）</li>
-            <li>语义熵和语义信道容量通过引入<strong>知识库</strong>来扩展Shannon熵和互信息的定义</li>
-            <li>6G通信将语义压缩视为关键使能技术，可实现一个数量级以上的比特率降低</li>
-            <li>大语言模型可以视为<strong>语义编码器/译码器</strong>，prompt engineering和CoT均可用语义信息论的视角解释</li>
-        </ul>
-
-        <p>语义信息论只是信息论众多前沿方向之一。量子信息、信息分解、复杂系统——Shannon的理论正在被扩展到前所未有的领域。</p>
-
-        <div class="footer-nav">
-            <a href="25.html">← 上一章</a>
-            <a href="index.html">📖 返回目录</a>
-            <a href="27.html">下一章 →</a>
-        </div>
-    </div>
+<a class="skip-link" href="#content">跳转至正文</a>
+<header class="top"><a class="brand" href="../index.html">信息论 / INFORMATION THEORY</a><nav aria-label="课程导航"><a href="../index.html">课程首页</a><a href="../index.html#chapters">全部章节</a></nav></header>
+<div class="layout">
+<nav class="toc" aria-label="本章目录"><strong>第 26 章 · 语义信息论</strong><a href="#why">香农把语义排除在外，为何现在要请回来？</a><a href="#paradigm">从语法到语义的范式转变</a><a href="#semantic">语义熵与语义信道容量</a><a href="#sixg">语义通信框架与 6G</a><a href="#llm">大模型与语义信息</a><a href="#code">可测试的最小算例</a><a href="#sources">来源与延伸</a></nav>
+<main id="content"><article>
+<header class="article-header"><p class="chapter-label">SEMANTICS / CHAPTER 26</p><h1>语义信息论：从传递符号到传递含义</h1><p class="dek">香农在 1948 年明确把"信息的语义方面"排除在工程问题之外。但当两端都是会理解的智能体时，通信的目标变成"让接收端理解含义"。这一章讲清语义熵、语义信道容量如何依赖共享知识库，以及困惑度、prompt 与思维链的语义信息论解读，并标出哪些说法仍是初步框架。</p></header>
+<div class="article-body">
+<section id="why" aria-labelledby="s-why"><h2 id="s-why">香农把语义排除在外，为何现在要请回来？</h2><p>香农在 1948 年的论文里明确写道："信息的语义方面与工程问题无关。"这划定了经典信息论的边界——只关心符号能否被精确复现，不关心符号的含义。电报系统不需要理解电报内容，电话网络不需要理解对话，这个假设在 20 世纪完全合理。</p><p>当通信两端都是会“理解”的智能体时，情况变了。传输一个像素矩阵已经过时了：传输“一张戴眼镜微笑女性的照片”才是更高效的通信方式。要做到这一点，发送端需要理解内容，接收端需要能生成内容，而两者共享一套预先部署好的知识——这就把“含义”重新带回了信息论。</p></section>
+<section id="paradigm" aria-labelledby="s-paradigm"><h2 id="s-paradigm">从语法到语义的范式转变</h2><p>经典信息论是<strong>语法级</strong>的：发送符号串，接收可能被噪声污染的符号串，译码器尽可能恢复。它能够在不涉及语义的前提下建立通信极限，因为传输和意义是正交的。<strong>语义级</strong>通信则把目标定为让接收端<strong>理解含义</strong>：发送端和接收端各自持有一个知识库（共享先验、预训练模型或语言理解能力），用尽可能少的符号传达含义。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="p26t p26d" viewBox="0 0 920 330"><title id="p26t">语法级通信与语义级通信的对比</title><desc id="p26d">上排为经典语法级流程：信源经符号编码、信道、符号译码到信宿，目标是精确恢复符号串。下排为语义级流程：信源经语义编码得到语义表示，经信道后由语义译码生成含义，两端各有一个共享知识库参与编码与解码。</desc><rect x="1" y="1" width="918" height="328" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="36" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">从传递符号到传递含义</text><g font-family="system-ui,'PingFang SC',sans-serif" font-size="13" fill="#203035"><text x="40" y="86" fill="#53676d" font-weight="700">语法级</text><rect x="120" y="66" width="120" height="44" rx="10" fill="#eef7f4" stroke="#147f80"/><text x="180" y="93" text-anchor="middle">符号编码</text><rect x="290" y="66" width="90" height="44" rx="10" fill="#fff" stroke="#9fb4b0"/><text x="335" y="93" text-anchor="middle">信道</text><rect x="430" y="66" width="120" height="44" rx="10" fill="#eef7f4" stroke="#147f80"/><text x="490" y="93" text-anchor="middle">符号译码</text><rect x="600" y="66" width="120" height="44" rx="10" fill="#f3f9f6" stroke="#9fb4b0"/><text x="660" y="93" text-anchor="middle">精确恢复符号</text><text x="40" y="222" fill="#53676d" font-weight="700">语义级</text><rect x="120" y="200" width="120" height="44" rx="10" fill="#f0ecfb" stroke="#7461ba"/><text x="180" y="227" text-anchor="middle">语义编码</text><rect x="290" y="200" width="90" height="44" rx="10" fill="#fff" stroke="#9fb4b0"/><text x="335" y="227" text-anchor="middle">信道</text><rect x="430" y="200" width="120" height="44" rx="10" fill="#f0ecfb" stroke="#7461ba"/><text x="490" y="227" text-anchor="middle">语义译码</text><rect x="600" y="200" width="120" height="44" rx="10" fill="#fff6ef" stroke="#d06d4d"/><text x="660" y="227" text-anchor="middle">正确理解含义</text><rect x="150" y="278" width="60" height="30" rx="8" fill="#f3f9f6" stroke="#9fb4b0"/><text x="180" y="298" text-anchor="middle" font-size="12">知识库 K</text><rect x="460" y="278" width="60" height="30" rx="8" fill="#f3f9f6" stroke="#9fb4b0"/><text x="490" y="298" text-anchor="middle" font-size="12">知识库 K</text></g><path d="M240 88H288M380 88H428M550 88H598M240 222H288M380 222H428M550 222H598" stroke="#9fb4b0" stroke-width="2"/><path d="M180 244V274M490 244V274" stroke="#d06d4d" stroke-width="1.6" stroke-dasharray="5 4"/></svg><figcaption>两种流程的对比：语法级关心符号是否被正确接收，语义级关心含义是否被正确理解。语义级流程中，共享知识库 K 同时参与编码与解码，是“少传符号、多传含义”的前提。</figcaption></figure><div class="note">语义通信并非“免费”：它把代价从信道转移到了两端的模型上。只有当这些模型已经部署好（例如基站与手机都配有相应模型）时，传输代价才会真正从数万比特降到数百比特。</div></section>
+<section id="semantic" aria-labelledby="s-semantic"><h2 id="s-semantic">语义熵与语义信道容量</h2><p>在经典信息论中，概率分布 p(x) 完全决定了熵。语义层面的推广需要额外结构：信源产生的消息 M 具有“含义”，发送端与接收端共享一个知识库 K。以 K 为条件定义<strong>语义条件熵</strong>：</p><div class="math-equation" role="group" aria-label="语义条件熵"><div class="math-scroll" tabindex="0" role="region" aria-label="语义条件熵，可横向滚动"><math display="block" aria-label="语义条件熵等于负的 M 在 K 条件下概率对数的期望"><msub><mi>H</mi><mtext>s</mtext></msub><mo>(</mo><mi>M</mi><mo>∣</mo><mi>K</mi><mo>)</mo><mo>=</mo><mo>−</mo><munder><mo>∑</mo><mi>m</mi></munder><mi>p</mi><mo>(</mo><mi>m</mi><mo>∣</mo><mi>K</mi><mo>)</mo><msub><mi>log</mi><mn>2</mn></msub><mi>p</mi><mo>(</mo><mi>m</mi><mo>∣</mo><mi>K</mi><mo>)</mo></math></div><div class="eq-label">(26.1)</div></div><p>K 越完善，接收端对 M 的剩余不确定性越低，H_s 越小——短消息就能传达丰富含义；K 越贫乏，H_s 越高，需要更多符号。与之对应的<strong>语义互信息</strong> I_s(M;R|K) 衡量“含义被正确传达了多少”，而不是“符号被正确接收了多少”。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="k26t k26d" viewBox="0 0 920 330"><title id="k26t">知识库越完善，语义熵越低</title><desc id="k26d">横轴为知识库 K 的覆盖度（0 到 1），纵轴为 bit。语义条件熵 H_s(M|K) 随覆盖度上升而下降，语义互信息 I_s(M;R|K) 随覆盖度上升而上升。</desc><rect x="1" y="1" width="918" height="328" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="36" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">语义熵与知识库的依赖</text><path d="M150 70V290H840" stroke="#9fb4b0" stroke-width="1.5"/><polyline points="150,90 264,120 378,160 492,200 606,232 720,254 840,268" fill="none" stroke="#d06d4d" stroke-width="3"/><polyline points="150,280 264,250 378,215 492,182 606,152 720,128 840,108" fill="none" stroke="#147f80" stroke-width="3"/><text x="470" y="120" font-family="system-ui,'PingFang SC',sans-serif" fill="#d06d4d" font-size="14">H_s(M|K)：剩余不确定性下降</text><text x="470" y="250" font-family="system-ui,'PingFang SC',sans-serif" fill="#147f80" font-size="14">I_s(M;R|K)：被理解的含义上升</text><text x="150" y="316" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" text-anchor="middle">知识贫乏</text><text x="840" y="316" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" text-anchor="middle">知识完善</text><text x="120" y="190" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" transform="rotate(-90 120 190)" text-anchor="middle">bit</text></svg><figcaption>知识库 K 越完善，语义条件熵 H_s(M|K) 越低（橙色），语义互信息 I_s(M;R|K) 越高（青色）。这解释了为何老友之间只言片语即可传意，而向初学者解释同一概念需要大段篇幅。</figcaption></figure><div class="note warning">上述 H_s 与 I_s 是<strong>初步的形式化</strong>：如何定义“含义空间”与“知识库的概率结构”仍无统一定义。把 H_s 当作一个已验证的定理来引用是不准确的；它目前更多是一个组织思路的框架。</div><p><strong>语义信道容量</strong> C_s 则是在“含义空间”上定义的：给定发送端知识库与接收端生成能力，每传输一个符号平均能传达的最大含义量。它与经典容量 C 的关系是当前研究的开放问题之一。</p></section>
+<section id="sixg" aria-labelledby="s-sixg"><h2 id="s-sixg">语义通信框架与 6G</h2><p>语义信息论不只是学术游戏：6G 标准讨论已将语义通信列为候选技术方向之一。一个典型架构是：信源→语义编码器→信道编码器→信道→信道译码器→语义译码器→信宿，两端共享知识库。区别在于，语义编码器输出的不再是原始符号的压缩表示，而是低维语义表示（embedding），它对信道噪声鲁棒（embeddings 空间的小扰动不改变语义）；语义译码器则是生成式的，根据语义表示与知识库<strong>生成</strong>一个近似含义。</p><p>这个过程天然有损：丢掉的是不重要的细节（背景纹理的精确颜色），保留的是核心含义（对象身份、表情与姿态）。原则上，如果接收端只需要“理解”而不需要“完美重建”，就可能用远少于香农极限的比特完成通信。</p><div class="note">关于“语义压缩比传统方案低一个数量级”之类的具体数字：不同任务、不同模型、不同评价指标下差异很大，且多以主观评分衡量。本页不引用未经核实的单一数字，只强调“接收端只需理解时可大幅降低符号量”这一方向性结论。</div></section>
+<section id="llm" aria-labelledby="s-llm"><h2 id="s-llm">大模型与语义信息</h2><p>大语言模型与语义信息论的联系比很多人意识到的更直接。首先，可将 LLM 看作一个<strong>语义压缩器</strong>：它把海量文本的信息压入参数，生成时则在条件概率空间中导航。衡量其质量的困惑度（perplexity）本质上就是平均交叉熵的指数：</p><div class="math-equation" role="group" aria-label="困惑度与平均交叉熵"><div class="math-scroll" tabindex="0" role="region" aria-label="困惑度与平均交叉熵，可横向滚动"><math display="block" aria-label="困惑度等于平均交叉熵的 2 的幂，也等于每 token 比特数的 2 的幂"><mtext>perplexity</mtext><mo>=</mo><msup><mn>2</mn><msub><mi>L</mi><mn>2</mn></msub></msup><mo>=</mo><msup><mi>e</mi><msub><mi>L</mi><mrow><mi>ln</mi></mrow></msub></msup></math></div><div class="eq-label">(26.2)</div></div><p>其中 L₂ 是以 2 为底的平均交叉熵（每 token 比特数），L_ln 是自然对数版本。困惑度越低，模型对下一个 token 越确定，也意味着每个 token 需要的比特越少。</p><figure><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pp26t pp26d" viewBox="0 0 920 330"><title id="pp26t">困惑度与每 token 比特数的关系</title><desc id="pp26d">横轴为困惑度（对数刻度 2 到 100），纵轴为每 token 的编码比特 log2(perplexity)。点 (2,1)、(10,3.32)、(100,6.64) 落在一条直线上，说明困惑度是平均交叉熵的指数形式。</desc><rect x="1" y="1" width="918" height="328" rx="18" stroke="#dce8e4" stroke-width="1.5" fill="#fbfdfb"/><text x="28" y="36" font-family="system-ui,'PingFang SC',sans-serif" fill="#203035" font-size="20" font-weight="750">困惑度就是平均交叉熵的指数</text><path d="M150 70V290H840" stroke="#9fb4b0" stroke-width="1.5"/><polyline points="150,250 495,170 840,90" fill="none" stroke="#147f80" stroke-width="3"/><circle cx="150" cy="250" r="6" fill="#d06d4d"/><circle cx="495" cy="170" r="6" fill="#d06d4d"/><circle cx="840" cy="90" r="6" fill="#d06d4d"/><g font-family="system-ui,'PingFang SC',sans-serif" font-size="13" fill="#53676d"><text x="150" y="316" text-anchor="middle">2</text><text x="495" y="316" text-anchor="middle">10</text><text x="840" y="316" text-anchor="middle">100</text><text x="162" y="245">1.00 bit</text><text x="507" y="165">3.32 bit</text><text x="790" y="85">6.64 bit</text></g><text x="120" y="190" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" transform="rotate(-90 120 190)" text-anchor="middle">每 token 比特</text><text x="495" y="60" font-family="system-ui,'PingFang SC',sans-serif" fill="#53676d" font-size="13" text-anchor="middle">横轴为困惑度（对数刻度）</text></svg><figcaption>困惑度与每 token 比特数一一对应：perplexity=2 ↔ 1 bit，10 ↔ 3.32 bit，100 ↔ 6.64 bit。因此“模型更好 = 困惑度更低”同时也是一个压缩效率陈述。</figcaption></figure><div class="lab" data-lab="perplexity"><label for="lab26">选择困惑度（2.0 到 100.0）</label><input id="lab26" type="range" min="20" max="1000" step="1" value="100"><output for="lab26" aria-live="polite">困惑度=10.0，每 token 3.322 bit；自然对数交叉熵=2.303</output><p class="micro">按式 (26.2) 换算。图中直线即 y=log₂(perplexity)：困惑度每翻一倍，每 token 多 1 bit。</p></div><p>三个可以用语义信息论语言描述的现象：<strong>prompt 工程</strong>类似于设计语义编码器——好 prompt 用少量 token 精确传达意图（低语义熵）；<strong>思维链（CoT）</strong>类似于渐进式语义译码，把一次到位变成多步推理；<strong>上下文学习（in-context learning）</strong>则相当于临时扩展接收端的知识库 K，使后续语义解码更精确。</p><div class="note">把 prompt/CoT/ICL 严格映射到语义熵与语义互信息仍是<strong>类比</strong>，而非已证定理。它们有助于建立直觉，但不能替代对具体模型行为的实验验证。</div></section>
+<section id="code" aria-labelledby="s-code"><h2 id="s-code">可测试的最小算例</h2><p>困惑度的定义可直接用固定值断言（教学示意）：</p><pre><code>import math
+def perplexity(avg_ce_nats): return math.exp(avg_ce_nats)
+# 平均交叉熵为 ln(10) nats 时，困惑度为 10
+assert abs(perplexity(math.log(10)) - 10.0) &lt; 1e-9
+# 换算为每 token 比特数
+bits = math.log2(10.0)
+assert abs(bits - 3.3219) &lt; 1e-3
+# 困惑度 2 对应每 token 1 bit
+assert abs(math.log2(2.0) - 1.0) &lt; 1e-12</code></pre><p class="micro">仅校对式 (26.2) 的数值关系，不涉及任何具体模型的性能声明。</p></section>
+<section id="sources" aria-labelledby="s-sources"><h2 id="s-sources">来源与延伸阅读</h2><ol class="references"><li>C. E. Shannon (1948), <a href="https://doi.org/10.1002/j.1538-7305.1948.tb01338.x"><em>A Mathematical Theory of Communication</em></a>, Bell System Technical Journal：语义与工程问题无关的论述。</li><li>C. E. Shannon &amp; W. Weaver (1949), <em>The Mathematical Theory of Communication</em>, University of Illinois Press：关于语义层次的讨论。</li><li>T. Brown et al. (2020), <a href="https://arxiv.org/abs/2005.14165"><em>Language Models are Few-Shot Learners</em></a>, NeurIPS：上下文学习。</li><li>J. Wei et al. (2022), <a href="https://arxiv.org/abs/2201.11903"><em>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</em></a>, NeurIPS：思维链。</li><li><a href="https://onlinelibrary.wiley.com/doi/10.1002/0471200611.ch2">Cover &amp; Thomas, Elements of Information Theory</a>：交叉熵与困惑度的定义基础。</li></ol></section>
 </div>
+<nav class="chapter-nav" aria-label="相邻章节"><a href="25.html">← 第 25 章 · 信息论工具实战</a><a href="27.html">第 27 章 · 信息论前沿 →</a></nav>
+</article></main>
 </div>
 </body>
 </html>

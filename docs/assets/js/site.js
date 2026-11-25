@@ -155,6 +155,11 @@
         const bias=7/(2*N*Math.LN2);
         return "N="+N+"：m=8 时经验熵平均低估约 "+bias.toFixed(3)+" bit（渐近近似），而真实熵为 3.000 bit";
       }
+      case "perplexity": {
+        const ppl=Math.max(1.01,Math.round(v)/10);
+        const bits=Math.log2(ppl), nats=bits*Math.LN2;
+        return "困惑度="+ppl.toFixed(1)+"，每 token "+bits.toFixed(3)+" bit；自然对数交叉熵="+nats.toFixed(3);
+      }
       default: return null;
     }
   }
