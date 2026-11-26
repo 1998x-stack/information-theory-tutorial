@@ -169,7 +169,7 @@ def exact_bsc_block_error(codewords, p:float):
     total=0.
     for index,word in enumerate(words):
         for mask in range(1<<n):
-            errors=mask.bit_count()
+            errors=bin(mask).count("1")
             chance=p**errors*(1-p)**(n-errors)
             r="".join(str(int(bit)^((mask>>pos)&1)) for pos,bit in enumerate(word))
             winner=min(range(len(words)),key=lambda i:sum(a!=b for a,b in zip(r,words[i])))
