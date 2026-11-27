@@ -75,7 +75,7 @@ def verify(output):
                         faults.append("unloaded figures: "+str(state["brokenImages"]))
                     if name!="index.html":
                         num=int(Path(name).stem)
-                        minfig=3 if num>=6 else 2
+                        minfig=4 if num>=26 else (3 if num>=6 else 2)
                         if state["figures"]<minfig:
                             faults.append(f"figures {state['figures']} < {minfig}")
                         if not state["math"] or any(
@@ -85,15 +85,16 @@ def verify(output):
                             faults.append("MathML namespace/geometry")
                         if not all(state["fractions"]):
                             faults.append("MathML stacked fraction geometry")
-                        slider=page.locator('.lab input[type="range"]').first
-                        if slider.count():
-                            output_element=page.locator(".lab output").first
+                        sliders=page.locator('.lab input[type="range"]')
+                        for index in range(sliders.count()):
+                            slider=sliders.nth(index)
+                            output_element=slider.locator("xpath=..").locator("output").first
                             before=output_element.inner_text()
                             slider.focus()
                             slider.press("ArrowRight")
                             after=output_element.inner_text()
                             if not before or before==after:
-                                faults.append("keyboard range control did not update output")
+                                faults.append(f"keyboard range control {index+1} did not update output")
                     if width in (1440,390) and name in (
                         "index.html","chapters/06.html","chapters/07.html",
                         "chapters/08.html","chapters/09.html","chapters/10.html",
@@ -121,12 +122,12 @@ def verify(output):
             context.close()
         # A representative chapter in print media; check equations remain visible.
         page=browser.new_page(viewport={"width":1440,"height":900})
-        page.goto((DOCS/"chapters/15.html").resolve().as_uri())
+        page.goto((DOCS/"chapters/28.html").resolve().as_uri())
         page.emulate_media(media="print")
         print_check=page.evaluate("""() => [...document.querySelectorAll('math')].every(
             el=>el.getBoundingClientRect().width>0 && el.getBoundingClientRect().height>0
         )""")
-        if not print_check: failures.append("Print mode: chapter 15 math invisible")
+        if not print_check: failures.append("Print mode: chapter 28 math invisible")
         page.close()
         browser.close()
     (output/"report.json").write_text(json.dumps({

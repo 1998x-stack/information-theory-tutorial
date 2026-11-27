@@ -3,6 +3,47 @@
   const h2 = p => (p <= 0 || p >= 1) ? 0 :
     -p * Math.log2(p) - (1-p) * Math.log2(1-p);
   const fmt = n => n.toFixed(4);
+
+  function crcRemainder(bits,generator){const w=bits.split("").map(Number),g=generator.split("").map(Number);for(let i=0;i<=w.length-g.length;i++)if(w[i])for(let j=0;j<g.length;j++)w[i+j]^=g[j];return w.slice(-(g.length-1)).join("").padStart(g.length-1,"0");}
+  function convEncode(bits){let state=0,out="";for(const ch of bits+"00"){const b=Number(ch),p=(state>>1)&1,o=state&1;out+=(b^p^o).toString()+(b^o).toString();state=(b<<1)|p;}return out;}
+  function viterbiDecode(received){const pairs=received.match(/../g)||[];let m=[0,Infinity,Infinity,Infinity],backs=[];for(const pair of pairs){const next=[Infinity,Infinity,Infinity,Infinity],pred=[null,null,null,null];for(let s=0;s<4;s++){if(!Number.isFinite(m[s]))continue;const p=(s>>1)&1,o=s&1;for(let b=0;b<=1;b++){const out=[b^p^o,b^o],ns=(b<<1)|p,cost=(Number(pair[0])!==out[0])+(Number(pair[1])!==out[1]),v=m[s]+cost;if(v<next[ns]){next[ns]=v;pred[ns]={state:s,bit:b};}}}m=next;backs.push(pred);}let state=0,bits="";for(let t=backs.length-1;t>=0;t--){const p=backs[t][state];if(!p)return {bits:"?",metric:Infinity};bits=p.bit+bits;state=p.state;}return {bits:bits.slice(0,-2),metric:m[0]};}
+  function waterFill(noise,power){let lo=Math.min(...noise),hi=Math.max(...noise)+power;for(let k=0;k<80;k++){const mid=(lo+hi)/2,total=noise.reduce((s,n)=>s+Math.max(mid-n,0),0);if(total>power)hi=mid;else lo=mid;}const level=(lo+hi)/2,powers=noise.map(n=>Math.max(level-n,0)),capacity=powers.reduce((s,p,i)=>s+.5*Math.log2(1+p/noise[i]),0);return {level,powers,capacity};}
+
+  function macRegion(p2){const p1=2,n=1,c1=.5*Math.log2(1+p1/n),c2=.5*Math.log2(1+p2/n),cs=.5*Math.log2(1+(p1+p2)/n);return {c1,c2,cs,corner1:[c1,cs-c1],corner2:[cs-c2,c2]};}
+  function softmax(z){const m=Math.max(...z),e=z.map(v=>Math.exp(v-m)),s=e.reduce((a,b)=>a+b,0);return e.map(v=>v/s);}
+  function logsumexp(z){const m=Math.max(...z);return m+Math.log(z.reduce((a,v)=>a+Math.exp(v-m),0));}
+  function digammaInt(n){let s=0;for(let i=1;i<n;i++)s+=1/i;return s-0.5772156649015329;}
+  const ksgPairs=(()=>{let seed=20261122;const rand=()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;seed>>>=0;return (seed+.5)/4294967296;};const normal=()=>{const u=Math.max(rand(),1e-12),v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};const a=[],rho=.7,scale=Math.sqrt(1-rho*rho);for(let i=0;i<160;i++){const x=normal(),y=rho*x+scale*normal();a.push([x,y]);}return a;})();
+  function ksgDemo(k){const a=ksgPairs,n=a.length,terms=[];for(let i=0;i<n;i++){let ds=[];for(let j=0;j<n;j++)if(i!==j)ds.push(Math.max(Math.abs(a[i][0]-a[j][0]),Math.abs(a[i][1]-a[j][1])));ds.sort((x,y)=>x-y);const eps=ds[k-1];let nx=0,ny=0;for(let j=0;j<n;j++)if(i!==j){if(Math.abs(a[i][0]-a[j][0])<eps)nx++;if(Math.abs(a[i][1]-a[j][1])<eps)ny++;}terms.push(digammaInt(nx+1)+digammaInt(ny+1));}const nats=digammaInt(k)+digammaInt(n)-terms.reduce((s,v)=>s+v,0)/n;return nats/Math.LN2;}
+
+  // Capstone lab uses the same 32-bit LCG as examples/capstone.py.
+  function lcg(seed){let state=seed>>>0;return ()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return (state+.5)/4294967296;};}
+  function hamming74Encode(nibble){
+    const [a,b,c,d]=nibble.split("").map(Number),p1=a^b^d,p2=a^c^d,p4=b^c^d;
+    return [p1,p2,a,p4,b,c,d].join("");
+  }
+  function hamming74Decode(word){
+    const bits=word.split("").map(Number);let syndrome=0;
+    bits.forEach((b,i)=>{if(b)syndrome^=i+1;});
+    if(syndrome)bits[syndrome-1]^=1;
+    return {nibble:[bits[2],bits[4],bits[5],bits[6]].join(""),syndrome};
+  }
+  function capstoneLab(p){
+    const message="AAAABBCD",src="00001010110111";
+    const padded=src+"00";
+    const encoded=padded.match(/.{4}/g).map(hamming74Encode).join("");
+    const rnd=lcg(2026),flips=[];
+    const received=[...encoded].map((b,i)=>{if(rnd()<p){flips.push(i);return b==="0"?"1":"0";}return b;}).join("");
+    const blocks=received.match(/.{7}/g).map(hamming74Decode);
+    const raw=blocks.map(x=>x.nibble).join("").slice(0,src.length);
+    const residual=[...src].reduce((a,b,i)=>a+(b!==raw[i]),0);
+    const codebook={0:"A",10:"B",110:"C",111:"D"};
+    let prefix="",recovered="",invalid=false;
+    for(const bit of raw){prefix+=bit;if(Object.prototype.hasOwnProperty.call(codebook,prefix)){recovered+=codebook[prefix];prefix="";}else if(!["1","11"].includes(prefix)){invalid=true;break;}}
+    const success=!invalid&&!prefix&&recovered===message;
+    return "p="+p.toFixed(2)+"；正文="+src.length+" bit；信道="+encoded.length+" bit；翻转="+flips.length+"；综合征非零="+blocks.filter(x=>x.syndrome).length+"；译后残余 bit 错误="+residual+"；消息恢复="+(success?"成功":"失败");
+  }
+
   function typicalMass(n, p=.25, eps=.15) {
     const H = h2(p);
     let binomial = Math.pow(1-p, n), mass = 0;
