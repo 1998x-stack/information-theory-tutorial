@@ -31,7 +31,23 @@
     "Rissanen1978": "J. Rissanen (1978), Modeling by Shortest Data Description",
     "Szegedy2016": "C. Szegedy et al. (2016), Rethinking the Inception Architecture for Computer Vision, CVPR",
     "Kingma2014": "D. P. Kingma & M. Welling (2014), Auto-Encoding Variational Bayes, ICLR",
-    "Higgins2017": "I. Higgins et al. (2017), beta-VAE, ICLR"
+    "Higgins2017": "I. Higgins et al. (2017), beta-VAE, ICLR",
+    "Tishby1999": "N. Tishby, F. Pereira, W. Bialek (1999), The Information Bottleneck Method",
+    "TishbyZaslavsky2015": "https://arxiv.org/abs/1503.02406",
+    "Saxe2018": "https://arxiv.org/abs/1703.00810",
+    "Alemi2017": "https://arxiv.org/abs/1612.00410",
+    "Kraskov2004": "A. Kraskov, H. Stogbauer, P. Grassberger (2004), Estimating Mutual Information, Phys. Rev. E 69, 066138",
+    "Belghazi2018": "https://arxiv.org/abs/1801.04062",
+    "Oord2018": "https://arxiv.org/abs/1807.03748",
+    "InfoMeasure2025": "https://www.nature.com/srep/",
+    "ShannonWeaver1949": "C. E. Shannon & W. Weaver (1949), The Mathematical Theory of Communication, University of Illinois Press",
+    "Brown2020": "https://arxiv.org/abs/2005.14165",
+    "Wei2022": "https://arxiv.org/abs/2201.11903",
+    "Schreiber2000": "https://doi.org/10.1103/PhysRevLett.85.461",
+    "WilliamsBeer2010": "https://arxiv.org/abs/1004.2515",
+    "NielsenChuang": "M. A. Nielsen & I. L. Chuang, Quantum Computation and Quantum Information, Cambridge University Press",
+    "Landauer1961": "R. Landauer (1961), Irreversibility and Heat Generation in the Computing Process, IBM J. Res. Dev. 5(3)",
+    "MacKay2003": "https://www.inference.org.uk/mackay/itila/"
   },  "claims": [
     {
       "chapter": 1,
@@ -253,6 +269,36 @@
         "CoverThomas"
       ],
       "toy": "softmax([2,1,0]) = [0.665241,0.244729,0.090031]; CE([1,0,0],p)=0.5880511 bit; grad = p-y"
+    },
+    {
+      "chapter": 24,
+      "statement": "The information bottleneck minimizes I(X;T)-beta*I(T;Y) and assumes the Markov chain T-X-Y; a continuous deterministic representation can drive I(X;T) to diverge, so the compression trajectory in the information plane is not a universal deep-learning law (Saxe et al. question it as tanh artifacts). Variational IB replaces I(X;T) by a KL to a prior.",
+      "evidence": ["Tishby1999", "TishbyZaslavsky2015", "Alemi2017", "Saxe2018", "CoverThomas"],
+      "toy": "2-bit X, 1-bit Y: T=X -> (I(X;T),I(T;Y))=(2,1); minimal (1,1) is the Pareto point; constant T -> (0,0)"
+    },
+    {
+      "chapter": 25,
+      "statement": "For a fixed finite support the plug-in entropy is typically downward biased and Miller-Madow is a first-order correction; empirical MI is positively biased under independence. KSG reports nats by default (divide by ln 2 for bits). MINE's Donsker-Varadhan objective bounds the population MI, and InfoNCE is a lower bound of at most log K nats.",
+      "evidence": ["Kraskov2004", "Belghazi2018", "Oord2018", "InfoMeasure2025", "CoverThomas"],
+      "toy": "MI in nats divided by ln 2 gives bits; InfoNCE with K negatives <= ln K nats"
+    },
+    {
+      "chapter": 26,
+      "statement": "Semantic communication must first define X, context K, the task/semantic variable S=g(X,K), a distortion function and its assumptions; a synonym-embedding cosine similarity is not a probability. For a deterministic map H(S|K)<=H(X|K) does not increase physical channel capacity, and semantic coding must account for model, compute, synchronization and metadata overhead.",
+      "evidence": ["ShannonWeaver1949", "Shannon1948", "Brown2020", "Wei2022", "CoverThomas"],
+      "toy": "deterministic S=g(X,K): H(S|K)<=H(X|K); physical channel capacity C is unchanged"
+    },
+    {
+      "chapter": 27,
+      "statement": "A quantum density matrix is Hermitian, positive semidefinite and unit trace, and its von Neumann entropy is computed from its spectrum. A Bell state is globally pure but locally maximally mixed, with quantum mutual information 2 bits and never negative; the Holevo bound assumes no pre-shared entanglement. Transfer entropy T(X->Y)=I(Y_{t+1};X_t|Y_t) is a conditional predictive gain and nonzero TE alone is not causation; PID is non-unique. Landauer's kBT ln2 bound applies to quasi-static irreversible erasure of one equiprobable unknown classical bit.",
+      "evidence": ["NielsenChuang", "Schreiber2000", "WilliamsBeer2010", "Landauer1961", "CoverThomas"],
+      "toy": "Bell |Phi+>: eigenvalues (1,0,0,0), S=0; each qubit max mixed I/2; QMI=2 bits"
+    },
+    {
+      "chapter": 28,
+      "statement": "An end-to-end project needs round-trip and end-to-end checks and must explicitly describe Huffman metadata, variable-length error propagation, the arithmetic finite-precision protocol, LZW code width, Hamming double-error behaviour, BSC seeds and rates. The total bits sent for a fixed packet is not a true compression ratio without counting codebook and frame overhead.",
+      "evidence": ["MacKay2003", "Shannon1948", "MIT"],
+      "toy": "Hamming(7,4): a two-bit error is not correctable and may be miscorrected to a wrong codeword"
     }
   ]
 }
